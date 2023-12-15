@@ -1,13 +1,14 @@
+using ExcelTool;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using System;
 using System.Collections;
 
-namespace MyExcelTool
+namespace ExcelTool
 {
     public partial class ExcelTool : Form
     {
-        private ExcelFileBase? mExportTargetFile = null; // 导出目标文件，其关联在里面设置
+        private ExcelFileData? mExportTargetFile = null; // 导出目标文件，其关联在里面设置
 
         public ExcelTool()
         {
@@ -50,7 +51,7 @@ namespace MyExcelTool
             OpenFileDialog _openfileDialog = new OpenFileDialog();
             if (_openfileDialog.ShowDialog() == DialogResult.OK)
             {
-                var _loadedFile = JsonConvert.DeserializeObject<ExcelFileBase>(_openfileDialog.FileName);
+                var _loadedFile = JsonConvert.DeserializeObject<ExcelFileData>(_openfileDialog.FileName);
                 if (_loadedFile != null)
                 {
                     mExportTargetFile = _loadedFile;
@@ -61,14 +62,21 @@ namespace MyExcelTool
         private void BntChooseExportFile_Click(object sender, EventArgs e)
         {
             OpenFileDialog _openfileDialog = new OpenFileDialog();
-            _openfileDialog.Filter = "*.xls|*.xlsx";
+            _openfileDialog.Filter = "*.xls|*.csv";
             _openfileDialog.Multiselect = false;
             if (_openfileDialog.ShowDialog() == DialogResult.OK)
             {
-                mExportTargetFile = new ExcelFileBase();
-                if (mExportTargetFile.LoadFile(_openfileDialog.FileName))
+                try
                 {
-                    TextForExportFilePath.Text = _openfileDialog.FileName;
+                    mExportTargetFile = new ExcelFileData();
+                    if (mExportTargetFile.DoLoadFile(_openfileDialog.FileName))
+                    {
+                        TextForExportFilePath.Text = _openfileDialog.FileName;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString(), "报错");
                 }
             }
         }

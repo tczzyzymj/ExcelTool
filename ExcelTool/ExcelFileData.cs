@@ -2,15 +2,17 @@
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyExcelTool
+namespace ExcelTool
 {
-    internal class ExcelFileBase
+    public class ExcelFileData : TableBaseData
     {
-        private ExcelPackage? mExcelPackage = null; // 原始数据
+        private ExcelPackage? mExcelPackage = null; // 原始数据如果是
 
         [JsonProperty]
         private string mExcelAbsolutePath = string.Empty;
@@ -34,17 +36,17 @@ namespace MyExcelTool
         [JsonProperty]
         private int mChooseWorkSheetIndex = 1; // 选中的workSheet需要处理的 workdsheet
 
-        public ExcelFileBase()
+        public ExcelFileData()
         {
 
         }
 
-        ~ExcelFileBase()
+        ~ExcelFileData()
         {
             CloseFile();
         }
 
-        public bool LoadFile(string absolutePath)
+        public override bool InternalLoadFile(string absolutePath)
         {
             FileInfo _info = new FileInfo(absolutePath);
             if (!_info.Exists)
@@ -53,46 +55,36 @@ namespace MyExcelTool
                 return false;
             }
 
-            bool _result = false;
-            try
+            mExcelPackage = new ExcelPackage(_info);
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            mExcelAbsolutePath = absolutePath;
+
+            var _allSheets = mExcelPackage.Workbook.Worksheets; // 这里要注意，里面说了和 .net 的版本有关，具体请跳转进去看一下
+            int _startIndex = 0;
+            if (mExcelPackage.Compatibility.IsWorksheets1Based)
             {
-                mExcelPackage = new ExcelPackage(_info);
-                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-                mExcelAbsolutePath = absolutePath;
-
-                var _allSheets = mExcelPackage.Workbook.Worksheets; // 这里要注意，里面说了和 .net 的版本有关，具体请跳转进去看一下
-                int _startIndex = 0;
-                if (mExcelPackage.Compatibility.IsWorksheets1Based)
-                {
-                    // 从1开始
-                    _startIndex = 1;
-                }
-                else
-                {
-                    // 从0开始
-                    _startIndex = 0;
-                }
-
-                for (int i = _startIndex; i < _allSheets.Count; ++i)
-                {
-                    var sheet = _allSheets[i];
-                    var _newSheetData = new WorkSheetData();
-                    if (!_newSheetData.Init(this, sheet, i))
-                    {
-                        return false;
-                    }
-
-                    mWorkSheetList.Add(_newSheetData);
-                }
-
-                _result = true;
+                // 从1开始
+                _startIndex = 1;
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show(ex.ToString());
+                // 从0开始
+                _startIndex = 0;
             }
 
-            return _result;
+            for (int i = _startIndex; i < _allSheets.Count; ++i)
+            {
+                var sheet = _allSheets[i];
+                var _newSheetData = new WorkSheetData();
+                if (!_newSheetData.Init(this, sheet, i))
+                {
+                    return false;
+                }
+
+                mWorkSheetList.Add(_newSheetData);
+            }
+
+            return true;
         }
 
         public void ChooseWorkSheet(int indexValue)

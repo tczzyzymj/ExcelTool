@@ -1,4 +1,4 @@
-﻿namespace MyExcelTool
+﻿namespace ExcelTool
 {
     partial class ExcelTool
     {
@@ -40,6 +40,9 @@
             label2 = new Label();
             TextBoxForContentStartRow = new TextBox();
             label3 = new Label();
+            panel1 = new Panel();
+            ListViewMain = new ListView();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // StartExportBtn
@@ -167,11 +170,29 @@
             label3.TabIndex = 9;
             label3.Text = "内容开始行";
             // 
+            // panel1
+            // 
+            panel1.BorderStyle = BorderStyle.FixedSingle;
+            panel1.Controls.Add(ListViewMain);
+            panel1.Location = new Point(12, 96);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(1712, 975);
+            panel1.TabIndex = 11;
+            // 
+            // ListViewMain
+            // 
+            ListViewMain.Location = new Point(-1, -1);
+            ListViewMain.Name = "ListViewMain";
+            ListViewMain.Size = new Size(1712, 975);
+            ListViewMain.TabIndex = 1;
+            ListViewMain.UseCompatibleStateImageBehavior = false;
+            // 
             // ExcelTool
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1736, 1122);
+            Controls.Add(panel1);
             Controls.Add(TextBoxForContentStartRow);
             Controls.Add(label3);
             Controls.Add(TextBoxForKeyStartColm);
@@ -188,6 +209,7 @@
             MaximizeBox = false;
             Name = "ExcelTool";
             Text = "ExcelTool";
+            panel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -206,5 +228,7 @@
         private Label label2;
         private TextBox TextBoxForContentStartRow;
         private Label label3;
+        private Panel panel1;
+        private ListView ListViewMain;
     }
 }

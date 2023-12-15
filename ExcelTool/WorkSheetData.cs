@@ -6,13 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyExcelTool
+namespace ExcelTool
 {
-    internal class WorkSheetData
+    public class WorkSheetData
     {
         private bool mHasInit = false;
 
-        private WeakReference<ExcelFileBase>? mExcelFileBase = null;
+        private WeakReference<ExcelFileData>? mExcelFileBase = null;
 
         private ExcelWorksheet? mData = null;
 
@@ -20,7 +20,7 @@ namespace MyExcelTool
 
         private int mSheetIndex = 1; // 这里要特别注意，根据 .net版本不同有不同的下标开始，从0，或者1都有可能，这里直接记录结果
 
-        public bool Init(ExcelFileBase ownerExcelFile, ExcelWorksheet targetWorkSheet, int index)
+        public bool Init(ExcelFileData ownerExcelFile, ExcelWorksheet targetWorkSheet, int index)
         {
             if (mHasInit)
             {
@@ -41,9 +41,9 @@ namespace MyExcelTool
             mSheetIndex = index;
             mData = targetWorkSheet;
 
-            mExcelFileBase = new WeakReference<ExcelFileBase>(ownerExcelFile);
+            mExcelFileBase = new WeakReference<ExcelFileData>(ownerExcelFile);
 
-            if (!mExcelFileBase.TryGetTarget(out ExcelFileBase? _ownerExcel))
+            if (!mExcelFileBase.TryGetTarget(out ExcelFileData? _ownerExcel))
             {
                 return false;
             }

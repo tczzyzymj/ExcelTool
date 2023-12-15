@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyExcelTool
+namespace ExcelTool
 {
-    internal class KeyData
+    public class KeyData
     {
         private int mKeyIndex = 1;
 

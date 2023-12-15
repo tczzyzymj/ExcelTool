@@ -1,4 +1,4 @@
-namespace MyExcelTool
+namespace ExcelTool
 {
     internal static class Program
     {
