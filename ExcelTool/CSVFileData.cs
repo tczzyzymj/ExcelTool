@@ -11,7 +11,6 @@ namespace ExcelTool
     {
         private DataTable? mOriginDataTable = null;
 
-
         public override bool InternalLoadFile(string absolutePath)
         {
             var _allLines = File.ReadAllLines(absolutePath);
@@ -36,8 +35,10 @@ namespace ExcelTool
                 }
                 else
                 {
+                    List<string> _dataList = new List<string>(_splitArray);
+
                     // 这里是 数据
-                    mOriginDataTable.Rows.Add(_splitArray);
+                    mOriginDataTable.Rows.Add(_dataList);
                 }
             }
 
