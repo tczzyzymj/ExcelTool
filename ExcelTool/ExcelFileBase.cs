@@ -10,7 +10,7 @@ namespace MyExcelTool
 {
     internal class ExcelFileBase
     {
-        private ExcelPackage mExcelPackage = null; // 原始数据
+        private ExcelPackage? mExcelPackage = null; // 原始数据
 
         [JsonProperty]
         private string mExcelAbsolutePath = string.Empty;
@@ -29,7 +29,7 @@ namespace MyExcelTool
         [JsonProperty]
         private int mContentStartColmIndex = 1; // 内容开始的列下标，从1开始
 
-        private WorkSheetData mChooseWorkSheet = null; // 当前选中的目标 WorkSheet
+        private WorkSheetData? mChooseWorkSheet = null; // 当前选中的目标 WorkSheet
 
         [JsonProperty]
         private int mChooseWorkSheetIndex = 1; // 选中的workSheet需要处理的 workdsheet
@@ -141,16 +141,20 @@ namespace MyExcelTool
 
         public void CloseFile()
         {
-            mExcelPackage.Dispose();
+            mExcelPackage?.Dispose();
         }
 
         public void SaveFile()
         {
-            mExcelPackage.Save();
+            mExcelPackage?.Save();
         }
 
         public string GetFileName(bool isFull)
         {
+            if (mExcelPackage == null)
+            {
+                return string.Empty;
+            }
             if (isFull)
             {
                 return mExcelPackage.File.FullName;

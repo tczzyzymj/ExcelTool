@@ -12,9 +12,9 @@ namespace MyExcelTool
     {
         private bool mHasInit = false;
 
-        private WeakReference<ExcelFileBase> mExcelFileBase = null;
+        private WeakReference<ExcelFileBase>? mExcelFileBase = null;
 
-        private ExcelWorksheet mData = null;
+        private ExcelWorksheet? mData = null;
 
         private List<KeyData> mKeyDataList = new List<KeyData>();
 
@@ -43,7 +43,7 @@ namespace MyExcelTool
 
             mExcelFileBase = new WeakReference<ExcelFileBase>(ownerExcelFile);
 
-            if (!mExcelFileBase.TryGetTarget(out ExcelFileBase _ownerExcel))
+            if (!mExcelFileBase.TryGetTarget(out ExcelFileBase? _ownerExcel))
             {
                 return false;
             }
@@ -60,7 +60,7 @@ namespace MyExcelTool
                     MessageBox.Show($"表格的 key 有空列，请检查，文件：{_ownerExcel.GetFileName(true)}, sheet:{mData.Name}，行：{_rowIndex}, 列：{_colm}", "错误");
                     return false;
                 }
-                string _finalStr = _tempValue as string;
+                string? _finalStr = _tempValue as string;
                 if (string.IsNullOrEmpty(_finalStr))
                 {
                     MessageBox.Show($"表格的 key 有空列，请检查，文件：{_ownerExcel.GetFileName(true)}, sheet:{mData.Name}", "错误");

@@ -134,6 +134,7 @@
             TextBoxForKeyStartColm.Size = new Size(39, 28);
             TextBoxForKeyStartColm.TabIndex = 8;
             TextBoxForKeyStartColm.Text = "1";
+            TextBoxForKeyStartColm.KeyPress += TextBoxCommonProcess_KeyPress;
             // 
             // label2
             // 
@@ -154,6 +155,7 @@
             TextBoxForContentStartRow.Size = new Size(39, 28);
             TextBoxForContentStartRow.TabIndex = 10;
             TextBoxForContentStartRow.Text = "4";
+            TextBoxForContentStartRow.KeyPress += TextBoxCommonProcess_KeyPress;
             // 
             // label3
             // 

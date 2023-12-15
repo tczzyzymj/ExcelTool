@@ -72,5 +72,13 @@ namespace MyExcelTool
                 }
             }
         }
+
+        private void TextBoxCommonProcess_KeyPress(object? sender, KeyPressEventArgs e)
+        {
+            if (!char.IsDigit(e.KeyChar) || e.KeyChar == 8) // e.KeyChar == 8 ÊÇÍË¸ñ¼ü
+            {
+                e.Handled = true;
+            }
+        }
     }
 }
