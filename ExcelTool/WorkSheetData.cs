@@ -18,7 +18,9 @@ namespace MyExcelTool
 
         private List<KeyData> mKeyDataList = new List<KeyData>();
 
-        public bool Init(ExcelFileBase ownerExcelFile, ExcelWorksheet targetWorkSheet)
+        private int mSheetIndex = 1; // 这里要特别注意，根据 .net版本不同有不同的下标开始，从0，或者1都有可能，这里直接记录结果
+
+        public bool Init(ExcelFileBase ownerExcelFile, ExcelWorksheet targetWorkSheet, int index)
         {
             if (mHasInit)
             {
@@ -36,7 +38,7 @@ namespace MyExcelTool
                 MessageBox.Show("传入的 ExcelWorksheet 为空，无法初始化，请检查！", "错误");
                 return false;
             }
-
+            mSheetIndex = index;
             mData = targetWorkSheet;
 
             mExcelFileBase = new WeakReference<ExcelFileBase>(ownerExcelFile);
