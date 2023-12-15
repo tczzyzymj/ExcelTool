@@ -44,7 +44,7 @@ namespace MyExcelTool
             }
         }
 
-        private void ExportSettingBtn_Click(object sender, EventArgs e)
+        private void BtnExportSetting_Click(object sender, EventArgs e)
         {
             InternalExportSetting();
         }
