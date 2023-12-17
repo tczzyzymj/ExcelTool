@@ -82,10 +82,6 @@ namespace ExcelTool
                     {
                         return;
                     }
-
-                    TextForExportFilePath.Text = _openfileDialog.FileName;
-                    PanelForChooseSheet.Visible = true;
-
                 }
                 catch (Exception ex)
                 {
@@ -109,7 +105,6 @@ namespace ExcelTool
 
         private void ExcelTool_Load(object sender, EventArgs e)
         {
-            PanelForChooseSheet.Visible = false;
         }
 
         private void ComboBoxForSelectSheet_SelectedIndexChanged(object sender, EventArgs e)
