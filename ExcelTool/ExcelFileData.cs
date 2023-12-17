@@ -14,13 +14,6 @@ namespace ExcelTool
     {
         private ExcelPackage? mExcelPackage = null; // 原始数据如果是
 
-        private List<CommonWorkSheetData> mWorkSheetList = new List<CommonWorkSheetData>();
-
-        private CommonWorkSheetData? mChooseWorkSheet = null; // 当前选中的目标 WorkSheet
-
-        [JsonProperty]
-        private int mChooseWorkSheetIndex = 1; // 选中的workSheet需要处理的 workdsheet
-
         public ExcelFileData()
         {
 
@@ -62,9 +55,9 @@ namespace ExcelTool
             {
                 var sheet = _allSheets[i];
                 var _newSheetData = new ExcelSheetData();
-                if (!_newSheetData.Init(this, sheet, 0, i))
+                if (!_newSheetData.Init(this, sheet, 0, i, sheet.Name))
                 {
-                    return false;
+                    continue;
                 }
 
                 mWorkSheetList.Add(_newSheetData);

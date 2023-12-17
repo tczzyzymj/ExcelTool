@@ -15,16 +15,24 @@ namespace ExcelTool
         protected string mExcelAbsolutePath = string.Empty;
 
         [JsonProperty]
-        protected int mKeyStartRowIndex = 1; // Key 的概念认为是数据列的名字，其开始的行下标，从1开始，不是0
+        protected int mKeyStartRowIndex = 2; // Key 的概念认为是数据列的名字，其开始的行下标，从1开始，不是0
 
         [JsonProperty]
         protected int mKeyStartColmIndex = 1; // Key 的概念认为是数据列的名字，其开始的列下标，从1开始，不是0
 
         [JsonProperty]
-        protected int mContentStartRowIndex = 2; // 内容选中的行下标，从2开始，认为1是KEY不能小于2
+        protected int mContentStartRowIndex = 4; // 内容选中的行下标，从2开始，认为1是KEY不能小于2
 
         [JsonProperty]
-        protected int mContentStartColmIndex = 1; // 内容开始的列下标，从1开始
+        private int mChooseWorkSheetIndexInList = 0; // 选中的workSheet需要处理的 workdsheet
+
+        protected List<CommonWorkSheetData> mWorkSheetList = new List<CommonWorkSheetData>();
+
+        protected CommonWorkSheetData? mChooseWorkSheet = null; // 当前选中的目标 WorkSheet
+
+        protected int mChooseSheetIndex = 0;
+
+        protected string mChooseSheetName = string.Empty;
 
         public bool DoLoadFile(string absolutePath)
         {
@@ -46,6 +54,36 @@ namespace ExcelTool
             }
 
             return false;
+        }
+
+        public CommonWorkSheetData? GetWorkdSheet()
+        {
+            return mChooseWorkSheet;
+        }
+
+        public bool TryChooseSheet(CommonWorkSheetData targetData)
+        {
+            if (targetData == null)
+            {
+                MessageBox.Show("尝试选中需要处理的 Sheet 表，但传入的内容为空，请检查!");
+                return false;
+            }
+
+            var _targetIndex = mWorkSheetList.IndexOf(targetData);
+            if (_targetIndex < 0)
+            {
+                MessageBox.Show($"尝试选中需要处理的 Sheet 表，但是没有已加载的数据中找到，Sheet 名字是:{targetData.DisplayName}，请检查!","错误");
+                return false;
+            }
+            mChooseWorkSheetIndexInList = targetData.IndexInList;
+            mChooseWorkSheet = targetData;
+
+            return true;
+        }
+
+        public List<CommonWorkSheetData> GetWorkSheet()
+        {
+            return mWorkSheetList;
         }
 
         public virtual string GetFileName(bool isFull)
@@ -88,16 +126,6 @@ namespace ExcelTool
         public void SetContentStartRowIndex(int targetValue)
         {
             mContentStartRowIndex = targetValue;
-        }
-
-        public int GetContentStartColmIndex()
-        {
-            return mContentStartColmIndex;
-        }
-
-        public void SetContentStartColmIndex(int targetValue)
-        {
-            mContentStartColmIndex = targetValue;
         }
 
         public abstract bool InternalLoadFile(string absolutePath);

@@ -12,7 +12,7 @@ namespace ExcelTool
     {
         protected ExcelWorksheet? mData = null; // 原始数据
 
-        protected override bool InternalInitWithKey(TableBaseData ownerExcelFile, object sheetData, int sheetIndex, int indexInFileData)
+        protected override bool InternalInitWithKey(TableBaseData ownerExcelFile, object sheetData, int IndexInListValue, int indexInFileData, string name)
         {
             if (mHasInit)
             {
@@ -35,6 +35,12 @@ namespace ExcelTool
             if (mData == null)
             {
                 MessageBox.Show("传入的 Data 数据无法解析为 ExcelWorksheet，请检查", "错误");
+                return false;
+            }
+
+            if (mData.Dimension == null || mData.Dimension.Rows == null || mData.Dimension.Columns == null)
+            {
+                // 这个 sheet 为空，就不选择了
                 return false;
             }
 

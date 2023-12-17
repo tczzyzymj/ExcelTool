@@ -31,7 +31,6 @@
             BtnChooseExportFile = new Button();
             label1 = new Label();
             TextForExportFilePath = new TextBox();
-            PanelForChooseSheet = new Panel();
             label4 = new Label();
             ComboBoxForSelectSheet = new ComboBox();
             TextBoxForContentStartRow = new TextBox();
@@ -40,8 +39,7 @@
             label2 = new Label();
             TextBoxForKeyStartRow = new TextBox();
             LableKeyStartRowIndex = new Label();
-            button1 = new Button();
-            PanelForChooseSheet.SuspendLayout();
+            BtnFinishConfig = new Button();
             SuspendLayout();
             // 
             // BtnChooseExportFile
@@ -53,6 +51,7 @@
             BtnChooseExportFile.TabIndex = 8;
             BtnChooseExportFile.Text = "选择文件";
             BtnChooseExportFile.UseVisualStyleBackColor = true;
+            BtnChooseExportFile.Click += BtnChooseExportFile_Click;
             // 
             // label1
             // 
@@ -74,20 +73,11 @@
             TextForExportFilePath.TabIndex = 6;
             TextForExportFilePath.Text = "请点击选择";
             // 
-            // PanelForChooseSheet
-            // 
-            PanelForChooseSheet.Controls.Add(label4);
-            PanelForChooseSheet.Controls.Add(ComboBoxForSelectSheet);
-            PanelForChooseSheet.Location = new Point(25, 72);
-            PanelForChooseSheet.Name = "PanelForChooseSheet";
-            PanelForChooseSheet.Size = new Size(327, 41);
-            PanelForChooseSheet.TabIndex = 16;
-            // 
             // label4
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label4.Location = new Point(3, 10);
+            label4.Location = new Point(28, 82);
             label4.Name = "label4";
             label4.Size = new Size(83, 21);
             label4.TabIndex = 13;
@@ -96,10 +86,11 @@
             // ComboBoxForSelectSheet
             // 
             ComboBoxForSelectSheet.FormattingEnabled = true;
-            ComboBoxForSelectSheet.Location = new Point(92, 8);
+            ComboBoxForSelectSheet.Location = new Point(117, 80);
             ComboBoxForSelectSheet.Name = "ComboBoxForSelectSheet";
             ComboBoxForSelectSheet.Size = new Size(121, 25);
             ComboBoxForSelectSheet.TabIndex = 14;
+            ComboBoxForSelectSheet.SelectedIndexChanged += ComboBoxForSelectSheet_SelectedIndexChanged;
             // 
             // TextBoxForContentStartRow
             // 
@@ -110,6 +101,8 @@
             TextBoxForContentStartRow.Size = new Size(39, 28);
             TextBoxForContentStartRow.TabIndex = 22;
             TextBoxForContentStartRow.Text = "4";
+            TextBoxForContentStartRow.TextChanged += TextBoxForContentStartRow_TextChanged;
+            TextBoxForContentStartRow.KeyPress += TextBoxCommonProcess_KeyPress;
             // 
             // label3
             // 
@@ -130,6 +123,8 @@
             TextBoxForKeyStartColm.Size = new Size(39, 28);
             TextBoxForKeyStartColm.TabIndex = 20;
             TextBoxForKeyStartColm.Text = "1";
+            TextBoxForKeyStartColm.TextChanged += TextBoxForKeyStartColm_TextChanged;
+            TextBoxForKeyStartColm.KeyPress += TextBoxCommonProcess_KeyPress;
             // 
             // label2
             // 
@@ -150,6 +145,8 @@
             TextBoxForKeyStartRow.Size = new Size(39, 28);
             TextBoxForKeyStartRow.TabIndex = 18;
             TextBoxForKeyStartRow.Text = "2";
+            TextBoxForKeyStartRow.TextChanged += TextBoxForKeyStartRow_TextChanged;
+            TextBoxForKeyStartRow.KeyPress += TextBoxCommonProcess_KeyPress;
             // 
             // LableKeyStartRowIndex
             // 
@@ -161,36 +158,36 @@
             LableKeyStartRowIndex.TabIndex = 17;
             LableKeyStartRowIndex.Text = "Key开始行";
             // 
-            // button1
+            // BtnFinishConfig
             // 
-            button1.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            button1.Location = new Point(544, 182);
-            button1.Name = "button1";
-            button1.Size = new Size(130, 30);
-            button1.TabIndex = 23;
-            button1.Text = "配置完成";
-            button1.UseVisualStyleBackColor = true;
+            BtnFinishConfig.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            BtnFinishConfig.Location = new Point(544, 182);
+            BtnFinishConfig.Name = "BtnFinishConfig";
+            BtnFinishConfig.Size = new Size(130, 30);
+            BtnFinishConfig.TabIndex = 23;
+            BtnFinishConfig.Text = "配置完成";
+            BtnFinishConfig.UseVisualStyleBackColor = true;
+            BtnFinishConfig.Click += BtnFinishConfig_Click;
             // 
             // ExportFileConfigForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(698, 236);
-            Controls.Add(button1);
+            Controls.Add(label4);
+            Controls.Add(ComboBoxForSelectSheet);
+            Controls.Add(BtnFinishConfig);
             Controls.Add(TextBoxForContentStartRow);
             Controls.Add(label3);
             Controls.Add(TextBoxForKeyStartColm);
             Controls.Add(label2);
             Controls.Add(TextBoxForKeyStartRow);
             Controls.Add(LableKeyStartRowIndex);
-            Controls.Add(PanelForChooseSheet);
             Controls.Add(BtnChooseExportFile);
             Controls.Add(label1);
             Controls.Add(TextForExportFilePath);
             Name = "ExportFileConfigForm";
             Text = "ExportFileConfigForm";
-            PanelForChooseSheet.ResumeLayout(false);
-            PanelForChooseSheet.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -200,7 +197,6 @@
         private Button BtnChooseExportFile;
         private Label label1;
         private TextBox TextForExportFilePath;
-        private Panel PanelForChooseSheet;
         private Label label4;
         private ComboBox ComboBoxForSelectSheet;
         private TextBox TextBoxForContentStartRow;
@@ -209,6 +205,6 @@
         private Label label2;
         private TextBox TextBoxForKeyStartRow;
         private Label LableKeyStartRowIndex;
-        private Button button1;
+        private Button BtnFinishConfig;
     }
 }

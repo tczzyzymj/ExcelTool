@@ -28,22 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            ListViewItem listViewItem1 = new ListViewItem("");
             StartExportBtn = new Button();
             BtnExportSetting = new Button();
             BtnImport = new Button();
             BtnChooseExportFile = new Button();
-            LableKeyStartRowIndex = new Label();
-            TextBoxForKeyStartRow = new TextBox();
-            TextBoxForKeyStartColm = new TextBox();
-            label2 = new Label();
-            TextBoxForContentStartRow = new TextBox();
-            label3 = new Label();
-            panel1 = new Panel();
-            ListViewMain = new ListView();
             BtnAnalysis = new Button();
             button1 = new Button();
-            panel1.SuspendLayout();
+            DataVewConfigForExportFile = new DataGridView();
+            KeyName = new DataGridViewTextBoxColumn();
+            RelatInfo = new DataGridViewTextBoxColumn();
+            EditRelateBtnColum = new DataGridViewButtonColumn();
+            ((System.ComponentModel.ISupportInitialize)DataVewConfigForExportFile).BeginInit();
             SuspendLayout();
             // 
             // StartExportBtn
@@ -85,100 +80,18 @@
             BtnChooseExportFile.Name = "BtnChooseExportFile";
             BtnChooseExportFile.Size = new Size(130, 30);
             BtnChooseExportFile.TabIndex = 5;
-            BtnChooseExportFile.Text = "选择导出文件";
+            BtnChooseExportFile.Text = "选择导出目标";
             BtnChooseExportFile.UseVisualStyleBackColor = true;
             BtnChooseExportFile.Click += BntChooseExportFile_Click;
-            // 
-            // LableKeyStartRowIndex
-            // 
-            LableKeyStartRowIndex.AutoSize = true;
-            LableKeyStartRowIndex.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            LableKeyStartRowIndex.Location = new Point(1069, 61);
-            LableKeyStartRowIndex.Name = "LableKeyStartRowIndex";
-            LableKeyStartRowIndex.Size = new Size(85, 21);
-            LableKeyStartRowIndex.TabIndex = 5;
-            LableKeyStartRowIndex.Text = "Key开始行";
-            // 
-            // TextBoxForKeyStartRow
-            // 
-            TextBoxForKeyStartRow.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxForKeyStartRow.Location = new Point(1160, 58);
-            TextBoxForKeyStartRow.Name = "TextBoxForKeyStartRow";
-            TextBoxForKeyStartRow.RightToLeft = RightToLeft.Yes;
-            TextBoxForKeyStartRow.Size = new Size(39, 28);
-            TextBoxForKeyStartRow.TabIndex = 6;
-            TextBoxForKeyStartRow.Text = "2";
-            // 
-            // TextBoxForKeyStartColm
-            // 
-            TextBoxForKeyStartColm.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxForKeyStartColm.Location = new Point(1315, 58);
-            TextBoxForKeyStartColm.Name = "TextBoxForKeyStartColm";
-            TextBoxForKeyStartColm.RightToLeft = RightToLeft.Yes;
-            TextBoxForKeyStartColm.Size = new Size(39, 28);
-            TextBoxForKeyStartColm.TabIndex = 8;
-            TextBoxForKeyStartColm.Text = "1";
-            TextBoxForKeyStartColm.KeyPress += TextBoxCommonProcess_KeyPress;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label2.Location = new Point(1224, 61);
-            label2.Name = "label2";
-            label2.Size = new Size(85, 21);
-            label2.TabIndex = 7;
-            label2.Text = "Key开始列";
-            // 
-            // TextBoxForContentStartRow
-            // 
-            TextBoxForContentStartRow.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxForContentStartRow.Location = new Point(1475, 58);
-            TextBoxForContentStartRow.Name = "TextBoxForContentStartRow";
-            TextBoxForContentStartRow.RightToLeft = RightToLeft.Yes;
-            TextBoxForContentStartRow.Size = new Size(39, 28);
-            TextBoxForContentStartRow.TabIndex = 10;
-            TextBoxForContentStartRow.Text = "4";
-            TextBoxForContentStartRow.KeyPress += TextBoxCommonProcess_KeyPress;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label3.Location = new Point(1384, 61);
-            label3.Name = "label3";
-            label3.Size = new Size(90, 21);
-            label3.TabIndex = 9;
-            label3.Text = "内容开始行";
-            // 
-            // panel1
-            // 
-            panel1.BorderStyle = BorderStyle.FixedSingle;
-            panel1.Controls.Add(ListViewMain);
-            panel1.Location = new Point(12, 96);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(1712, 975);
-            panel1.TabIndex = 11;
-            // 
-            // ListViewMain
-            // 
-            ListViewMain.Items.AddRange(new ListViewItem[] { listViewItem1 });
-            ListViewMain.Location = new Point(-1, -1);
-            ListViewMain.Name = "ListViewMain";
-            ListViewMain.Size = new Size(1712, 975);
-            ListViewMain.TabIndex = 1;
-            ListViewMain.UseCompatibleStateImageBehavior = false;
-            ListViewMain.View = View.Details;
-            ListViewMain.SelectedIndexChanged += ListViewMain_SelectedIndexChanged;
             // 
             // BtnAnalysis
             // 
             BtnAnalysis.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            BtnAnalysis.Location = new Point(1594, 56);
+            BtnAnalysis.Location = new Point(327, 60);
             BtnAnalysis.Name = "BtnAnalysis";
             BtnAnalysis.Size = new Size(130, 30);
             BtnAnalysis.TabIndex = 12;
-            BtnAnalysis.Text = "解析";
+            BtnAnalysis.Text = "开始解析";
             BtnAnalysis.UseVisualStyleBackColor = true;
             BtnAnalysis.Click += BtnAnalysis_Click;
             // 
@@ -189,23 +102,51 @@
             button1.Name = "button1";
             button1.Size = new Size(130, 30);
             button1.TabIndex = 13;
-            button1.Text = "选择导出文件";
+            button1.Text = "选择数据源文件";
             button1.UseVisualStyleBackColor = true;
+            // 
+            // DataVewConfigForExportFile
+            // 
+            DataVewConfigForExportFile.BackgroundColor = SystemColors.ControlLight;
+            DataVewConfigForExportFile.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            DataVewConfigForExportFile.Columns.AddRange(new DataGridViewColumn[] { KeyName, RelatInfo, EditRelateBtnColum });
+            DataVewConfigForExportFile.Location = new Point(12, 116);
+            DataVewConfigForExportFile.Name = "DataVewConfigForExportFile";
+            DataVewConfigForExportFile.RowTemplate.Height = 25;
+            DataVewConfigForExportFile.Size = new Size(1712, 936);
+            DataVewConfigForExportFile.TabIndex = 14;
+            // 
+            // KeyName
+            // 
+            KeyName.FillWeight = 160F;
+            KeyName.HeaderText = "导出目标列名";
+            KeyName.Name = "KeyName";
+            KeyName.ReadOnly = true;
+            KeyName.Width = 200;
+            // 
+            // RelatInfo
+            // 
+            RelatInfo.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            RelatInfo.FillWeight = 160F;
+            RelatInfo.HeaderText = "关联信息";
+            RelatInfo.Name = "RelatInfo";
+            RelatInfo.ReadOnly = true;
+            // 
+            // EditRelateBtnColum
+            // 
+            EditRelateBtnColum.FillWeight = 160F;
+            EditRelateBtnColum.HeaderText = "编辑按钮";
+            EditRelateBtnColum.Name = "EditRelateBtnColum";
+            EditRelateBtnColum.Width = 200;
             // 
             // ExcelTool
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1736, 1122);
+            Controls.Add(DataVewConfigForExportFile);
             Controls.Add(button1);
             Controls.Add(BtnAnalysis);
-            Controls.Add(panel1);
-            Controls.Add(TextBoxForContentStartRow);
-            Controls.Add(label3);
-            Controls.Add(TextBoxForKeyStartColm);
-            Controls.Add(label2);
-            Controls.Add(TextBoxForKeyStartRow);
-            Controls.Add(LableKeyStartRowIndex);
             Controls.Add(BtnChooseExportFile);
             Controls.Add(BtnImport);
             Controls.Add(BtnExportSetting);
@@ -215,9 +156,8 @@
             Name = "ExcelTool";
             Text = "ExcelTool";
             Load += ExcelTool_Load;
-            panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)DataVewConfigForExportFile).EndInit();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -226,15 +166,11 @@
         private Button BtnExportSetting;
         private Button BtnImport;
         private Button BtnChooseExportFile;
-        private Label LableKeyStartRowIndex;
-        private TextBox TextBoxForKeyStartRow;
-        private TextBox TextBoxForKeyStartColm;
-        private Label label2;
-        private TextBox TextBoxForContentStartRow;
-        private Label label3;
-        private Panel panel1;
-        private ListView ListViewMain;
         private Button BtnAnalysis;
         private Button button1;
+        private DataGridView DataVewConfigForExportFile;
+        private DataGridViewTextBoxColumn KeyName;
+        private DataGridViewTextBoxColumn RelatInfo;
+        private DataGridViewButtonColumn EditRelateBtnColum;
     }
 }

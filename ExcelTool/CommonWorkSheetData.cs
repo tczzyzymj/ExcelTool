@@ -18,14 +18,26 @@ namespace ExcelTool
 
         protected List<List<KeyData>>? mCellData2DList = null;
 
-        // 这里 excel 需要注意下注意，根据 .net版本不同有不同的下标开始，从0，或者1都有可能，这里直接记录结果
-        protected int mIndexForShow = 1;
+        protected string mSheetName = string.Empty;
+
+        public int IndexInList
+        {
+            get;
+            protected set;
+        } = 0;
 
         protected int mIndexInFileData = 1;
 
+        public string DisplayName
+        {
+            get;
+            protected set;
+        } = string.Empty;
+
+
         public int GetIndexForShow()
         {
-            return mIndexForShow;
+            return IndexInList;
         }
 
         public int GetIndexInFileData()
@@ -33,14 +45,18 @@ namespace ExcelTool
             return mIndexInFileData;
         }
 
-        protected abstract bool InternalInitWithKey(TableBaseData ownerExcelFile, object sheetData, int sheetIndex, int indexInFileData);
+        protected abstract bool InternalInitWithKey(TableBaseData ownerExcelFile, object sheetData, int IndexInListValue, int indexInFileData, string name);
 
         // 注意，这里只初始化 Key
-        public bool Init(TableBaseData ownerExcelFile, object sheetData, int indexFowShow, int indexInFileData)
+        public bool Init(TableBaseData ownerExcelFile, object sheetData, int indexInListValue, int indexInFileData, string name)
         {
-            mIndexForShow = indexFowShow;
+            IndexInList = indexInListValue;
             mIndexInFileData = indexInFileData;
-            return InternalInitWithKey(ownerExcelFile, sheetData, indexFowShow, indexInFileData);
+            mSheetName = name;
+            IndexInList = indexInListValue +1;
+            DisplayName = $"{IndexInList} : {name}";
+            mKeyDataList.Clear();
+            return InternalInitWithKey(ownerExcelFile, sheetData, indexInListValue, indexInFileData, name);
         }
 
         public List<KeyData> GetKeyListData()

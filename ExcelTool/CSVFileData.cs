@@ -9,13 +9,10 @@ namespace ExcelTool
 {
     public class CSVFileData : TableBaseData
     {
-        private CommonWorkSheetData? mWorkSheetData = null;
-
         private string[]? mAllDataArray = null;
 
         public override bool InternalLoadFile(string absolutePath)
         {
-            mWorkSheetData = null;
             mAllDataArray = File.ReadAllLines(absolutePath);
             if (mAllDataArray == null || mAllDataArray.Length < 1)
             {
@@ -23,15 +20,17 @@ namespace ExcelTool
                 return false;
             }
 
-            mWorkSheetData = new CSVSheetData();
-            mWorkSheetData.Init(this, mAllDataArray, 0, 0);
+            var _newSheetData = new CSVSheetData();
+            mWorkSheetList.Add(_newSheetData);
+            _newSheetData.Init(this, mAllDataArray, 0, 0, "Sheet");
+            mChooseWorkSheet = _newSheetData;
 
             return true;
         }
 
         protected override bool InternalAnalysData()
         {
-            if (mWorkSheetData == null || mAllDataArray == null)
+            if (mChooseWorkSheet == null || mAllDataArray == null)
             {
                 MessageBox.Show("无法加载数据，读取文件没成功，请检查！", "错误");
                 return false;
