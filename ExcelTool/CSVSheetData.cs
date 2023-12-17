@@ -21,9 +21,9 @@ namespace ExcelTool
             {
                 var _splitArray = _allData[0].Split(',');
 
-                for (int j = 0; j < _splitArray.Length; ++j)
+                for (int _i = 0; _i < _splitArray.Length; ++_i)
                 {
-
+                    AddNewKeyData(_i, _i, _splitArray[_i]);
                 }
             }
 

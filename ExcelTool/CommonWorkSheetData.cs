@@ -60,7 +60,7 @@ namespace ExcelTool
 
         protected abstract bool InternalLoadAllCellData();
 
-        protected virtual bool AddKey(int indexForShow, int indexInSheetData, string nameValue)
+        protected virtual bool AddNewKeyData(int indexForShow, int indexInSheetData, string nameValue)
         {
             var _existData = mKeyDataList.Find((x) => x.GetKeyIndexForShow() == indexForShow);
             if (_existData != null)

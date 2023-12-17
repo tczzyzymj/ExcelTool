@@ -31,8 +31,6 @@
             StartExportBtn = new Button();
             BtnExportSetting = new Button();
             BtnImport = new Button();
-            TextForExportFilePath = new TextBox();
-            label1 = new Label();
             BtnChooseExportFile = new Button();
             LableKeyStartRowIndex = new Label();
             TextBoxForKeyStartRow = new TextBox();
@@ -43,11 +41,8 @@
             panel1 = new Panel();
             ListViewMain = new ListView();
             BtnAnalysis = new Button();
-            label4 = new Label();
-            ComboBoxForSelectSheet = new ComboBox();
-            PanelForChooseSheet = new Panel();
+            button1 = new Button();
             panel1.SuspendLayout();
-            PanelForChooseSheet.SuspendLayout();
             SuspendLayout();
             // 
             // StartExportBtn
@@ -82,30 +77,10 @@
             BtnImport.UseVisualStyleBackColor = true;
             BtnImport.Click += BtnImport_Click;
             // 
-            // TextForExportFilePath
-            // 
-            TextForExportFilePath.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
-            TextForExportFilePath.Location = new Point(93, 59);
-            TextForExportFilePath.Name = "TextForExportFilePath";
-            TextForExportFilePath.ReadOnly = true;
-            TextForExportFilePath.Size = new Size(416, 26);
-            TextForExportFilePath.TabIndex = 3;
-            TextForExportFilePath.Text = "请点击选择";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label1.Location = new Point(13, 61);
-            label1.Name = "label1";
-            label1.Size = new Size(74, 21);
-            label1.TabIndex = 4;
-            label1.Text = "目标文件";
-            // 
             // BtnChooseExportFile
             // 
             BtnChooseExportFile.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            BtnChooseExportFile.Location = new Point(533, 56);
+            BtnChooseExportFile.Location = new Point(12, 60);
             BtnChooseExportFile.Name = "BtnChooseExportFile";
             BtnChooseExportFile.Size = new Size(130, 30);
             BtnChooseExportFile.TabIndex = 5;
@@ -203,40 +178,22 @@
             BtnAnalysis.UseVisualStyleBackColor = true;
             BtnAnalysis.Click += BtnAnalysis_Click;
             // 
-            // label4
+            // button1
             // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label4.Location = new Point(3, 12);
-            label4.Name = "label4";
-            label4.Size = new Size(83, 21);
-            label4.TabIndex = 13;
-            label4.Text = "选择sheet";
-            // 
-            // ComboBoxForSelectSheet
-            // 
-            ComboBoxForSelectSheet.FormattingEnabled = true;
-            ComboBoxForSelectSheet.Location = new Point(92, 8);
-            ComboBoxForSelectSheet.Name = "ComboBoxForSelectSheet";
-            ComboBoxForSelectSheet.Size = new Size(121, 25);
-            ComboBoxForSelectSheet.TabIndex = 14;
-            ComboBoxForSelectSheet.SelectedIndexChanged += ComboBoxForSelectSheet_SelectedIndexChanged;
-            // 
-            // PanelForChooseSheet
-            // 
-            PanelForChooseSheet.Controls.Add(label4);
-            PanelForChooseSheet.Controls.Add(ComboBoxForSelectSheet);
-            PanelForChooseSheet.Location = new Point(695, 49);
-            PanelForChooseSheet.Name = "PanelForChooseSheet";
-            PanelForChooseSheet.Size = new Size(327, 41);
-            PanelForChooseSheet.TabIndex = 15;
+            button1.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            button1.Location = new Point(167, 60);
+            button1.Name = "button1";
+            button1.Size = new Size(130, 30);
+            button1.TabIndex = 13;
+            button1.Text = "选择导出文件";
+            button1.UseVisualStyleBackColor = true;
             // 
             // ExcelTool
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1736, 1122);
-            Controls.Add(PanelForChooseSheet);
+            Controls.Add(button1);
             Controls.Add(BtnAnalysis);
             Controls.Add(panel1);
             Controls.Add(TextBoxForContentStartRow);
@@ -246,8 +203,6 @@
             Controls.Add(TextBoxForKeyStartRow);
             Controls.Add(LableKeyStartRowIndex);
             Controls.Add(BtnChooseExportFile);
-            Controls.Add(label1);
-            Controls.Add(TextForExportFilePath);
             Controls.Add(BtnImport);
             Controls.Add(BtnExportSetting);
             Controls.Add(StartExportBtn);
@@ -257,8 +212,6 @@
             Text = "ExcelTool";
             Load += ExcelTool_Load;
             panel1.ResumeLayout(false);
-            PanelForChooseSheet.ResumeLayout(false);
-            PanelForChooseSheet.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -268,8 +221,6 @@
         private Button StartExportBtn;
         private Button BtnExportSetting;
         private Button BtnImport;
-        private TextBox TextForExportFilePath;
-        private Label label1;
         private Button BtnChooseExportFile;
         private Label LableKeyStartRowIndex;
         private TextBox TextBoxForKeyStartRow;
@@ -280,8 +231,6 @@
         private Panel panel1;
         private ListView ListViewMain;
         private Button BtnAnalysis;
-        private Label label4;
-        private ComboBox ComboBoxForSelectSheet;
-        private Panel PanelForChooseSheet;
+        private Button button1;
     }
 }

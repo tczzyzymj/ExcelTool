@@ -49,8 +49,6 @@ namespace ExcelTool
 
             for (int _colm = _ownerExcel.GetKeyStartColmIndex(); _colm <= mData.Dimension.Columns; ++_colm)
             {
-                KeyData keyData = new KeyData();
-                mKeyDataList.Add(keyData);
                 var _tempValue = mData.Cells[_rowIndex, _colm].Value;
                 if (_tempValue == null)
                 {
@@ -64,7 +62,7 @@ namespace ExcelTool
                     return false;
                 }
 
-                keyData.Init(_colm, _colm - 1, _finalStr);
+                AddNewKeyData(_colm - _ownerExcel.GetKeyStartColmIndex(), _colm, _finalStr);
             }
 
             mHasInit = true;
