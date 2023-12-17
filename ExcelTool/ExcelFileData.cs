@@ -14,9 +14,9 @@ namespace ExcelTool
     {
         private ExcelPackage? mExcelPackage = null; // 原始数据如果是
 
-        private List<WorkSheetData> mWorkSheetList = new List<WorkSheetData>();
+        private List<CommonWorkSheetData> mWorkSheetList = new List<CommonWorkSheetData>();
 
-        private WorkSheetData? mChooseWorkSheet = null; // 当前选中的目标 WorkSheet
+        private CommonWorkSheetData? mChooseWorkSheet = null; // 当前选中的目标 WorkSheet
 
         [JsonProperty]
         private int mChooseWorkSheetIndex = 1; // 选中的workSheet需要处理的 workdsheet
@@ -31,6 +31,7 @@ namespace ExcelTool
             CloseFile();
         }
 
+        // 这里只先加载一下 sheet
         public override bool InternalLoadFile(string absolutePath)
         {
             FileInfo _info = new FileInfo(absolutePath);
@@ -43,7 +44,8 @@ namespace ExcelTool
             mExcelPackage = new ExcelPackage(_info);
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-            var _allSheets = mExcelPackage.Workbook.Worksheets; // 这里要注意，里面说了和 .net 的版本有关，具体请跳转进去看一下
+            // 这里要注意，里面说了和 .net 的版本有关，具体请跳转进去看一下
+            var _allSheets = mExcelPackage.Workbook.Worksheets;
             int _startIndex = 0;
             if (mExcelPackage.Compatibility.IsWorksheets1Based)
             {
@@ -59,8 +61,8 @@ namespace ExcelTool
             for (int i = _startIndex; i < _allSheets.Count; ++i)
             {
                 var sheet = _allSheets[i];
-                var _newSheetData = new WorkSheetData();
-                if (!_newSheetData.Init(this, sheet, i))
+                var _newSheetData = new ExcelSheetData();
+                if (!_newSheetData.Init(this, sheet, 0, i))
                 {
                     return false;
                 }
@@ -68,6 +70,11 @@ namespace ExcelTool
                 mWorkSheetList.Add(_newSheetData);
             }
 
+            return true;
+        }
+
+        protected override bool InternalAnalysData()
+        {
             return true;
         }
 
@@ -85,7 +92,7 @@ namespace ExcelTool
             mExcelPackage?.Save();
         }
 
-        public string GetFileName(bool isFull)
+        public override string GetFileName(bool isFull)
         {
             if (mExcelPackage == null)
             {

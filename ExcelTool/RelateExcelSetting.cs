@@ -17,7 +17,7 @@ namespace ExcelTool
             InitializeComponent();
         }
 
-        public bool InitData(ExcelFileData fromData)
+        public bool InitData(TableBaseData fromData)
         {
             if (fromData == null)
             {

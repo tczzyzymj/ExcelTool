@@ -42,7 +42,12 @@
             label3 = new Label();
             panel1 = new Panel();
             ListViewMain = new ListView();
+            BtnAnalysis = new Button();
+            label4 = new Label();
+            ComboBoxForSelectSheet = new ComboBox();
+            PanelForChooseSheet = new Panel();
             panel1.SuspendLayout();
+            PanelForChooseSheet.SuspendLayout();
             SuspendLayout();
             // 
             // StartExportBtn
@@ -79,11 +84,11 @@
             // 
             // TextForExportFilePath
             // 
-            TextForExportFilePath.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            TextForExportFilePath.Location = new Point(876, 62);
+            TextForExportFilePath.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
+            TextForExportFilePath.Location = new Point(93, 59);
             TextForExportFilePath.Name = "TextForExportFilePath";
             TextForExportFilePath.ReadOnly = true;
-            TextForExportFilePath.Size = new Size(712, 28);
+            TextForExportFilePath.Size = new Size(416, 26);
             TextForExportFilePath.TabIndex = 3;
             TextForExportFilePath.Text = "请点击选择";
             // 
@@ -91,7 +96,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label1.Location = new Point(801, 65);
+            label1.Location = new Point(13, 61);
             label1.Name = "label1";
             label1.Size = new Size(74, 21);
             label1.TabIndex = 4;
@@ -100,7 +105,7 @@
             // BtnChooseExportFile
             // 
             BtnChooseExportFile.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            BtnChooseExportFile.Location = new Point(1594, 60);
+            BtnChooseExportFile.Location = new Point(533, 56);
             BtnChooseExportFile.Name = "BtnChooseExportFile";
             BtnChooseExportFile.Size = new Size(130, 30);
             BtnChooseExportFile.TabIndex = 5;
@@ -112,7 +117,7 @@
             // 
             LableKeyStartRowIndex.AutoSize = true;
             LableKeyStartRowIndex.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            LableKeyStartRowIndex.Location = new Point(12, 62);
+            LableKeyStartRowIndex.Location = new Point(1069, 61);
             LableKeyStartRowIndex.Name = "LableKeyStartRowIndex";
             LableKeyStartRowIndex.Size = new Size(85, 21);
             LableKeyStartRowIndex.TabIndex = 5;
@@ -121,7 +126,7 @@
             // TextBoxForKeyStartRow
             // 
             TextBoxForKeyStartRow.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxForKeyStartRow.Location = new Point(103, 59);
+            TextBoxForKeyStartRow.Location = new Point(1160, 58);
             TextBoxForKeyStartRow.Name = "TextBoxForKeyStartRow";
             TextBoxForKeyStartRow.RightToLeft = RightToLeft.Yes;
             TextBoxForKeyStartRow.Size = new Size(39, 28);
@@ -131,7 +136,7 @@
             // TextBoxForKeyStartColm
             // 
             TextBoxForKeyStartColm.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxForKeyStartColm.Location = new Point(258, 59);
+            TextBoxForKeyStartColm.Location = new Point(1315, 58);
             TextBoxForKeyStartColm.Name = "TextBoxForKeyStartColm";
             TextBoxForKeyStartColm.RightToLeft = RightToLeft.Yes;
             TextBoxForKeyStartColm.Size = new Size(39, 28);
@@ -143,7 +148,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label2.Location = new Point(167, 62);
+            label2.Location = new Point(1224, 61);
             label2.Name = "label2";
             label2.Size = new Size(85, 21);
             label2.TabIndex = 7;
@@ -152,7 +157,7 @@
             // TextBoxForContentStartRow
             // 
             TextBoxForContentStartRow.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxForContentStartRow.Location = new Point(418, 59);
+            TextBoxForContentStartRow.Location = new Point(1475, 58);
             TextBoxForContentStartRow.Name = "TextBoxForContentStartRow";
             TextBoxForContentStartRow.RightToLeft = RightToLeft.Yes;
             TextBoxForContentStartRow.Size = new Size(39, 28);
@@ -164,7 +169,7 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label3.Location = new Point(327, 62);
+            label3.Location = new Point(1384, 61);
             label3.Name = "label3";
             label3.Size = new Size(90, 21);
             label3.TabIndex = 9;
@@ -187,11 +192,52 @@
             ListViewMain.TabIndex = 1;
             ListViewMain.UseCompatibleStateImageBehavior = false;
             // 
+            // BtnAnalysis
+            // 
+            BtnAnalysis.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            BtnAnalysis.Location = new Point(1594, 56);
+            BtnAnalysis.Name = "BtnAnalysis";
+            BtnAnalysis.Size = new Size(130, 30);
+            BtnAnalysis.TabIndex = 12;
+            BtnAnalysis.Text = "解析";
+            BtnAnalysis.UseVisualStyleBackColor = true;
+            BtnAnalysis.Click += BtnAnalysis_Click;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            label4.Location = new Point(3, 12);
+            label4.Name = "label4";
+            label4.Size = new Size(83, 21);
+            label4.TabIndex = 13;
+            label4.Text = "选择sheet";
+            // 
+            // ComboBoxForSelectSheet
+            // 
+            ComboBoxForSelectSheet.FormattingEnabled = true;
+            ComboBoxForSelectSheet.Location = new Point(92, 8);
+            ComboBoxForSelectSheet.Name = "ComboBoxForSelectSheet";
+            ComboBoxForSelectSheet.Size = new Size(121, 25);
+            ComboBoxForSelectSheet.TabIndex = 14;
+            ComboBoxForSelectSheet.SelectedIndexChanged += ComboBoxForSelectSheet_SelectedIndexChanged;
+            // 
+            // PanelForChooseSheet
+            // 
+            PanelForChooseSheet.Controls.Add(label4);
+            PanelForChooseSheet.Controls.Add(ComboBoxForSelectSheet);
+            PanelForChooseSheet.Location = new Point(695, 49);
+            PanelForChooseSheet.Name = "PanelForChooseSheet";
+            PanelForChooseSheet.Size = new Size(327, 41);
+            PanelForChooseSheet.TabIndex = 15;
+            // 
             // ExcelTool
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1736, 1122);
+            Controls.Add(PanelForChooseSheet);
+            Controls.Add(BtnAnalysis);
             Controls.Add(panel1);
             Controls.Add(TextBoxForContentStartRow);
             Controls.Add(label3);
@@ -209,7 +255,10 @@
             MaximizeBox = false;
             Name = "ExcelTool";
             Text = "ExcelTool";
+            Load += ExcelTool_Load;
             panel1.ResumeLayout(false);
+            PanelForChooseSheet.ResumeLayout(false);
+            PanelForChooseSheet.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -230,5 +279,9 @@
         private Label label3;
         private Panel panel1;
         private ListView ListViewMain;
+        private Button BtnAnalysis;
+        private Label label4;
+        private ComboBox ComboBoxForSelectSheet;
+        private Panel PanelForChooseSheet;
     }
 }

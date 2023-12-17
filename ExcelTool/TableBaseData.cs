@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,8 +40,25 @@ namespace ExcelTool
                 return true;
             }
 
+            if (!AnalysData())
+            {
+                return false;
+            }
+
             return false;
         }
+
+        public virtual string GetFileName(bool isFull)
+        {
+            return Path.GetFileName(mExcelAbsolutePath);
+        }
+
+        public bool AnalysData()
+        {
+            return InternalAnalysData();
+        }
+
+        protected abstract bool InternalAnalysData(); // 解析数据，主要是 key 或者 content 的数据改变了后的解析
 
         public int GetKeyStartRowIndex()
         {

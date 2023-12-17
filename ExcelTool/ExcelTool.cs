@@ -8,7 +8,7 @@ namespace ExcelTool
 {
     public partial class ExcelTool : Form
     {
-        private ExcelFileData? mExportTargetFile = null; // 导出目标文件，其关联在里面设置
+        private TableBaseData? mExportTargetFile = null; // 导出目标文件，其关联在里面设置
 
         public ExcelTool()
         {
@@ -51,7 +51,7 @@ namespace ExcelTool
             OpenFileDialog _openfileDialog = new OpenFileDialog();
             if (_openfileDialog.ShowDialog() == DialogResult.OK)
             {
-                var _loadedFile = JsonConvert.DeserializeObject<ExcelFileData>(_openfileDialog.FileName);
+                var _loadedFile = JsonConvert.DeserializeObject<TableBaseData>(_openfileDialog.FileName);
                 if (_loadedFile != null)
                 {
                     mExportTargetFile = _loadedFile;
@@ -68,11 +68,24 @@ namespace ExcelTool
             {
                 try
                 {
-                    mExportTargetFile = new ExcelFileData();
-                    if (mExportTargetFile.DoLoadFile(_openfileDialog.FileName))
+                    var _extension = Path.GetExtension(_openfileDialog.FileName).ToLower();
+                    if (_extension.Equals("xls") || _extension.Equals("xlsx"))
                     {
-                        TextForExportFilePath.Text = _openfileDialog.FileName;
+                        mExportTargetFile = new ExcelFileData();
                     }
+                    else
+                    {
+                        mExportTargetFile = new CSVFileData();
+                    }
+
+                    if (!mExportTargetFile.DoLoadFile(_openfileDialog.FileName))
+                    {
+                        return;
+                    }
+
+                    TextForExportFilePath.Text = _openfileDialog.FileName;
+                    PanelForChooseSheet.Visible = true;
+
                 }
                 catch (Exception ex)
                 {
@@ -87,6 +100,21 @@ namespace ExcelTool
             {
                 e.Handled = true;
             }
+        }
+
+        private void BtnAnalysis_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ExcelTool_Load(object sender, EventArgs e)
+        {
+            PanelForChooseSheet.Visible = false;
+        }
+
+        private void ComboBoxForSelectSheet_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

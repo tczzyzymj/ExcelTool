@@ -1,26 +1,18 @@
 ﻿using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace ExcelTool
 {
-    public class WorkSheetData
+    internal class ExcelSheetData : CommonWorkSheetData
     {
-        private bool mHasInit = false;
+        protected ExcelWorksheet? mData = null; // 原始数据
 
-        private WeakReference<ExcelFileData>? mExcelFileBase = null;
-
-        private ExcelWorksheet? mData = null;
-
-        private List<KeyData> mKeyDataList = new List<KeyData>();
-
-        private int mSheetIndex = 1; // 这里要特别注意，根据 .net版本不同有不同的下标开始，从0，或者1都有可能，这里直接记录结果
-
-        public bool Init(ExcelFileData ownerExcelFile, ExcelWorksheet targetWorkSheet, int index)
+        protected override bool InternalInitWithKey(TableBaseData ownerExcelFile, object sheetData, int sheetIndex, int indexInFileData)
         {
             if (mHasInit)
             {
@@ -33,17 +25,22 @@ namespace ExcelTool
                 return false;
             }
 
-            if (targetWorkSheet == null)
+            if (sheetData == null)
             {
                 MessageBox.Show("传入的 ExcelWorksheet 为空，无法初始化，请检查！", "错误");
                 return false;
             }
-            mSheetIndex = index;
-            mData = targetWorkSheet;
+            var _finalData = sheetData as ExcelWorksheet;
+            mData = _finalData;
+            if (mData == null)
+            {
+                MessageBox.Show("传入的 Data 数据无法解析为 ExcelWorksheet，请检查", "错误");
+                return false;
+            }
 
-            mExcelFileBase = new WeakReference<ExcelFileData>(ownerExcelFile);
+            mExcelFileBase = new WeakReference<TableBaseData>(ownerExcelFile);
 
-            if (!mExcelFileBase.TryGetTarget(out ExcelFileData? _ownerExcel))
+            if (!mExcelFileBase.TryGetTarget(out TableBaseData? _ownerExcel))
             {
                 return false;
             }
@@ -67,11 +64,16 @@ namespace ExcelTool
                     return false;
                 }
 
-                keyData.Init(_colm, _finalStr);
+                keyData.Init(_colm, _colm - 1, _finalStr);
             }
 
             mHasInit = true;
 
+            return true;
+        }
+
+        protected override bool InternalLoadAllCellData()
+        {
             return true;
         }
     }

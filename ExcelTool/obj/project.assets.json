@@ -1078,19 +1078,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ZGF\\.nuget\\packages\\": {}
+    "C:\\Users\\Michael\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\GitProject\\ExcelTool\\ExcelTool\\ExcelTool.csproj",
+      "projectUniqueName": "D:\\GitProject\\ExcelTool\\ExcelTool\\ExcelTool.csproj",
       "projectName": "ExcelTool",
-      "projectPath": "E:\\GitProject\\ExcelTool\\ExcelTool\\ExcelTool.csproj",
-      "packagesPath": "C:\\Users\\ZGF\\.nuget\\packages\\",
-      "outputPath": "E:\\GitProject\\ExcelTool\\ExcelTool\\obj\\",
+      "projectPath": "D:\\GitProject\\ExcelTool\\ExcelTool\\ExcelTool.csproj",
+      "packagesPath": "C:\\Users\\Michael\\.nuget\\packages\\",
+      "outputPath": "D:\\GitProject\\ExcelTool\\ExcelTool\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\ZGF\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Michael\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -1144,7 +1144,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.403\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
       }
     }
   }

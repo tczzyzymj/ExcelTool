@@ -8,24 +8,32 @@ namespace ExcelTool
 {
     public class KeyData
     {
-        private int mKeyIndex = 1;
+        private int mKeyIndexForShow = 0; // 外部用的
 
         private string mKeyName = string.Empty;
 
-        public void Init(int indexValue, string nameValue)
+        private int mKeyIndexInSheetData = 1; // 注意，这个是内部用的，因为 excel 的数据是从下标1开始的
+
+        public void Init(int indexValue, int indexInSheetData, string nameValue)
         {
-            mKeyIndex = indexValue;
+            mKeyIndexForShow = indexValue;
             mKeyName = nameValue;
+            mKeyIndexInSheetData = indexInSheetData;
         }
 
-        public int GetKeyIndex()
+        public int GetKeyIndexForShow()
         {
-            return mKeyIndex;
+            return mKeyIndexForShow;
         }
 
         public string GetKeyName()
         {
             return mKeyName;
+        }
+
+        public int GetKeyIndexInSheetData()
+        {
+            return mKeyIndexInSheetData;
         }
     }
 }

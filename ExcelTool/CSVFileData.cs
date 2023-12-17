@@ -9,37 +9,32 @@ namespace ExcelTool
 {
     public class CSVFileData : TableBaseData
     {
-        private DataTable? mOriginDataTable = null;
+        private CommonWorkSheetData? mWorkSheetData = null;
+
+        private string[]? mAllDataArray = null;
 
         public override bool InternalLoadFile(string absolutePath)
         {
-            var _allLines = File.ReadAllLines(absolutePath);
-            if (_allLines == null || _allLines.Length < 1)
+            mWorkSheetData = null;
+            mAllDataArray = File.ReadAllLines(absolutePath);
+            if (mAllDataArray == null || mAllDataArray.Length < 1)
             {
                 MessageBox.Show($"文件：{absolutePath} ，内容不正确，请检查");
                 return false;
             }
 
-            mOriginDataTable = new DataTable();
+            mWorkSheetData = new CSVSheetData();
+            mWorkSheetData.Init(this, mAllDataArray, 0, 0);
 
-            for (int i = 0; i < _allLines.Length; ++i)
+            return true;
+        }
+
+        protected override bool InternalAnalysData()
+        {
+            if (mWorkSheetData == null || mAllDataArray == null)
             {
-                var _splitArray = _allLines[i].Split(',');
-                if (i == 0)
-                {
-                    // 这里是 key
-                    for (int j = 0; j < _splitArray.Length; ++j)
-                    {
-                        mOriginDataTable.Columns.Add(_splitArray[j]);
-                    }
-                }
-                else
-                {
-                    List<string> _dataList = new List<string>(_splitArray);
-
-                    // 这里是 数据
-                    mOriginDataTable.Rows.Add(_dataList);
-                }
+                MessageBox.Show("无法加载数据，读取文件没成功，请检查！", "错误");
+                return false;
             }
 
             return true;
