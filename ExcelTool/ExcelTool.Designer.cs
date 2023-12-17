@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            ListViewItem listViewItem1 = new ListViewItem("");
             StartExportBtn = new Button();
             BtnExportSetting = new Button();
             BtnImport = new Button();
@@ -161,11 +162,14 @@
             // 
             // ListViewMain
             // 
+            ListViewMain.Items.AddRange(new ListViewItem[] { listViewItem1 });
             ListViewMain.Location = new Point(-1, -1);
             ListViewMain.Name = "ListViewMain";
             ListViewMain.Size = new Size(1712, 975);
             ListViewMain.TabIndex = 1;
             ListViewMain.UseCompatibleStateImageBehavior = false;
+            ListViewMain.View = View.Details;
+            ListViewMain.SelectedIndexChanged += ListViewMain_SelectedIndexChanged;
             // 
             // BtnAnalysis
             // 

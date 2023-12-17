@@ -105,9 +105,38 @@ namespace ExcelTool
 
         private void ExcelTool_Load(object sender, EventArgs e)
         {
+            ListViewMain.BeginUpdate();
+            //ListViewMain.View = View.List;
+            //ListViewMain.Columns.Clear();
+            ListViewMain.Columns.Add("Key", 120, HorizontalAlignment.Center);
+            ListViewMain.Columns.Add("Content", 120, HorizontalAlignment.Center);
+
+            //for (int i = 0; i < 10; ++i)
+            //{
+            //    var _item = new ListViewItem();
+            //    _item.Text = i.ToString();
+            //    //_item.SubItems.Add(i.ToString());
+            //    //_item.SubItems.Add(i.ToString());
+            //    ListViewMain.Items.Add(_item);
+            //}
+
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    var _temButton = new Button();
+            //    _temButton.Text = "Test" + i;
+            //    _temButton.Name = "Test" + i;
+            //    ListViewMain.Controls.Add(_temButton);
+            //}
+
+            ListViewMain.EndUpdate();
         }
 
         private void ComboBoxForSelectSheet_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ListViewMain_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }
