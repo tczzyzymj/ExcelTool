@@ -49,7 +49,7 @@ namespace ExcelTool
             }
 
             var _funcList = mKeyData.GetFilterFuncList();
-            FilterFuncBase _filterFuncBase = null;
+
             if (!Enum.TryParse(typeof(MainTypeDefine.FilterCompareValueType), this.ComboBoxForValueType.SelectedIndex.ToString(), out var _tempCompareValueType))
             {
                 throw new Exception($"比较值类型：{ComboBoxForValueType.SelectedIndex} 解析失败，无法解析为：FilterCompareValueType 请检查！");
@@ -58,6 +58,8 @@ namespace ExcelTool
             {
                 throw new Exception($"比较方式类型：{this.ComboBoxForCompareType.SelectedIndex} 解析失败，无法解析为：FilterCompareWayType 请检查！");
             }
+
+            FilterFuncBase? _filterFuncBase = null;
 
             switch (_tempCompareValueType)
             {
@@ -87,7 +89,10 @@ namespace ExcelTool
                 return;
             }
 
-            _filterFuncBase.CompareWay = (MainTypeDefine.FilterCompareWayType)_tempCompareWayType;
+            if (_tempCompareWayType != null)
+            {
+                _filterFuncBase.CompareWay = (MainTypeDefine.FilterCompareWayType)_tempCompareWayType;
+            }
 
             _funcList.Add(_filterFuncBase);
             var _addInex = DataGridViewForFilterFunc.Rows.Add(
@@ -128,7 +133,7 @@ namespace ExcelTool
             }
             var _funcList = mKeyData.GetFilterFuncList();
             var _cell = this.DataGridViewForFilterFunc.Rows[e.RowIndex].Cells[e.ColumnIndex];
-            if (_cell.EditedFormattedValue == null)
+            if (_cell == null || _cell.EditedFormattedValue == null)
             {
                 return;
             }
@@ -137,13 +142,20 @@ namespace ExcelTool
             {
                 case 0:
                 {
-                    Enum.TryParse(typeof(MainTypeDefine.FilterCompareWayType), _cell.EditedFormattedValue.ToString(), out var _enumValue);
-                    _funcList[e.RowIndex].CompareWay = (MainTypeDefine.FilterCompareWayType)_enumValue;
+                    if (Enum.TryParse(typeof(MainTypeDefine.FilterCompareWayType), _cell.EditedFormattedValue.ToString(), out var _enumValue) && _enumValue != null)
+                    {
+                        _funcList[e.RowIndex].CompareWay = (MainTypeDefine.FilterCompareWayType)_enumValue;
+                    }
+
                     break;
                 }
                 case 1:
                 {
-                    _funcList[e.RowIndex].SetCompareValue(_cell.EditedFormattedValue.ToString());
+                    if (_cell.EditedFormattedValue != null)
+                    {
+                        _funcList[e.RowIndex].SetCompareValue(_cell.EditedFormattedValue.ToString());
+                    }
+
                     break;
                 }
             }

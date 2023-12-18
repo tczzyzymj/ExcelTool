@@ -54,7 +54,7 @@ namespace ExcelTool
 
                 ComboBoxForSelectSheet.BeginUpdate();
                 this.ComboBoxForSelectSheet.DataSource = _workSheetList;
-                this.ComboBoxForSelectSheet.ValueMember = "IndexInList";
+                this.ComboBoxForSelectSheet.ValueMember = "IndexInListForShow";
                 this.ComboBoxForSelectSheet.DisplayMember = "DisplayName";
                 this.ComboBoxForSelectSheet.SelectedIndex = 0;
                 ComboBoxForSelectSheet.EndUpdate();
@@ -121,6 +121,7 @@ namespace ExcelTool
                 }
             }
 
+            this.DialogResult = DialogResult.OK;
             this.Close();
         }
 

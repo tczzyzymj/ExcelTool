@@ -73,18 +73,6 @@ namespace ExcelTool
             }
         }
 
-        private string GetZM(int indexValue)
-        {
-            string _columName = string.Empty;
-            while (indexValue > 0)
-            {
-                var _module = (indexValue - 1) % 26;
-                _columName = Convert.ToChar(65 + _module) + _columName;
-                indexValue = (indexValue - _module) / 26;
-            }
-            return _columName;
-        }
-
         private void TextBoxCommonProcess_KeyPress(object? sender, KeyPressEventArgs e)
         {
             if (!char.IsDigit(e.KeyChar) || e.KeyChar == 8) // e.KeyChar == 8 是退格键
@@ -160,7 +148,7 @@ namespace ExcelTool
                 for (int i = 0; i < _keyListData.Count; i++)
                 {
                     DataGridViewForKeyFilter.Rows.Add(
-                        GetZM(_keyListData[i].GetKeyIndexForShow()),
+                        CommonUtil.GetZM(_keyListData[i].GetKeyIndexForShow()),
                         _keyListData[i].GetKeyName(),
                         _keyListData[i].GetFilterFuncList().Count > 0,
                         "设置"

@@ -16,7 +16,7 @@ namespace ExcelTool
 
         private int mKeyIndexForShow = 0;
 
-        private List<FilterFuncBase> mFilterFuncList = new List<FilterFuncBase>();
+        private List<FilterFuncBase> mFilterFuncList = new List<FilterFuncBase>(); // 其实这个是给源文件用的，其他的目前用不到
 
         public void Init(int indexForShow, int indexInSheetData, string nameValue)
         {

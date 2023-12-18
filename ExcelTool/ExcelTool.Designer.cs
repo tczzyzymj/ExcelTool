@@ -34,13 +34,13 @@
             BtnExportSetting = new Button();
             BtnImport = new Button();
             BtnChooseExportFile = new Button();
-            BtnAnalysis = new Button();
             BtnChooseSourceFile = new Button();
             DataViewConfigForExportFile = new DataGridView();
+            Key = new DataGridViewTextBoxColumn();
             KeyName = new DataGridViewTextBoxColumn();
             RelatInfo = new DataGridViewTextBoxColumn();
             EditRelateBtnColum = new DataGridViewButtonColumn();
-            HasEdited = new DataGridViewCheckBoxColumn();
+            LeaveEmptyColum = new DataGridViewCheckBoxColumn();
             label4 = new Label();
             ComboBoxForExportWriteWay = new ComboBox();
             ComboBoxForExportConflictDealWay = new ComboBox();
@@ -88,20 +88,9 @@
             BtnChooseExportFile.Name = "BtnChooseExportFile";
             BtnChooseExportFile.Size = new Size(130, 30);
             BtnChooseExportFile.TabIndex = 5;
-            BtnChooseExportFile.Text = "选择导出目标";
+            BtnChooseExportFile.Text = "配置导出目标";
             BtnChooseExportFile.UseVisualStyleBackColor = true;
             BtnChooseExportFile.Click += BntChooseExportFile_Click;
-            // 
-            // BtnAnalysis
-            // 
-            BtnAnalysis.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            BtnAnalysis.Location = new Point(327, 60);
-            BtnAnalysis.Name = "BtnAnalysis";
-            BtnAnalysis.Size = new Size(130, 30);
-            BtnAnalysis.TabIndex = 12;
-            BtnAnalysis.Text = "解析导出Key";
-            BtnAnalysis.UseVisualStyleBackColor = true;
-            BtnAnalysis.Click += BtnAnalysis_Click;
             // 
             // BtnChooseSourceFile
             // 
@@ -110,7 +99,7 @@
             BtnChooseSourceFile.Name = "BtnChooseSourceFile";
             BtnChooseSourceFile.Size = new Size(130, 30);
             BtnChooseSourceFile.TabIndex = 13;
-            BtnChooseSourceFile.Text = "选择数据源文件";
+            BtnChooseSourceFile.Text = "配置数据源";
             BtnChooseSourceFile.UseVisualStyleBackColor = true;
             BtnChooseSourceFile.Click += BtnChooseSourceFile_Click;
             // 
@@ -118,13 +107,21 @@
             // 
             DataViewConfigForExportFile.BackgroundColor = SystemColors.ControlLight;
             DataViewConfigForExportFile.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            DataViewConfigForExportFile.Columns.AddRange(new DataGridViewColumn[] { KeyName, RelatInfo, EditRelateBtnColum, HasEdited });
+            DataViewConfigForExportFile.Columns.AddRange(new DataGridViewColumn[] { Key, KeyName, RelatInfo, EditRelateBtnColum, LeaveEmptyColum });
             DataViewConfigForExportFile.Location = new Point(12, 116);
             DataViewConfigForExportFile.Name = "DataViewConfigForExportFile";
             DataViewConfigForExportFile.RowTemplate.Height = 25;
             DataViewConfigForExportFile.Size = new Size(1712, 936);
             DataViewConfigForExportFile.TabIndex = 14;
-            DataViewConfigForExportFile.CellClick += DataVewConfigForExportFile_CellClick;
+            DataViewConfigForExportFile.CellClick += DataViewConfigForExportFile_CellClick;
+            DataViewConfigForExportFile.CellContentClick += DataViewConfigForExportFile_CellContentClick;
+            DataViewConfigForExportFile.CellValueChanged += DataViewConfigForExportFile_CellValueChanged;
+            // 
+            // Key
+            // 
+            Key.HeaderText = "Key";
+            Key.Name = "Key";
+            Key.Width = 60;
             // 
             // KeyName
             // 
@@ -149,23 +146,21 @@
             // EditRelateBtnColum
             // 
             EditRelateBtnColum.FillWeight = 160F;
-            EditRelateBtnColum.HeaderText = "编辑按钮";
+            EditRelateBtnColum.HeaderText = "设置关联";
             EditRelateBtnColum.Name = "EditRelateBtnColum";
             EditRelateBtnColum.Text = "编辑";
             EditRelateBtnColum.ToolTipText = "编辑";
             // 
-            // HasEdited
+            // LeaveEmptyColum
             // 
-            HasEdited.FillWeight = 160F;
-            HasEdited.HeaderText = "是否已编辑";
-            HasEdited.Name = "HasEdited";
-            HasEdited.ReadOnly = true;
+            LeaveEmptyColum.HeaderText = "是否忽略";
+            LeaveEmptyColum.Name = "LeaveEmptyColum";
             // 
             // label4
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label4.Location = new Point(524, 65);
+            label4.Location = new Point(341, 65);
             label4.Name = "label4";
             label4.Size = new Size(138, 21);
             label4.TabIndex = 15;
@@ -175,7 +170,7 @@
             // 
             ComboBoxForExportWriteWay.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             ComboBoxForExportWriteWay.FormattingEnabled = true;
-            ComboBoxForExportWriteWay.Location = new Point(668, 63);
+            ComboBoxForExportWriteWay.Location = new Point(485, 63);
             ComboBoxForExportWriteWay.Name = "ComboBoxForExportWriteWay";
             ComboBoxForExportWriteWay.Size = new Size(121, 29);
             ComboBoxForExportWriteWay.TabIndex = 16;
@@ -185,7 +180,7 @@
             // 
             ComboBoxForExportConflictDealWay.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             ComboBoxForExportConflictDealWay.FormattingEnabled = true;
-            ComboBoxForExportConflictDealWay.Location = new Point(1029, 63);
+            ComboBoxForExportConflictDealWay.Location = new Point(827, 63);
             ComboBoxForExportConflictDealWay.Name = "ComboBoxForExportConflictDealWay";
             ComboBoxForExportConflictDealWay.Size = new Size(121, 29);
             ComboBoxForExportConflictDealWay.TabIndex = 18;
@@ -195,7 +190,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label1.Location = new Point(858, 65);
+            label1.Location = new Point(656, 65);
             label1.Name = "label1";
             label1.Size = new Size(165, 21);
             label1.TabIndex = 17;
@@ -212,7 +207,6 @@
             Controls.Add(label4);
             Controls.Add(DataViewConfigForExportFile);
             Controls.Add(BtnChooseSourceFile);
-            Controls.Add(BtnAnalysis);
             Controls.Add(BtnChooseExportFile);
             Controls.Add(BtnImport);
             Controls.Add(BtnExportSetting);
@@ -233,16 +227,16 @@
         private Button BtnExportSetting;
         private Button BtnImport;
         private Button BtnChooseExportFile;
-        private Button BtnAnalysis;
         private Button BtnChooseSourceFile;
         private DataGridView DataViewConfigForExportFile;
-        private DataGridViewTextBoxColumn KeyName;
-        private DataGridViewTextBoxColumn RelatInfo;
-        private DataGridViewButtonColumn EditRelateBtnColum;
-        private DataGridViewCheckBoxColumn HasEdited;
         private Label label4;
         private ComboBox ComboBoxForExportWriteWay;
         private ComboBox ComboBoxForExportConflictDealWay;
         private Label label1;
+        private DataGridViewTextBoxColumn Key;
+        private DataGridViewTextBoxColumn KeyName;
+        private DataGridViewTextBoxColumn RelatInfo;
+        private DataGridViewButtonColumn EditRelateBtnColum;
+        private DataGridViewCheckBoxColumn LeaveEmptyColum;
     }
 }
