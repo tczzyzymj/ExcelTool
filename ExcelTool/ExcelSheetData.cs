@@ -38,9 +38,9 @@ namespace ExcelTool
                 return false;
             }
 
-            if (mData.Dimension == null || mData.Dimension.Rows == null || mData.Dimension.Columns == null)
+            if (mData.Dimension == null )
             {
-                // 这个 sheet 里面的内容为空，还是要记录一下
+                // 这个 sheet 里面的内容为空，还是要记录一下，所以返回true
                 return true;
             }
 

@@ -8,17 +8,27 @@ namespace ExcelTool
 {
     public class KeyData
     {
-        private int mKeyIndexForShow = 0; // 外部用的
+        private int mKeyIndexInList = 0; // 外部用的
 
         private string mKeyName = string.Empty;
 
         private int mKeyIndexInSheetData = 1; // 注意，这个是内部用的，因为 excel 的数据是从下标1开始的
 
-        public void Init(int indexValue, int indexInSheetData, string nameValue)
+        private int mKeyIndexForShow = 0;
+
+        private List<FilterFuncBase> mFilterFuncList = new List<FilterFuncBase>();
+
+        public void Init(int indexForShow, int indexInSheetData, string nameValue)
         {
-            mKeyIndexForShow = indexValue;
+            mKeyIndexInList = indexForShow;
             mKeyName = nameValue;
             mKeyIndexInSheetData = indexInSheetData;
+            mKeyIndexForShow = mKeyIndexInList + 1;
+        }
+
+        public int GetKeyIndexInList()
+        {
+            return mKeyIndexInList;
         }
 
         public int GetKeyIndexForShow()
@@ -34,6 +44,11 @@ namespace ExcelTool
         public int GetKeyIndexInSheetData()
         {
             return mKeyIndexInSheetData;
+        }
+
+        public List<FilterFuncBase> GetFilterFuncList()
+        {
+            return mFilterFuncList;
         }
     }
 }

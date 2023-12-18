@@ -20,7 +20,7 @@ namespace ExcelTool
 
         protected string mSheetName = string.Empty;
 
-        public int IndexInList
+        public int IndexInListForShow
         {
             get;
             protected set;
@@ -35,11 +35,6 @@ namespace ExcelTool
         } = string.Empty;
 
 
-        public int GetIndexForShow()
-        {
-            return IndexInList;
-        }
-
         public int GetIndexInFileData()
         {
             return mIndexInFileData;
@@ -50,11 +45,10 @@ namespace ExcelTool
         // 注意，这里只初始化 Key
         public bool Init(TableBaseData ownerExcelFile, object sheetData, int indexInListValue, int indexInFileData, string name)
         {
-            IndexInList = indexInListValue;
             mIndexInFileData = indexInFileData;
             mSheetName = name;
-            IndexInList = indexInListValue +1;
-            DisplayName = $"{IndexInList} : {name}";
+            IndexInListForShow = indexInListValue + 1;
+            DisplayName = $"{IndexInListForShow} : {name}";
             mKeyDataList.Clear();
             return InternalInitWithKey(ownerExcelFile, sheetData, indexInListValue, indexInFileData, name);
         }
@@ -76,12 +70,12 @@ namespace ExcelTool
 
         protected abstract bool InternalLoadAllCellData();
 
-        protected virtual bool AddNewKeyData(int indexForShow, int indexInSheetData, string nameValue)
+        protected virtual bool AddNewKeyData(int indexInList, int indexInSheetData, string nameValue)
         {
-            var _existData = mKeyDataList.Find((x) => x.GetKeyIndexForShow() == indexForShow);
+            var _existData = mKeyDataList.Find((x) => x.GetKeyIndexInList() == indexInList);
             if (_existData != null)
             {
-                MessageBox.Show($"已经存在相同的 indexForShow : {indexForShow}, 内容分别是：{_existData.GetKeyName()} {nameValue}");
+                MessageBox.Show($"已经存在相同的 indexInList : {indexInList}, 内容分别是：{_existData.GetKeyName()} {nameValue}");
                 return false;
             }
 
@@ -93,7 +87,7 @@ namespace ExcelTool
             }
 
             var _newData = new KeyData();
-            _newData.Init(indexForShow, indexInSheetData, nameValue);
+            _newData.Init(indexInList, indexInSheetData, nameValue);
             mKeyDataList.Add(_newData);
             return true;
         }

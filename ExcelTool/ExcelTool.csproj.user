@@ -7,6 +7,12 @@
     <Compile Update="ExportFileConfigForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="FilterConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FormBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="RelateExcelSetting.cs">
       <SubType>Form</SubType>
     </Compile>

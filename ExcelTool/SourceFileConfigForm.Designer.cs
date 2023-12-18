@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            button1 = new Button();
+            BtnFinishConfig = new Button();
             TextBoxForContentStartRow = new TextBox();
             label3 = new Label();
             TextBoxForKeyStartColm = new TextBox();
@@ -42,21 +42,26 @@
             ComboBoxForSelectSheet = new ComboBox();
             label4 = new Label();
             DataGridViewForKeyFilter = new DataGridView();
+            KeyIndex = new DataGridViewTextBoxColumn();
             KeyName = new DataGridViewTextBoxColumn();
             CheckColum = new DataGridViewCheckBoxColumn();
             EditFilterBtnColum = new DataGridViewButtonColumn();
+            TextBoxForSearch = new TextBox();
+            BtnSearch = new Button();
+            BtnReset = new Button();
             ((System.ComponentModel.ISupportInitialize)DataGridViewForKeyFilter).BeginInit();
             SuspendLayout();
             // 
-            // button1
+            // BtnFinishConfig
             // 
-            button1.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            button1.Location = new Point(545, 505);
-            button1.Name = "button1";
-            button1.Size = new Size(130, 30);
-            button1.TabIndex = 34;
-            button1.Text = "配置完成";
-            button1.UseVisualStyleBackColor = true;
+            BtnFinishConfig.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            BtnFinishConfig.Location = new Point(653, 520);
+            BtnFinishConfig.Name = "BtnFinishConfig";
+            BtnFinishConfig.Size = new Size(130, 30);
+            BtnFinishConfig.TabIndex = 34;
+            BtnFinishConfig.Text = "配置完成";
+            BtnFinishConfig.UseVisualStyleBackColor = true;
+            BtnFinishConfig.Click += BtnFinishConfig_Click;
             // 
             // TextBoxForContentStartRow
             // 
@@ -124,7 +129,7 @@
             // BtnChooseExportFile
             // 
             BtnChooseExportFile.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            BtnChooseExportFile.Location = new Point(545, 19);
+            BtnChooseExportFile.Location = new Point(653, 20);
             BtnChooseExportFile.Name = "BtnChooseExportFile";
             BtnChooseExportFile.Size = new Size(130, 30);
             BtnChooseExportFile.TabIndex = 26;
@@ -148,7 +153,7 @@
             TextForExportFilePath.Location = new Point(118, 22);
             TextForExportFilePath.Name = "TextForExportFilePath";
             TextForExportFilePath.ReadOnly = true;
-            TextForExportFilePath.Size = new Size(416, 26);
+            TextForExportFilePath.Size = new Size(529, 26);
             TextForExportFilePath.TabIndex = 24;
             TextForExportFilePath.Text = "请点击选择";
             // 
@@ -156,11 +161,11 @@
             // 
             label5.AutoSize = true;
             label5.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label5.Location = new Point(29, 192);
+            label5.Location = new Point(29, 188);
             label5.Name = "label5";
-            label5.Size = new Size(74, 21);
+            label5.Size = new Size(69, 21);
             label5.TabIndex = 35;
-            label5.Text = "内容筛选";
+            label5.Text = "Key筛选";
             // 
             // ComboBoxForSelectSheet
             // 
@@ -169,7 +174,7 @@
             ComboBoxForSelectSheet.Name = "ComboBoxForSelectSheet";
             ComboBoxForSelectSheet.Size = new Size(121, 25);
             ComboBoxForSelectSheet.TabIndex = 14;
-            ComboBoxForSelectSheet.SelectedIndexChanged += ComboBoxForSelectSheet_SelectedIndexChanged;
+            ComboBoxForSelectSheet.SelectionChangeCommitted += ComboBoxForSelectSheet_SelectedIndexChanged;
             // 
             // label4
             // 
@@ -184,13 +189,20 @@
             // DataGridViewForKeyFilter
             // 
             DataGridViewForKeyFilter.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            DataGridViewForKeyFilter.Columns.AddRange(new DataGridViewColumn[] { KeyName, CheckColum, EditFilterBtnColum });
+            DataGridViewForKeyFilter.Columns.AddRange(new DataGridViewColumn[] { KeyIndex, KeyName, CheckColum, EditFilterBtnColum });
             DataGridViewForKeyFilter.Location = new Point(29, 216);
             DataGridViewForKeyFilter.Name = "DataGridViewForKeyFilter";
             DataGridViewForKeyFilter.RowTemplate.Height = 25;
-            DataGridViewForKeyFilter.Size = new Size(646, 283);
+            DataGridViewForKeyFilter.Size = new Size(754, 283);
             DataGridViewForKeyFilter.TabIndex = 36;
             DataGridViewForKeyFilter.CellContentClick += DataGridViewForKeyFilter_CellContentClick;
+            // 
+            // KeyIndex
+            // 
+            KeyIndex.HeaderText = "Key下标";
+            KeyIndex.Name = "KeyIndex";
+            KeyIndex.ReadOnly = true;
+            KeyIndex.Width = 80;
             // 
             // KeyName
             // 
@@ -203,23 +215,58 @@
             // 
             CheckColum.HeaderText = "是否筛选";
             CheckColum.Name = "CheckColum";
+            CheckColum.ReadOnly = true;
+            CheckColum.Width = 80;
             // 
             // EditFilterBtnColum
             // 
-            EditFilterBtnColum.HeaderText = "编辑过滤类型";
+            EditFilterBtnColum.HeaderText = "设置过滤方法";
             EditFilterBtnColum.Name = "EditFilterBtnColum";
-            EditFilterBtnColum.Text = "编辑";
+            EditFilterBtnColum.Text = "设置";
+            // 
+            // TextBoxForSearch
+            // 
+            TextBoxForSearch.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
+            TextBoxForSearch.Location = new Point(109, 186);
+            TextBoxForSearch.Name = "TextBoxForSearch";
+            TextBoxForSearch.Size = new Size(292, 26);
+            TextBoxForSearch.TabIndex = 37;
+            // 
+            // BtnSearch
+            // 
+            BtnSearch.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            BtnSearch.Location = new Point(407, 183);
+            BtnSearch.Name = "BtnSearch";
+            BtnSearch.Size = new Size(130, 30);
+            BtnSearch.TabIndex = 38;
+            BtnSearch.Text = "查找";
+            BtnSearch.UseVisualStyleBackColor = true;
+            BtnSearch.Click += BtnSearch_Click;
+            // 
+            // BtnReset
+            // 
+            BtnReset.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            BtnReset.Location = new Point(543, 183);
+            BtnReset.Name = "BtnReset";
+            BtnReset.Size = new Size(130, 30);
+            BtnReset.TabIndex = 39;
+            BtnReset.Text = "重置";
+            BtnReset.UseVisualStyleBackColor = true;
+            BtnReset.Click += BtnReset_Click;
             // 
             // SourceFileConfigForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(706, 553);
+            ClientSize = new Size(795, 562);
+            Controls.Add(BtnReset);
+            Controls.Add(BtnSearch);
+            Controls.Add(TextBoxForSearch);
             Controls.Add(DataGridViewForKeyFilter);
             Controls.Add(label4);
             Controls.Add(ComboBoxForSelectSheet);
             Controls.Add(label5);
-            Controls.Add(button1);
+            Controls.Add(BtnFinishConfig);
             Controls.Add(TextBoxForContentStartRow);
             Controls.Add(label3);
             Controls.Add(TextBoxForKeyStartColm);
@@ -240,7 +287,7 @@
 
         #endregion
 
-        private Button button1;
+        private Button BtnFinishConfig;
         private TextBox TextBoxForContentStartRow;
         private Label label3;
         private TextBox TextBoxForKeyStartColm;
@@ -254,6 +301,10 @@
         private ComboBox ComboBoxForSelectSheet;
         private Label label4;
         private DataGridView DataGridViewForKeyFilter;
+        private TextBox TextBoxForSearch;
+        private Button BtnSearch;
+        private Button BtnReset;
+        private DataGridViewTextBoxColumn KeyIndex;
         private DataGridViewTextBoxColumn KeyName;
         private DataGridViewCheckBoxColumn CheckColum;
         private DataGridViewButtonColumn EditFilterBtnColum;

@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             StartExportBtn = new Button();
             BtnExportSetting = new Button();
             BtnImport = new Button();
@@ -43,7 +43,7 @@
             HasEdited = new DataGridViewCheckBoxColumn();
             label4 = new Label();
             ComboBoxForExportWriteWay = new ComboBox();
-            ComboBoxForExportConfigDealWay = new ComboBox();
+            ComboBoxForExportConflictDealWay = new ComboBox();
             label1 = new Label();
             ((System.ComponentModel.ISupportInitialize)DataViewConfigForExportFile).BeginInit();
             SuspendLayout();
@@ -124,12 +124,12 @@
             DataViewConfigForExportFile.RowTemplate.Height = 25;
             DataViewConfigForExportFile.Size = new Size(1712, 936);
             DataViewConfigForExportFile.TabIndex = 14;
-            DataViewConfigForExportFile.CellContentClick += DataVewConfigForExportFile_CellContentClick;
+            DataViewConfigForExportFile.CellClick += DataVewConfigForExportFile_CellClick;
             // 
             // KeyName
             // 
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            KeyName.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            KeyName.DefaultCellStyle = dataGridViewCellStyle1;
             KeyName.FillWeight = 160F;
             KeyName.HeaderText = "导出目标列名";
             KeyName.Name = "KeyName";
@@ -139,8 +139,8 @@
             // RelatInfo
             // 
             RelatInfo.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            RelatInfo.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            RelatInfo.DefaultCellStyle = dataGridViewCellStyle2;
             RelatInfo.FillWeight = 160F;
             RelatInfo.HeaderText = "关联信息";
             RelatInfo.Name = "RelatInfo";
@@ -173,19 +173,23 @@
             // 
             // ComboBoxForExportWriteWay
             // 
+            ComboBoxForExportWriteWay.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             ComboBoxForExportWriteWay.FormattingEnabled = true;
-            ComboBoxForExportWriteWay.Location = new Point(668, 61);
+            ComboBoxForExportWriteWay.Location = new Point(668, 63);
             ComboBoxForExportWriteWay.Name = "ComboBoxForExportWriteWay";
-            ComboBoxForExportWriteWay.Size = new Size(121, 25);
+            ComboBoxForExportWriteWay.Size = new Size(121, 29);
             ComboBoxForExportWriteWay.TabIndex = 16;
+            ComboBoxForExportWriteWay.SelectedIndexChanged += ComboBoxForExportWriteWay_SelectedIndexChanged;
             // 
-            // ComboBoxForExportConfigDealWay
+            // ComboBoxForExportConflictDealWay
             // 
-            ComboBoxForExportConfigDealWay.FormattingEnabled = true;
-            ComboBoxForExportConfigDealWay.Location = new Point(1029, 60);
-            ComboBoxForExportConfigDealWay.Name = "ComboBoxForExportConfigDealWay";
-            ComboBoxForExportConfigDealWay.Size = new Size(121, 25);
-            ComboBoxForExportConfigDealWay.TabIndex = 18;
+            ComboBoxForExportConflictDealWay.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            ComboBoxForExportConflictDealWay.FormattingEnabled = true;
+            ComboBoxForExportConflictDealWay.Location = new Point(1029, 63);
+            ComboBoxForExportConflictDealWay.Name = "ComboBoxForExportConflictDealWay";
+            ComboBoxForExportConflictDealWay.Size = new Size(121, 29);
+            ComboBoxForExportConflictDealWay.TabIndex = 18;
+            ComboBoxForExportConflictDealWay.SelectedIndexChanged += ComboBoxForExportConfigDealWay_SelectedIndexChanged;
             // 
             // label1
             // 
@@ -202,7 +206,7 @@
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1736, 1122);
-            Controls.Add(ComboBoxForExportConfigDealWay);
+            Controls.Add(ComboBoxForExportConflictDealWay);
             Controls.Add(label1);
             Controls.Add(ComboBoxForExportWriteWay);
             Controls.Add(label4);
@@ -238,7 +242,7 @@
         private DataGridViewCheckBoxColumn HasEdited;
         private Label label4;
         private ComboBox ComboBoxForExportWriteWay;
-        private ComboBox ComboBoxForExportConfigDealWay;
+        private ComboBox ComboBoxForExportConflictDealWay;
         private Label label1;
     }
 }

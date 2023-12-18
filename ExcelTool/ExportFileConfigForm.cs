@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace ExcelTool
 {
-    public partial class ExportFileConfigForm : Form
+    public partial class ExportFileConfigForm : FormBase
     {
         private TableBaseData? mLoadedFile = null;
 

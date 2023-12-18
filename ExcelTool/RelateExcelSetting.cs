@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace ExcelTool
 {
-    public partial class RelateExcelSetting : Form
+    public partial class RelateExcelSetting : FormBase
     {
         public RelateExcelSetting()
         {

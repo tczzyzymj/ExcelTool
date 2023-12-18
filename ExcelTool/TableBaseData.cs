@@ -90,7 +90,7 @@ namespace ExcelTool
                 return false;
             }
 
-            mChooseWorkSheetIndexInList = targetData.IndexInList;
+            mChooseWorkSheetIndexInList = targetData.IndexInListForShow;
             mChooseWorkSheet = targetData;
 
             return true;
