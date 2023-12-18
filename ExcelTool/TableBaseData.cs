@@ -34,6 +34,8 @@ namespace ExcelTool
 
         protected string mChooseSheetName = string.Empty;
 
+        protected bool mHasInit = false;
+
         public bool DoLoadFile(string absolutePath)
         {
             if (!File.Exists(absolutePath))
@@ -41,22 +43,27 @@ namespace ExcelTool
                 return false;
             }
 
-            if (InternalLoadFile(absolutePath))
-            {
-                mExcelAbsolutePath = absolutePath;
-
-                return true;
-            }
-
-            if (!AnalysData())
+            if (!InternalLoadFile(absolutePath))
             {
                 return false;
             }
 
-            return false;
+            mExcelAbsolutePath = absolutePath;
+            mHasInit = true;
+            return true;
         }
 
-        public CommonWorkSheetData? GetWorkdSheet()
+        public bool GetHasInit()
+        {
+            return mHasInit;
+        }
+
+        public string? GetFilePath()
+        {
+            return mExcelAbsolutePath;
+        }
+
+        public CommonWorkSheetData? GetCurrentWorkSheet()
         {
             return mChooseWorkSheet;
         }
@@ -72,16 +79,40 @@ namespace ExcelTool
             var _targetIndex = mWorkSheetList.IndexOf(targetData);
             if (_targetIndex < 0)
             {
-                MessageBox.Show($"尝试选中需要处理的 Sheet 表，但是没有已加载的数据中找到，Sheet 名字是:{targetData.DisplayName}，请检查!","错误");
+                MessageBox.Show($"尝试选中需要处理的 Sheet 表，但是没有已加载的数据中找到，Sheet 名字是:{targetData.DisplayName}，请检查!", "错误");
                 return false;
             }
+
+            var _keyListData = targetData.GetKeyListData();
+            if (_keyListData == null || _keyListData.Count < 1)
+            {
+                MessageBox.Show("选中的 Sheet 没有 key 数据，请检查！", "错误");
+                return false;
+            }
+
             mChooseWorkSheetIndexInList = targetData.IndexInList;
             mChooseWorkSheet = targetData;
 
             return true;
         }
 
-        public List<CommonWorkSheetData> GetWorkSheet()
+        public bool IsCurrentSheetValid()
+        {
+            if (mChooseWorkSheet == null)
+            {
+                return false;
+            }
+
+            var _keyList = mChooseWorkSheet.GetKeyListData();
+            if (_keyList == null || _keyList.Count < 1)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public List<CommonWorkSheetData> GetWorkSheetList()
         {
             return mWorkSheetList;
         }
@@ -91,12 +122,12 @@ namespace ExcelTool
             return Path.GetFileName(mExcelAbsolutePath);
         }
 
-        public bool AnalysData()
+        public bool AnalysCellData()
         {
-            return InternalAnalysData();
+            return InternalAnalysCellData();
         }
 
-        protected abstract bool InternalAnalysData(); // 解析数据，主要是 key 或者 content 的数据改变了后的解析
+        protected abstract bool InternalAnalysCellData(); // 解析内容数据
 
         public int GetKeyStartRowIndex()
         {

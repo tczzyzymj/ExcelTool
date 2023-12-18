@@ -11,42 +11,68 @@ namespace ExcelTool
     {
         private TableBaseData? mExportTargetFile = null; // 导出目标文件，其关联在里面设置
 
+        private TableBaseData? mSourceFile = null; // 数据源文件
+
         public ExcelTool()
         {
             InitializeComponent();
+            DataViewConfigForExportFile.AllowUserToAddRows = false;
         }
 
         public TableBaseData? TryChooseExportFile(string absoluteFilePath)
         {
+            InternalChooseTargetFile(ref mExportTargetFile, absoluteFilePath);
+            return mExportTargetFile;
+        }
+
+        public TableBaseData? TryChooseSourceFile(string absoluteFilePath)
+        {
+            InternalChooseTargetFile(ref mSourceFile, absoluteFilePath);
+            return mSourceFile;
+        }
+
+        private bool InternalChooseTargetFile(ref TableBaseData targetFile, string absoluteFilePath)
+        {
+            bool _result = false;
             try
             {
                 var _extension = Path.GetExtension(absoluteFilePath).ToLower();
                 if (_extension.Equals(".xls") || _extension.Equals(".xlsx"))
                 {
-
-                    mExportTargetFile = new ExcelFileData();
+                    targetFile = new ExcelFileData();
                 }
                 else if (_extension.Equals(".csv"))
                 {
-                    mExportTargetFile = new CSVFileData();
+                    targetFile = new CSVFileData();
                 }
                 else
                 {
                     throw new Exception($"文件类型不匹配，请检查文件，目标文件路径为：{absoluteFilePath}");
                 }
 
-                if (!mExportTargetFile.DoLoadFile(absoluteFilePath))
+                if (!targetFile.DoLoadFile(absoluteFilePath))
                 {
-                    return null;
+                    return false;
                 }
 
+                _result = true;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString(), "报错");
             }
 
+            return _result;
+        }
+
+        public TableBaseData? GetExportFileData()
+        {
             return mExportTargetFile;
+        }
+
+        public TableBaseData? GetSourceFileData()
+        {
+            return mSourceFile;
         }
 
         private void BtnStartExport_Click(object sender, EventArgs e)
@@ -111,22 +137,28 @@ namespace ExcelTool
                 MessageBox.Show("当前未选中需要导出的目标文件", "错误");
                 return;
             }
-            if (mExportTargetFile.GetWorkdSheet() == null)
+            if (mExportTargetFile.GetCurrentWorkSheet() == null)
             {
                 MessageBox.Show("当前未选中需要导出的目标文件 Sheet", "错误");
                 return;
             }
-            var _workSheet = mExportTargetFile.GetWorkdSheet();
+            var _workSheet = mExportTargetFile.GetCurrentWorkSheet();
             var _keyList = _workSheet?.GetKeyListData();
             if (_keyList == null || _keyList.Count < 1)
             {
                 MessageBox.Show("当前选中需要导出的目标文件 Sheet，未能解析出 Key，请检查配置或者呼叫程序员!", "错误");
                 return;
             }
+
             for (int i = 0; i < _keyList.Count; ++i)
             {
-                this.DataVewConfigForExportFile.Rows.Add(_keyList[i].GetKeyName(), string.Empty, null);
+                this.DataViewConfigForExportFile.Rows.Add(_keyList[i].GetKeyName(), string.Empty, "编辑");
             }
+
+            //for (int i = 0; i < _keyList.Count; ++i)
+            //{
+            //    this.DataViewConfigForExportFile.Rows.Add(_keyList[i].GetKeyName(), string.Empty, null);
+            //}
         }
 
         private void ExcelTool_Load(object sender, EventArgs e)
@@ -142,6 +174,37 @@ namespace ExcelTool
         private void ListViewMain_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void DataVewConfigForExportFile_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            var _columIndex = e.ColumnIndex;
+            if (_columIndex == 2)
+            {
+                // 点击了编辑按钮，弹出编辑相关
+                var _rowIndex = e.RowIndex;
+                ProcessForClickEditBtn(_rowIndex);
+            }
+        }
+
+        private void ProcessForClickEditBtn(int rowIndex)
+        {
+
+        }
+
+        private void BtnChooseSourceFile_Click(object sender, EventArgs e)
+        {
+            SourceFileConfigForm _form = new SourceFileConfigForm();
+            _form.ShowDialog(this);
+        }
+
+        private void StartExportBtn_Click(object sender, EventArgs e)
+        {
+            if (mSourceFile == null || !mSourceFile.GetHasInit())
+            {
+                MessageBox.Show("源文件未准备好，请检查！", "错误");
+                return;
+            }
         }
     }
 }

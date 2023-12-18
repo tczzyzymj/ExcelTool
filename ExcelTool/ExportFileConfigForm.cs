@@ -13,6 +13,7 @@ namespace ExcelTool
     public partial class ExportFileConfigForm : Form
     {
         private TableBaseData? mLoadedFile = null;
+
         public ExportFileConfigForm()
         {
             InitializeComponent();
@@ -45,7 +46,7 @@ namespace ExcelTool
                 TextBoxForContentStartRow_TextChanged(null, null);
 
                 TextForExportFilePath.Text = _openfileDialog.FileName;
-                var _workSheetList = mLoadedFile.GetWorkSheet();
+                var _workSheetList = mLoadedFile.GetWorkSheetList();
                 if (_workSheetList == null || _workSheetList.Count < 1)
                 {
                     return;
@@ -110,7 +111,36 @@ namespace ExcelTool
 
         private void BtnFinishConfig_Click(object sender, EventArgs e)
         {
+            // 检查一下有效性
+            if (mLoadedFile != null)
+            {
+                if (!mLoadedFile.IsCurrentSheetValid())
+                {
+                    MessageBox.Show("当前选中 Sheet 无效，请重新配置", "错误");
+                    return;
+                }
+            }
+
             this.Close();
+        }
+
+        private void ExportFileConfigForm_Load(object sender, EventArgs e)
+        {
+            var _owner = this.Owner as ExcelTool;
+            if (_owner == null)
+            {
+                this.Close();
+                MessageBox.Show("父窗口不是 ExcelTool ，请检查!", "错误");
+                return;
+            }
+            mLoadedFile = _owner.GetExportFileData();
+            if (mLoadedFile != null)
+            {
+                TextBoxForKeyStartRow.Text = mLoadedFile.GetKeyStartRowIndex().ToString();
+                TextBoxForKeyStartColm.Text = mLoadedFile.GetKeyStartColmIndex().ToString();
+                TextBoxForContentStartRow.Text = mLoadedFile.GetContentStartRowIndex().ToString();
+                TextForExportFilePath.Text = mLoadedFile.GetFilePath();
+            }
         }
     }
 }

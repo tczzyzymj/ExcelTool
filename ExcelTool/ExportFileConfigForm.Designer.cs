@@ -186,8 +186,10 @@
             Controls.Add(BtnChooseExportFile);
             Controls.Add(label1);
             Controls.Add(TextForExportFilePath);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "ExportFileConfigForm";
             Text = "ExportFileConfigForm";
+            Load += ExportFileConfigForm_Load;
             ResumeLayout(false);
             PerformLayout();
         }

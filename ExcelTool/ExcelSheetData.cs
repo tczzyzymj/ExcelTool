@@ -40,8 +40,8 @@ namespace ExcelTool
 
             if (mData.Dimension == null || mData.Dimension.Rows == null || mData.Dimension.Columns == null)
             {
-                // 这个 sheet 为空，就不选择了
-                return false;
+                // 这个 sheet 里面的内容为空，还是要记录一下
+                return true;
             }
 
             mExcelFileBase = new WeakReference<TableBaseData>(ownerExcelFile);

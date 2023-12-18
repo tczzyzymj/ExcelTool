@@ -55,7 +55,7 @@ namespace ExcelTool
             {
                 var sheet = _allSheets[i];
                 var _newSheetData = new ExcelSheetData();
-                if (!_newSheetData.Init(this, sheet, 0, i, sheet.Name))
+                if (!_newSheetData.Init(this, sheet, i - _startIndex, i, sheet.Name))
                 {
                     continue;
                 }
@@ -66,7 +66,7 @@ namespace ExcelTool
             return true;
         }
 
-        protected override bool InternalAnalysData()
+        protected override bool InternalAnalysCellData()
         {
             return true;
         }

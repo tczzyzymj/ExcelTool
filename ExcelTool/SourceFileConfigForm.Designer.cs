@@ -39,11 +39,13 @@
             label1 = new Label();
             TextForExportFilePath = new TextBox();
             label5 = new Label();
-            ListBoxForKeyFiler = new ListBox();
-            button2 = new Button();
             ComboBoxForSelectSheet = new ComboBox();
             label4 = new Label();
-            comboBox1 = new ComboBox();
+            DataGridViewForKeyFilter = new DataGridView();
+            KeyName = new DataGridViewTextBoxColumn();
+            CheckColum = new DataGridViewCheckBoxColumn();
+            EditFilterBtnColum = new DataGridViewButtonColumn();
+            ((System.ComponentModel.ISupportInitialize)DataGridViewForKeyFilter).BeginInit();
             SuspendLayout();
             // 
             // button1
@@ -65,6 +67,7 @@
             TextBoxForContentStartRow.Size = new Size(39, 28);
             TextBoxForContentStartRow.TabIndex = 33;
             TextBoxForContentStartRow.Text = "4";
+            TextBoxForContentStartRow.TextChanged += TextBoxForContentStartRow_TextChanged;
             // 
             // label3
             // 
@@ -85,6 +88,7 @@
             TextBoxForKeyStartColm.Size = new Size(39, 28);
             TextBoxForKeyStartColm.TabIndex = 31;
             TextBoxForKeyStartColm.Text = "1";
+            TextBoxForKeyStartColm.TextChanged += TextBoxForKeyStartColm_TextChanged;
             // 
             // label2
             // 
@@ -105,6 +109,7 @@
             TextBoxForKeyStartRow.Size = new Size(39, 28);
             TextBoxForKeyStartRow.TabIndex = 29;
             TextBoxForKeyStartRow.Text = "2";
+            TextBoxForKeyStartRow.TextChanged += TextBoxForKeyStartRow_TextChanged;
             // 
             // LableKeyStartRowIndex
             // 
@@ -125,6 +130,7 @@
             BtnChooseExportFile.TabIndex = 26;
             BtnChooseExportFile.Text = "选择文件";
             BtnChooseExportFile.UseVisualStyleBackColor = true;
+            BtnChooseExportFile.Click += BtnChooseExportFile_Click;
             // 
             // label1
             // 
@@ -156,25 +162,6 @@
             label5.TabIndex = 35;
             label5.Text = "内容筛选";
             // 
-            // ListBoxForKeyFiler
-            // 
-            ListBoxForKeyFiler.FormattingEnabled = true;
-            ListBoxForKeyFiler.ItemHeight = 17;
-            ListBoxForKeyFiler.Location = new Point(29, 223);
-            ListBoxForKeyFiler.Name = "ListBoxForKeyFiler";
-            ListBoxForKeyFiler.Size = new Size(646, 259);
-            ListBoxForKeyFiler.TabIndex = 36;
-            // 
-            // button2
-            // 
-            button2.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            button2.Location = new Point(545, 192);
-            button2.Name = "button2";
-            button2.Size = new Size(130, 30);
-            button2.TabIndex = 37;
-            button2.Text = "添加筛选Key";
-            button2.UseVisualStyleBackColor = true;
-            // 
             // ComboBoxForSelectSheet
             // 
             ComboBoxForSelectSheet.FormattingEnabled = true;
@@ -182,6 +169,7 @@
             ComboBoxForSelectSheet.Name = "ComboBoxForSelectSheet";
             ComboBoxForSelectSheet.Size = new Size(121, 25);
             ComboBoxForSelectSheet.TabIndex = 14;
+            ComboBoxForSelectSheet.SelectedIndexChanged += ComboBoxForSelectSheet_SelectedIndexChanged;
             // 
             // label4
             // 
@@ -193,24 +181,43 @@
             label4.TabIndex = 13;
             label4.Text = "选择sheet";
             // 
-            // comboBox1
+            // DataGridViewForKeyFilter
             // 
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(418, 193);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(121, 25);
-            comboBox1.TabIndex = 38;
+            DataGridViewForKeyFilter.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            DataGridViewForKeyFilter.Columns.AddRange(new DataGridViewColumn[] { KeyName, CheckColum, EditFilterBtnColum });
+            DataGridViewForKeyFilter.Location = new Point(29, 216);
+            DataGridViewForKeyFilter.Name = "DataGridViewForKeyFilter";
+            DataGridViewForKeyFilter.RowTemplate.Height = 25;
+            DataGridViewForKeyFilter.Size = new Size(646, 283);
+            DataGridViewForKeyFilter.TabIndex = 36;
+            DataGridViewForKeyFilter.CellContentClick += DataGridViewForKeyFilter_CellContentClick;
+            // 
+            // KeyName
+            // 
+            KeyName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            KeyName.HeaderText = "Key名字";
+            KeyName.Name = "KeyName";
+            KeyName.ReadOnly = true;
+            // 
+            // CheckColum
+            // 
+            CheckColum.HeaderText = "是否筛选";
+            CheckColum.Name = "CheckColum";
+            // 
+            // EditFilterBtnColum
+            // 
+            EditFilterBtnColum.HeaderText = "编辑过滤类型";
+            EditFilterBtnColum.Name = "EditFilterBtnColum";
+            EditFilterBtnColum.Text = "编辑";
             // 
             // SourceFileConfigForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(706, 553);
-            Controls.Add(comboBox1);
+            Controls.Add(DataGridViewForKeyFilter);
             Controls.Add(label4);
             Controls.Add(ComboBoxForSelectSheet);
-            Controls.Add(button2);
-            Controls.Add(ListBoxForKeyFiler);
             Controls.Add(label5);
             Controls.Add(button1);
             Controls.Add(TextBoxForContentStartRow);
@@ -222,8 +229,11 @@
             Controls.Add(BtnChooseExportFile);
             Controls.Add(label1);
             Controls.Add(TextForExportFilePath);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "SourceFileConfigForm";
             Text = "SourceFileConfigForm";
+            Load += SourceFileConfigForm_Load;
+            ((System.ComponentModel.ISupportInitialize)DataGridViewForKeyFilter).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -241,10 +251,11 @@
         private Label label1;
         private TextBox TextForExportFilePath;
         private Label label5;
-        private ListBox ListBoxForKeyFiler;
-        private Button button2;
         private ComboBox ComboBoxForSelectSheet;
         private Label label4;
-        private ComboBox comboBox1;
+        private DataGridView DataGridViewForKeyFilter;
+        private DataGridViewTextBoxColumn KeyName;
+        private DataGridViewCheckBoxColumn CheckColum;
+        private DataGridViewButtonColumn EditFilterBtnColum;
     }
 }

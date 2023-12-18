@@ -28,7 +28,7 @@ namespace ExcelTool
             return true;
         }
 
-        protected override bool InternalAnalysData()
+        protected override bool InternalAnalysCellData()
         {
             if (mChooseWorkSheet == null || mAllDataArray == null)
             {
