@@ -174,7 +174,7 @@
             ComboBoxForSelectSheet.Name = "ComboBoxForSelectSheet";
             ComboBoxForSelectSheet.Size = new Size(121, 25);
             ComboBoxForSelectSheet.TabIndex = 14;
-            ComboBoxForSelectSheet.SelectionChangeCommitted += ComboBoxForSelectSheet_SelectedIndexChanged;
+            ComboBoxForSelectSheet.SelectedIndexChanged += ComboBoxForSelectSheet_SelectedIndexChanged;
             // 
             // label4
             // 

@@ -10,11 +10,11 @@ namespace ExcelTool
 {
     internal class ExcelSheetData : CommonWorkSheetData
     {
-        protected ExcelWorksheet? mData = null; // 原始数据
+        protected ExcelWorksheet? mSheetData = null; // 原始数据
 
         protected override bool InternalInitWithKey(object sheetData)
         {
-            if (mHasInit)
+            if (mHasInitKey)
             {
                 return true;
             }
@@ -31,14 +31,14 @@ namespace ExcelTool
                 return false;
             }
             var _finalData = sheetData as ExcelWorksheet;
-            mData = _finalData;
-            if (mData == null)
+            mSheetData = _finalData;
+            if (mSheetData == null)
             {
                 MessageBox.Show("传入的 Data 数据无法解析为 ExcelWorksheet，请检查", "错误");
                 return false;
             }
 
-            if (mData.Dimension == null)
+            if (mSheetData.Dimension == null)
             {
                 // 这个 sheet 里面的内容为空，还是要记录一下，所以返回true
                 return true;
@@ -51,31 +51,69 @@ namespace ExcelTool
 
             var _rowIndex = _ownerExcel.GetKeyStartRowIndex();
 
-            for (int _colm = _ownerExcel.GetKeyStartColmIndex(); _colm <= mData.Dimension.Columns; ++_colm)
+            for (int _colm = _ownerExcel.GetKeyStartColmIndex(); _colm <= mSheetData.Dimension.Columns; ++_colm)
             {
-                var _tempValue = mData.Cells[_rowIndex, _colm].Value;
+                var _tempValue = mSheetData.Cells[_rowIndex, _colm].Value;
                 if (_tempValue == null)
                 {
-                    MessageBox.Show($"表格的 key 有空列，请检查，文件：{_ownerExcel.GetFileName(true)}, sheet:{mData.Name}，行：{_rowIndex}, 列：{_colm}", "错误");
+                    MessageBox.Show($"表格的 key 有空列，请检查，文件：{_ownerExcel.GetFileName(true)}, sheet:{mSheetData.Name}，行：{_rowIndex}, 列：{_colm}", "错误");
                     return false;
                 }
                 string? _finalStr = _tempValue as string;
                 if (string.IsNullOrEmpty(_finalStr))
                 {
-                    MessageBox.Show($"表格的 key 有空列，请检查，文件：{_ownerExcel.GetFileName(true)}, sheet:{mData.Name}", "错误");
+                    MessageBox.Show($"表格的 key 有空列，请检查，文件：{_ownerExcel.GetFileName(true)}, sheet:{mSheetData.Name}", "错误");
                     return false;
                 }
 
                 AddNewKeyData(_colm - _ownerExcel.GetKeyStartColmIndex(), _colm, _finalStr);
             }
 
-            mHasInit = true;
+            mHasInitKey = true;
 
             return true;
         }
 
         protected override bool InternalLoadAllCellData()
         {
+            if (mHasLoadAllCellData)
+            {
+                return true;
+            }
+            var _ownerTable = GetOwnerTable();
+            if (_ownerTable == null)
+            {
+                MessageBox.Show("InternalLoadAllCellData 无法获取父 Table ，请检查！", "错误");
+                return false;
+            }
+
+            if (mSheetData == null)
+            {
+                MessageBox.Show("InternalLoadAllCellData 无法获取 SheetData，请检查！", "错误");
+                return false;
+            }
+
+            var _contentStartRow = _ownerTable.GetContentStartRowIndex();
+            var _keyStartColum = _ownerTable.GetKeyStartColmIndex();
+
+            mCellData2DList = new List<List<CellValueData>>(mSheetData.Dimension.Rows - 4);
+
+            for (int _row = _contentStartRow; _row <= mSheetData.Dimension.Rows; ++_row)
+            {
+                var _newList = new List<CellValueData>();
+                mCellData2DList.Add(_newList);
+
+                for (int _colum = _keyStartColum; _colum <= mSheetData.Dimension.Columns; ++_colum)
+                {
+                    var _newCellData = new CellValueData();
+                    _newList.Add(_newCellData);
+                    var _value = mSheetData.Cells[_row, _colum].Value;
+                    _newCellData.Init(_value == null ? string.Empty : _value.ToString(), _row, _colum);
+                }
+            }
+
+            mHasLoadAllCellData = true;
+
             return true;
         }
     }

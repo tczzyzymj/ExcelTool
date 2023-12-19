@@ -13,10 +13,10 @@ namespace ExcelTool
 
         private int mColumnIndex;
 
-        private string? mCellValue;
+        private string? mCellValue = string.Empty;
 
         // 认为表格的内容就是可以为空的，并且只保存为文本
-        public void Init(string content, int rowIndex, int colmIndex)
+        public void Init(string? content, int rowIndex, int colmIndex)
         {
             mCellValue = content;
             mRowIndex = rowIndex;

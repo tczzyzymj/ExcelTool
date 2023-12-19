@@ -134,7 +134,7 @@
             ComboBoxForExportWriteWay.Name = "ComboBoxForExportWriteWay";
             ComboBoxForExportWriteWay.Size = new Size(121, 29);
             ComboBoxForExportWriteWay.TabIndex = 16;
-            ComboBoxForExportWriteWay.SelectionChangeCommitted += ComboBoxForExportWriteWay_SelectedIndexChanged;
+            ComboBoxForExportWriteWay.SelectedIndexChanged += ComboBoxForExportWriteWay_SelectedIndexChanged;
             // 
             // ComboBoxForExportConflictDealWay
             // 
@@ -144,7 +144,7 @@
             ComboBoxForExportConflictDealWay.Name = "ComboBoxForExportConflictDealWay";
             ComboBoxForExportConflictDealWay.Size = new Size(121, 29);
             ComboBoxForExportConflictDealWay.TabIndex = 18;
-            ComboBoxForExportConflictDealWay.SelectionChangeCommitted += ComboBoxForExportConfigDealWay_SelectedIndexChanged;
+            ComboBoxForExportConflictDealWay.SelectedIndexChanged += ComboBoxForExportConfigDealWay_SelectedIndexChanged;
             // 
             // label1
             // 

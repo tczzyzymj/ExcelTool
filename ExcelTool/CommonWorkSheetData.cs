@@ -10,13 +10,15 @@ namespace ExcelTool
 {
     public abstract class CommonWorkSheetData
     {
-        protected bool mHasInit = false;
+        protected bool mHasLoadAllCellData = false;
+
+        protected bool mHasInitKey = false;
 
         protected WeakReference<TableBaseData>? mOwnerTable = null;
 
         protected List<KeyData> mKeyDataList = new List<KeyData>();
 
-        protected List<List<KeyData>>? mCellData2DList = null;
+        protected List<List<CellValueData>>? mCellData2DList = null; // 1维 是行， 2维是列
 
         protected string mSheetName = string.Empty;
 
@@ -42,9 +44,14 @@ namespace ExcelTool
 
         protected abstract bool InternalInitWithKey(object sheetData);
 
-        public WeakReference<TableBaseData> GetOwnerTable()
+        public TableBaseData? GetOwnerTable()
         {
-            return mOwnerTable;
+            if (mOwnerTable == null || !mOwnerTable.TryGetTarget(out var _result))
+            {
+                return null;
+            }
+
+            return _result;
         }
 
         // 注意，这里只初始化 Key
@@ -66,7 +73,7 @@ namespace ExcelTool
 
         public bool LoadAllCellData()
         {
-            if (!mHasInit)
+            if (!mHasLoadAllCellData)
             {
                 return false;
             }

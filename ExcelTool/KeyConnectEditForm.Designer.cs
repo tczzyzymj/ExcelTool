@@ -67,7 +67,6 @@
             ComboBoxForLoadedFile.Size = new Size(130, 29);
             ComboBoxForLoadedFile.TabIndex = 18;
             ComboBoxForLoadedFile.SelectedIndexChanged += ComboBoxForLoadedFile_SelectedIndexChanged;
-            ComboBoxForLoadedFile.SelectionChangeCommitted += ComboBoxForLoadedFile_SelectionChangeCommitted;
             // 
             // label1
             // 
@@ -180,7 +179,6 @@
             ComboBoxForWorkSheet.Size = new Size(130, 29);
             ComboBoxForWorkSheet.TabIndex = 24;
             ComboBoxForWorkSheet.SelectedIndexChanged += ComboBoxForWorkSheet_SelectedIndexChanged;
-            ComboBoxForWorkSheet.SelectionChangeCommitted += ComboBoxForWorkSheet_SelectionChangeCommitted;
             // 
             // KeyConnectEditForm
             // 

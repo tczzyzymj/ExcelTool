@@ -32,6 +32,15 @@ namespace ExcelTool
         }
 
         /// <summary>
+        /// 是否为主KEY，如果是主KEY，并且没有指定关联数据，那么ID会以最大ID为基准+1
+        /// </summary>
+        public bool IsMainKey
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// 关联的表格的相对路径，用于序列化
         /// </summary>
         public string ConnectTableRelativePath

@@ -139,9 +139,11 @@ namespace ExcelTool
                     _tempone.DisplayName = "全部重写";
                     _dataForExportWay.Add(_tempone);
                 }
+                ComboBoxForExportWriteWay.BeginUpdate();
                 ComboBoxForExportWriteWay.DataSource = _dataForExportWay;
                 ComboBoxForExportWriteWay.ValueMember = "RealValue";
                 ComboBoxForExportWriteWay.DisplayMember = "DisplayName";
+                ComboBoxForExportWriteWay.EndUpdate();
             }
 
             {
@@ -159,9 +161,11 @@ namespace ExcelTool
                     _tempone.DisplayName = "使用新数据";
                     _dataForExportWay.Add(_tempone);
                 }
+                ComboBoxForExportConflictDealWay.BeginUpdate();
                 ComboBoxForExportConflictDealWay.DataSource = _dataForExportWay;
                 ComboBoxForExportConflictDealWay.ValueMember = "RealValue";
                 ComboBoxForExportConflictDealWay.DisplayMember = "DisplayName";
+                ComboBoxForExportConflictDealWay.EndUpdate();
             }
         }
 
@@ -224,7 +228,6 @@ namespace ExcelTool
             var _selectValue = this.ComboBoxForExportWriteWay.SelectedValue as CommonDataForComboBox;
             if (_selectValue == null)
             {
-                MessageBox.Show("ComboBoxForExportWriteWay 无法转化为 CommonDataForComboBox ，请检查", "错误");
                 return;
             }
 
@@ -236,7 +239,6 @@ namespace ExcelTool
             var _selectValue = this.ComboBoxForExportWriteWay.SelectedValue as CommonDataForComboBox;
             if (_selectValue == null)
             {
-                MessageBox.Show("omboBoxForExportConfigDealWay 无法转化为 CommonDataForComboBox ，请检查", "错误");
                 return;
             }
 
@@ -245,18 +247,19 @@ namespace ExcelTool
 
         private void DataViewConfigForExportFile_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            // 点击了编辑按钮，弹出编辑相关
+            if (mKeyList == null || mKeyList.Count < 1 || e.RowIndex >= mKeyList.Count)
+            {
+                MessageBox.Show("ColumIndexForSetConnect 下标无效，请检查", "错误");
+                return;
+            }
+
             var _columIndex = e.ColumnIndex;
+            var _targetKey = mKeyList[e.RowIndex];
             switch (_columIndex)
             {
                 case mColumIndexForSetConnect:
                 {
-                    // 点击了编辑按钮，弹出编辑相关
-                    if (mKeyList == null || mKeyList.Count < 1 || e.RowIndex >= mKeyList.Count)
-                    {
-                        MessageBox.Show("ColumIndexForSetConnect 下标无效，请检查", "错误");
-                        return;
-                    }
-                    var _targetKey = mKeyList[e.RowIndex];
                     KeyConnectEditForm _form = new KeyConnectEditForm();
                     _form.InitData(_targetKey);
                     if (_form.ShowDialog() == DialogResult.OK)
@@ -272,10 +275,14 @@ namespace ExcelTool
                 }
                 case mColumIndexForSetIgnore:
                 {
+                    var _value = (bool)DataViewConfigForExportFile.Rows[e.RowIndex].Cells[e.ColumnIndex].EditedFormattedValue;
+                    _targetKey.IsIgnore = _value;
                     break;
                 }
                 case mColumIndexForIsMainKey:
                 {
+                    var _value = (bool)DataViewConfigForExportFile.Rows[e.RowIndex].Cells[e.ColumnIndex].EditedFormattedValue;
+                    _targetKey.IsMainKey = _value;
                     break;
                 }
             }

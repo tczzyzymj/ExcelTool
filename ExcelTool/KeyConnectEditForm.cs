@@ -59,8 +59,9 @@ namespace ExcelTool
             ComboBoxForLoadedFile.ValueMember = "DisplayIndex";
             ComboBoxForLoadedFile.DisplayMember = "DisplayName";
             ComboBoxForLoadedFile.EndUpdate();
+            ComboBoxForLoadedFile.SelectedIndex = 0;
 
-            InternalRefreshForKey();
+            this.InternalRefreshSheetComboBox();
         }
 
         private void DataViewForKeyConfig_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -159,25 +160,16 @@ namespace ExcelTool
                     return;
                 }
 
-                this.ComboBoxForLoadedFile.SelectedIndex = _index;
-                InternalRefreshSheetComboBox();
-                InternalRefreshForKey();
+                ComboBoxForLoadedFile.SelectedIndex = _index;
             }
-        }
-
-        private void ComboBoxForLoadedFile_SelectionChangeCommitted(object sender, EventArgs e)
-        {
-            var _dataList = TableDataManager.Instance().GetDataList();
-            var _index = this.ComboBoxForLoadedFile.SelectedIndex;
-            mSelectTargetTable = _dataList[_index];
-            mSelectSheet = mSelectTargetTable.GetWorkSheetByIndex(0);
-            InternalRefreshSheetComboBox();
-            InternalRefreshForKey();
         }
 
         private void ComboBoxForLoadedFile_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            var _dataList = TableDataManager.Instance().GetDataList();
+            var _index = this.ComboBoxForLoadedFile.SelectedIndex;
+            mSelectTargetTable = _dataList[_index];
+            ComboBoxForWorkSheet.SelectedIndex = 0;
         }
 
 
@@ -192,20 +184,14 @@ namespace ExcelTool
             ComboBoxForWorkSheet.DataSource = _sheetList;
             ComboBoxForWorkSheet.ValueMember = "IndexInListForShow";
             ComboBoxForWorkSheet.DisplayMember = "DisplayName";
-            ComboBoxForWorkSheet.SelectedIndex = 0;
             ComboBoxForWorkSheet.EndUpdate();
-        }
-
-
-        private void ComboBoxForWorkSheet_SelectionChangeCommitted(object sender, EventArgs e)
-        {
-            mSelectSheet = mSelectTargetTable?.GetWorkSheetByIndex(this.ComboBoxForWorkSheet.SelectedIndex);
-            InternalRefreshForKey();
+            ComboBoxForWorkSheet.SelectedIndex = 0;
         }
 
         private void ComboBoxForWorkSheet_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            mSelectSheet = mSelectTargetTable?.GetWorkSheetByIndex(this.ComboBoxForWorkSheet.SelectedIndex);
+            InternalRefreshForKey();
         }
 
         private bool InternalRefreshForKey()

@@ -8,10 +8,11 @@ namespace ExcelTool
 {
     internal class CSVSheetData : CommonWorkSheetData
     {
+        private string[]? mSheetData = null;
         protected override bool InternalInitWithKey(object sheetData)
         {
-            var _allData = sheetData as string[];
-            if (_allData == null)
+            mSheetData = sheetData as string[];
+            if (mSheetData == null)
             {
                 MessageBox.Show("传入的数据为空，请检查！", "错误");
                 return false;
@@ -19,7 +20,7 @@ namespace ExcelTool
 
             // 这里是 key，初始化的时候只初始化一下 key，内容放到后面的解析去做
             {
-                var _splitArray = _allData[0].Split(',');
+                var _splitArray = mSheetData[0].Split(',');
 
                 for (int _i = 0; _i < _splitArray.Length; ++_i)
                 {
@@ -32,6 +33,48 @@ namespace ExcelTool
 
         protected override bool InternalLoadAllCellData()
         {
+            if (mHasLoadAllCellData)
+            {
+                return true;
+            }
+
+            var _ownerTable = GetOwnerTable();
+            if (_ownerTable == null)
+            {
+                MessageBox.Show("InternalLoadAllCellData 无法获取父 Table ，请检查！", "错误");
+                return false;
+            }
+
+            if (mSheetData == null)
+            {
+                MessageBox.Show("InternalLoadAllCellData 无法获取 SheetData，请检查！", "错误");
+                return false;
+            }
+
+            var _contentStartRow = _ownerTable.GetContentStartRowIndex();
+            var _keyStartColum = _ownerTable.GetKeyStartColmIndex();
+
+            mCellData2DList = new List<List<CellValueData>>(mSheetData.Length - 4);
+
+            for (int _row = _contentStartRow; _row < mSheetData.Length; ++_row)
+            {
+                var _newList = new List<CellValueData>();
+                mCellData2DList.Add(_newList);
+
+                var _rowArray = mSheetData[_row].Split(';');
+
+                for (int _colum = _keyStartColum; _colum <= _rowArray.Length; ++_colum)
+                {
+                    var _newCellData = new CellValueData();
+                    _newList.Add(_newCellData);
+                    var _value = _rowArray[_colum];
+                    _newCellData.Init(_value == null ? string.Empty : _value.ToString(), _row, _colum);
+                }
+            }
+
+
+            mHasLoadAllCellData = true;
+
             return true;
         }
     }
