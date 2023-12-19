@@ -269,6 +269,7 @@ namespace ExcelTool
                         // 这里去检测一下，看 key 的引用是否
                         if (!CommonUtil.IsSafeNoCycleReferenceForKey(_targetKey))
                         {
+                            _targetKey.ClearNextConnectKey();
                             return;
                         }
                     }

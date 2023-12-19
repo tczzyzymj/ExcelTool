@@ -76,9 +76,20 @@ namespace ExcelTool
             return true;
         }
 
+        public abstract void WriteData(List<List<CellValueData>> inDataList);
+
+        public abstract void SaveFile();
+
         public bool GetHasInit()
         {
             return mHasInit;
+        }
+
+        public List<List<CellValueData>>? GetFilteredDataList()
+        {
+            var _currentSheet = GetCurrentWorkSheet();
+
+            return _currentSheet?.GetFilteredDataList();
         }
 
         public string? GetFilePath()

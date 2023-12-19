@@ -22,7 +22,7 @@ namespace ExcelTool
             protected set;
         } = string.Empty;
 
-        public abstract bool IsMatchFilter(string content);
+        public abstract bool IsMatchFilter(string? content);
 
         public abstract string GetCompareValue();
 
@@ -54,7 +54,7 @@ namespace ExcelTool
             return CompareValue.ToString();
         }
 
-        public override bool IsMatchFilter(string content)
+        public override bool IsMatchFilter(string? content)
         {
             if (string.IsNullOrEmpty(content))
             {
@@ -121,7 +121,7 @@ namespace ExcelTool
         }
 
         // 注意，如果是字符串比较，那么就认为，只能是equal
-        public override bool IsMatchFilter(string content)
+        public override bool IsMatchFilter(string? content)
         {
             return string.Equals(CompareValue, content);
         }

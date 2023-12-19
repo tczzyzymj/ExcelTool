@@ -24,6 +24,7 @@ namespace ExcelTool
         public KeyConnectEditForm()
         {
             InitializeComponent();
+            this.DataViewForKeyConfig.AllowUserToAddRows = false;
         }
 
         public bool InitData(KeyData targetKey)
@@ -52,14 +53,21 @@ namespace ExcelTool
             // 这里先默认选择一下加载的源数据文件
             mSelectTargetTable = TableDataManager.Instance().GetSourceFileData();
 
-            // 这里去加载
-            ComboBoxForLoadedFile.BeginUpdate();
-            var _dataList = TableDataManager.Instance().GetDataList();
-            ComboBoxForLoadedFile.DataSource = _dataList;
-            ComboBoxForLoadedFile.ValueMember = "DisplayIndex";
-            ComboBoxForLoadedFile.DisplayMember = "DisplayName";
-            ComboBoxForLoadedFile.EndUpdate();
-            ComboBoxForLoadedFile.SelectedIndex = 0;
+            // 这里为 file combobox 的已加载文件做显示
+            {
+                ComboBoxForLoadedFile.BeginUpdate();
+                var _dataList = TableDataManager.Instance().GetDataList();
+
+                ComboBoxForLoadedFile.DataSource = _dataList;
+                ComboBoxForLoadedFile.ValueMember = "DisplayIndex";
+                ComboBoxForLoadedFile.DisplayMember = "DisplayName";
+                if (_dataList != null && _dataList.Count > 0)
+                {
+                    ComboBoxForLoadedFile.SelectedIndex = 0;
+                }
+
+                ComboBoxForLoadedFile.EndUpdate();
+            }
 
             this.InternalRefreshSheetComboBox();
         }
@@ -76,12 +84,20 @@ namespace ExcelTool
                     }
 
                     KeyConnectEditForm _newForm = new KeyConnectEditForm();
-                    _newForm.InitData(mKeyDataList[e.RowIndex]);
+                    var _targetKey = mKeyDataList[e.RowIndex];
+                    _newForm.InitData(_targetKey);
                     if (_newForm.ShowDialog(this) == DialogResult.OK)
                     {
-                        CommonUtil.IsSafeNoCycleReferenceForKey(mKeyDataList[e.RowIndex]);
-                        var _cell = DataViewForKeyConfig.Rows[e.RowIndex].Cells[mColumIndexForConnectInfo];
-                        this.DataViewForKeyConfig.UpdateCellValue(mColumIndexForConnectInfo, e.RowIndex);
+                        if (!CommonUtil.IsSafeNoCycleReferenceForKey(mKeyDataList[e.RowIndex]))
+                        {
+                            _targetKey.ClearNextConnectKey();
+                        }
+                        else
+                        {
+                            var _cell = DataViewForKeyConfig.Rows[e.RowIndex].Cells[mColumIndexForConnectInfo];
+                            _cell.Value = _targetKey.GetConnectInfo();
+                            this.DataViewForKeyConfig.UpdateCellValue(mColumIndexForConnectInfo, e.RowIndex);
+                        }
                     }
                     break;
                 }
@@ -169,9 +185,8 @@ namespace ExcelTool
             var _dataList = TableDataManager.Instance().GetDataList();
             var _index = this.ComboBoxForLoadedFile.SelectedIndex;
             mSelectTargetTable = _dataList[_index];
-            ComboBoxForWorkSheet.SelectedIndex = 0;
+            InternalRefreshSheetComboBox();
         }
-
 
         private void InternalRefreshSheetComboBox()
         {
@@ -184,8 +199,8 @@ namespace ExcelTool
             ComboBoxForWorkSheet.DataSource = _sheetList;
             ComboBoxForWorkSheet.ValueMember = "IndexInListForShow";
             ComboBoxForWorkSheet.DisplayMember = "DisplayName";
-            ComboBoxForWorkSheet.EndUpdate();
             ComboBoxForWorkSheet.SelectedIndex = 0;
+            ComboBoxForWorkSheet.EndUpdate();
         }
 
         private void ComboBoxForWorkSheet_SelectedIndexChanged(object sender, EventArgs e)
@@ -220,6 +235,12 @@ namespace ExcelTool
             mKeyDataList = _keyList;
 
             return true;
+        }
+
+        private void BtnFinishConfig_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
     }
 }

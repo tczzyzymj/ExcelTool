@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,7 +45,7 @@ namespace ExcelTool
 
                 for (int _i = _ownerTable.GetKeyStartColmIndex(); _i < _splitArray.Length; ++_i)
                 {
-                    AddNewKeyData(_i, _i, _splitArray[_i]);
+                    AddNewKeyData(_i - _ownerTable.GetKeyStartColmIndex(), _i, _splitArray[_i]);
                 }
             }
 
@@ -60,7 +61,7 @@ namespace ExcelTool
                 return true;
             }
 
-            var _ownerTable = GetOwnerTable();
+            var _ownerTable = GetOwnerTable() as CSVFileData;
             if (_ownerTable == null)
             {
                 MessageBox.Show("InternalLoadAllCellData 无法获取父 Table ，请检查！", "错误");
@@ -75,6 +76,12 @@ namespace ExcelTool
 
             var _contentStartRow = _ownerTable.GetContentStartRowIndex();
             var _keyStartColum = _ownerTable.GetKeyStartColmIndex();
+            var _splitSymbol = _ownerTable.SplitSymbol;
+            var _IDIndex = _ownerTable.IDIndex;
+
+            StringBuilder _errorMsgBuilder = new StringBuilder();
+            mAllDataMap.Clear();
+            mCellData2DList?.Clear();
 
             mCellData2DList = new List<List<CellValueData>>(mSheetData.Length - 4);
 
@@ -83,17 +90,44 @@ namespace ExcelTool
                 var _newList = new List<CellValueData>();
                 mCellData2DList.Add(_newList);
 
-                var _rowArray = mSheetData[_row].Split(',');
+                var _rowArray = mSheetData[_row].Split(_splitSymbol);
 
                 for (int _colum = _keyStartColum; _colum <= _rowArray.Length; ++_colum)
                 {
                     var _newCellData = new CellValueData();
                     _newList.Add(_newCellData);
                     var _value = _rowArray[_colum];
-                    _newCellData.Init(_value == null ? string.Empty : _value.ToString(), _row, _colum);
+                    _newCellData.Init(
+                        _value.ToString(),
+                        _row,
+                        _colum,
+                        _row - _contentStartRow,
+                        _colum - _keyStartColum,
+                        mKeyDataList[_colum - _keyStartColum]
+                    );
+
+                    if (_colum == _IDIndex)
+                    {
+                        if (int.TryParse(_value, out var _targetKeyID))
+                        {
+                            if (mAllDataMap.ContainsKey(_targetKeyID))
+                            {
+                                _errorMsgBuilder.Append($"存在相同的KEY：{_targetKeyID} 请检查");
+                                _errorMsgBuilder.Append("\r\n");
+                            }
+                            else
+                            {
+                                mAllDataMap.Add(_targetKeyID, _newList);
+                            }
+                        }
+                        else
+                        {
+                            _errorMsgBuilder.Append($"ID 列无法解析为 int ，请检查：{_value?.ToString()} 请检查");
+                            _errorMsgBuilder.Append("\r\n");
+                        }
+                    }
                 }
             }
-
 
             mHasLoadAllCellData = true;
 

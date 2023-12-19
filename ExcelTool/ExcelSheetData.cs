@@ -99,10 +99,17 @@ namespace ExcelTool
                 return false;
             }
 
+            mAllDataMap.Clear();
+            mCellData2DList?.Clear();
+
             var _contentStartRow = _ownerTable.GetContentStartRowIndex();
             var _keyStartColum = _ownerTable.GetKeyStartColmIndex();
 
             mCellData2DList = new List<List<CellValueData>>(mSheetData.Dimension.Rows - 4);
+
+            var _IDIndex = _ownerTable.IDIndex;
+
+            StringBuilder _errorMsgBuilder = new StringBuilder();
 
             for (int _row = _contentStartRow; _row <= mSheetData.Dimension.Rows; ++_row)
             {
@@ -114,8 +121,42 @@ namespace ExcelTool
                     var _newCellData = new CellValueData();
                     _newList.Add(_newCellData);
                     var _value = mSheetData.Cells[_row, _colum].Value;
-                    _newCellData.Init(_value == null ? string.Empty : _value.ToString(), _row, _colum);
+                    _newCellData.Init(
+                        _value == null ? string.Empty : _value.ToString(),
+                        _row,
+                        _colum,
+                        _row - _contentStartRow,
+                        _colum - _keyStartColum,
+                        mKeyDataList[_colum - _keyStartColum]
+                    );
+
+                    if (_colum == _IDIndex)
+                    {
+                        if (int.TryParse(_value?.ToString(), out var _targetKeyID))
+                        {
+                            if (mAllDataMap.ContainsKey(_targetKeyID))
+                            {
+                                _errorMsgBuilder.Append($"存在相同的KEY：{_targetKeyID} 请检查");
+                                _errorMsgBuilder.Append("\r\n");
+                            }
+                            else
+                            {
+                                mAllDataMap.Add(_targetKeyID, _newList);
+                            }
+                        }
+                        else
+                        {
+                            _errorMsgBuilder.Append($"ID 列无法解析为 int ，请检查：{_value?.ToString()} 请检查");
+                            _errorMsgBuilder.Append("\r\n");
+                        }
+                    }
                 }
+            }
+
+            var _errorMsg = _errorMsgBuilder.ToString();
+            if (!string.IsNullOrEmpty(_errorMsg))
+            {
+                MessageBox.Show(_errorMsg, "加载有错");
             }
 
             mHasLoadAllCellData = true;

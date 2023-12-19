@@ -20,6 +20,11 @@ namespace ExcelTool
 
         protected List<List<CellValueData>>? mCellData2DList = null; // 1维 是行， 2维是列
 
+        /// <summary>
+        /// 这里是通过 KEY 可以索引的
+        /// </summary>
+        protected Dictionary<int, List<CellValueData>> mAllDataMap = new Dictionary<int, List<CellValueData>>();
+
         protected string mSheetName = string.Empty;
 
         public int IndexInListForShow
@@ -40,6 +45,48 @@ namespace ExcelTool
         public int GetIndexInFileData()
         {
             return mIndexInFileData;
+        }
+
+        public List<List<CellValueData>>? GetFilteredDataList()
+        {
+            if (mCellData2DList == null)
+            {
+                return null;
+            }
+
+            List<List<CellValueData>> _result = new List<List<CellValueData>>(mCellData2DList.Count);
+
+            var _keyDataList = GetKeyListData();
+            List<KeyData> _filterKeyData = new List<KeyData>(_keyDataList.Count);
+            for (int i = 0; i < _keyDataList.Count; ++i)
+            {
+                if (_keyDataList[i].GetFilterFuncList().Count > 0)
+                {
+                    _filterKeyData.Add(_keyDataList[i]);
+                }
+            }
+
+            for (int _row = 0; _row < mCellData2DList.Count; ++_row)
+            {
+                var _rowData = mCellData2DList[_row];
+                bool _match = true;
+                for (int i = 0; i < _filterKeyData.Count; ++i)
+                {
+                    if (!_filterKeyData[i].IsMatchFilter(_rowData[_filterKeyData[i].GetKeyIndexInList()].GetCellValue()))
+                    {
+                        _match = false;
+
+                        break;
+                    }
+                }
+
+                if (_match)
+                {
+                    _result.Add(_rowData);
+                }
+            }
+
+            return _result;
         }
 
         public virtual void ReloadKey()

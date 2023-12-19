@@ -54,6 +54,7 @@
             TextBoxSplitSymbol = new TextBox();
             LableForSplitSymbol = new Label();
             PanelForConfigs = new Panel();
+            LabelForNotice = new Label();
             BtnReloadKey = new Button();
             ((System.ComponentModel.ISupportInitialize)DataGridViewForKeyFilter).BeginInit();
             PanelForConfigs.SuspendLayout();
@@ -73,7 +74,7 @@
             // TextBoxForContentStartRow
             // 
             TextBoxForContentStartRow.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxForContentStartRow.Location = new Point(570, 19);
+            TextBoxForContentStartRow.Location = new Point(570, 52);
             TextBoxForContentStartRow.Name = "TextBoxForContentStartRow";
             TextBoxForContentStartRow.RightToLeft = RightToLeft.Yes;
             TextBoxForContentStartRow.Size = new Size(39, 28);
@@ -86,7 +87,7 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label3.Location = new Point(478, 22);
+            label3.Location = new Point(478, 55);
             label3.Name = "label3";
             label3.Size = new Size(90, 21);
             label3.TabIndex = 32;
@@ -95,7 +96,7 @@
             // TextBoxForKeyStartColm
             // 
             TextBoxForKeyStartColm.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxForKeyStartColm.Location = new Point(410, 19);
+            TextBoxForKeyStartColm.Location = new Point(410, 52);
             TextBoxForKeyStartColm.Name = "TextBoxForKeyStartColm";
             TextBoxForKeyStartColm.RightToLeft = RightToLeft.Yes;
             TextBoxForKeyStartColm.Size = new Size(39, 28);
@@ -108,7 +109,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label2.Location = new Point(323, 22);
+            label2.Location = new Point(323, 55);
             label2.Name = "label2";
             label2.Size = new Size(85, 21);
             label2.TabIndex = 30;
@@ -117,7 +118,7 @@
             // TextBoxForKeyStartRow
             // 
             TextBoxForKeyStartRow.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxForKeyStartRow.Location = new Point(253, 19);
+            TextBoxForKeyStartRow.Location = new Point(253, 52);
             TextBoxForKeyStartRow.Name = "TextBoxForKeyStartRow";
             TextBoxForKeyStartRow.RightToLeft = RightToLeft.Yes;
             TextBoxForKeyStartRow.Size = new Size(39, 28);
@@ -130,7 +131,7 @@
             // 
             LableKeyStartRowIndex.AutoSize = true;
             LableKeyStartRowIndex.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            LableKeyStartRowIndex.Location = new Point(166, 22);
+            LableKeyStartRowIndex.Location = new Point(166, 55);
             LableKeyStartRowIndex.Name = "LableKeyStartRowIndex";
             LableKeyStartRowIndex.Size = new Size(85, 21);
             LableKeyStartRowIndex.TabIndex = 28;
@@ -180,7 +181,7 @@
             // ComboBoxForSelectSheet
             // 
             ComboBoxForSelectSheet.FormattingEnabled = true;
-            ComboBoxForSelectSheet.Location = new Point(104, 73);
+            ComboBoxForSelectSheet.Location = new Point(104, 63);
             ComboBoxForSelectSheet.Name = "ComboBoxForSelectSheet";
             ComboBoxForSelectSheet.Size = new Size(121, 25);
             ComboBoxForSelectSheet.TabIndex = 14;
@@ -190,7 +191,7 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label4.Location = new Point(15, 75);
+            label4.Location = new Point(15, 65);
             label4.Name = "label4";
             label4.Size = new Size(83, 21);
             label4.TabIndex = 13;
@@ -267,7 +268,7 @@
             // TextBoxForIDColumIndex
             // 
             TextBoxForIDColumIndex.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxForIDColumIndex.Location = new Point(89, 19);
+            TextBoxForIDColumIndex.Location = new Point(89, 52);
             TextBoxForIDColumIndex.Name = "TextBoxForIDColumIndex";
             TextBoxForIDColumIndex.RightToLeft = RightToLeft.Yes;
             TextBoxForIDColumIndex.Size = new Size(39, 28);
@@ -280,7 +281,7 @@
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label6.Location = new Point(3, 22);
+            label6.Location = new Point(3, 55);
             label6.Name = "label6";
             label6.Size = new Size(75, 21);
             label6.TabIndex = 40;
@@ -289,7 +290,7 @@
             // TextBoxSplitSymbol
             // 
             TextBoxSplitSymbol.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxSplitSymbol.Location = new Point(724, 19);
+            TextBoxSplitSymbol.Location = new Point(724, 52);
             TextBoxSplitSymbol.Name = "TextBoxSplitSymbol";
             TextBoxSplitSymbol.RightToLeft = RightToLeft.Yes;
             TextBoxSplitSymbol.Size = new Size(39, 28);
@@ -301,7 +302,7 @@
             // 
             LableForSplitSymbol.AutoSize = true;
             LableForSplitSymbol.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            LableForSplitSymbol.Location = new Point(653, 22);
+            LableForSplitSymbol.Location = new Point(653, 55);
             LableForSplitSymbol.Name = "LableForSplitSymbol";
             LableForSplitSymbol.Size = new Size(58, 21);
             LableForSplitSymbol.TabIndex = 42;
@@ -309,6 +310,7 @@
             // 
             // PanelForConfigs
             // 
+            PanelForConfigs.Controls.Add(LabelForNotice);
             PanelForConfigs.Controls.Add(TextBoxForIDColumIndex);
             PanelForConfigs.Controls.Add(TextBoxSplitSymbol);
             PanelForConfigs.Controls.Add(LableKeyStartRowIndex);
@@ -319,10 +321,20 @@
             PanelForConfigs.Controls.Add(TextBoxForKeyStartColm);
             PanelForConfigs.Controls.Add(label3);
             PanelForConfigs.Controls.Add(TextBoxForContentStartRow);
-            PanelForConfigs.Location = new Point(13, 118);
+            PanelForConfigs.Location = new Point(12, 93);
             PanelForConfigs.Name = "PanelForConfigs";
-            PanelForConfigs.Size = new Size(768, 62);
+            PanelForConfigs.Size = new Size(768, 89);
             PanelForConfigs.TabIndex = 44;
+            // 
+            // LabelForNotice
+            // 
+            LabelForNotice.AutoSize = true;
+            LabelForNotice.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            LabelForNotice.Location = new Point(4, 20);
+            LabelForNotice.Name = "LabelForNotice";
+            LabelForNotice.Size = new Size(314, 21);
+            LabelForNotice.TabIndex = 46;
+            LabelForNotice.Text = "注意，所选文件不同，下标开始数字也不同";
             // 
             // BtnReloadKey
             // 
@@ -393,5 +405,6 @@
         private Label LableForSplitSymbol;
         private Panel PanelForConfigs;
         private Button BtnReloadKey;
+        private Label LabelForNotice;
     }
 }

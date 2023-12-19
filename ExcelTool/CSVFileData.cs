@@ -28,6 +28,14 @@ namespace ExcelTool
             set;
         } = ",";
 
+        public override void WriteData(List<List<CellValueData>> inDataList)
+        {
+        }
+
+        public override void SaveFile()
+        {
+        }
+
         public override bool InternalLoadFile(string absolutePath)
         {
             mAllDataArray = File.ReadAllLines(absolutePath);

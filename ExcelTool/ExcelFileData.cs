@@ -30,6 +30,15 @@ namespace ExcelTool
             CloseFile();
         }
 
+        public override void WriteData(List<List<CellValueData>> inDataList)
+        {
+        }
+
+        public override void SaveFile()
+        {
+            mExcelPackage?.Save();
+        }
+
         // 这里只先加载一下 sheet
         public override bool InternalLoadFile(string absolutePath)
         {
@@ -86,10 +95,6 @@ namespace ExcelTool
             mExcelPackage?.Dispose();
         }
 
-        public void SaveFile()
-        {
-            mExcelPackage?.Save();
-        }
 
         public override string GetFileName(bool isFull)
         {

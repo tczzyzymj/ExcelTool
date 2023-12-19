@@ -8,15 +8,18 @@ namespace ExcelTool
 {
     public class KeyData
     {
-        private int mKeyIndexInList = 0; // 外部用的
+        // 下标为0，在 worksheet 的 keydataList 里面的下标
+        private int mKeyColumIndexInList = 0;
 
         private string mKeyName = string.Empty;
 
-        private int mKeyIndexInSheetData = 1; // 注意，这个是内部用的，因为 excel 的数据是从下标1开始的
+        // 注意，这个是内部用的，因为 excel 的数据是从下标1开始的
+        private int mKeyColumIndexInSheetData = 1;
 
-        private int mKeyIndexForShow = 0;
+        private int mKeyColumIndexForShow = 0;
 
-        private List<FilterFuncBase> mFilterFuncList = new List<FilterFuncBase>(); // 其实这个是给源文件用的，其他的目前用不到
+        // 目前源文件 source file 用，其他的目前用不到，用来筛选数据
+        private List<FilterFuncBase> mFilterFuncList = new List<FilterFuncBase>();
 
         private WeakReference<KeyData>? mNextConnectKey = null; // 要避免循环引用，是基于表格的，每次设置关联之后，会检测一次
 
@@ -47,7 +50,7 @@ namespace ExcelTool
         {
             get;
             set;
-        }
+        } = string.Empty;
 
         /// <summary>
         /// 关联的 Key 下标，用于序列化
@@ -65,25 +68,48 @@ namespace ExcelTool
         {
             get;
             set;
-        }
+        } = string.Empty;
 
-        public void Init(int indexForShow, int indexInSheetData, string nameValue, WeakReference<CommonWorkSheetData> ownerSheet)
+        public void Init(
+            int indexForShow,
+            int indexInSheetData,
+            string nameValue,
+            WeakReference<CommonWorkSheetData> ownerSheet
+        )
         {
-            mKeyIndexInList = indexForShow;
+            mKeyColumIndexInList = indexForShow;
             mKeyName = nameValue;
-            mKeyIndexInSheetData = indexInSheetData;
-            mKeyIndexForShow = mKeyIndexInList + 1;
+            mKeyColumIndexInSheetData = indexInSheetData;
+            mKeyColumIndexForShow = mKeyColumIndexInList + 1;
             mOwnerSheet = ownerSheet;
         }
 
         public int GetKeyIndexInList()
         {
-            return mKeyIndexInList;
+            return mKeyColumIndexInList;
+        }
+
+        public bool IsMatchFilter(string? content)
+        {
+            if (mFilterFuncList.Count < 1)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < mFilterFuncList.Count; ++i)
+            {
+                if (!mFilterFuncList[i].IsMatchFilter(content))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public int GetKeyIndexForShow()
         {
-            return mKeyIndexForShow;
+            return mKeyColumIndexForShow;
         }
 
         public string GetKeyName()
@@ -93,7 +119,7 @@ namespace ExcelTool
 
         public int GetKeyIndexInSheetData()
         {
-            return mKeyIndexInSheetData;
+            return mKeyColumIndexInSheetData;
         }
 
         public List<FilterFuncBase> GetFilterFuncList()
@@ -140,7 +166,7 @@ namespace ExcelTool
             return string.Empty;
         }
 
-        public string GetRelateInfo()
+        public string GetConnectInfo()
         {
             if (mNextConnectKey == null)
             {
@@ -162,11 +188,6 @@ namespace ExcelTool
             {
                 MessageBox.Show("尝试 SetNextConnectKey，但传入的数据为空，请检查!", "错误");
                 return false;
-            }
-
-            // 这里要去检查一下
-            while (_tempConnectKey != null)
-            {
             }
 
             mNextConnectKey = connectKey;

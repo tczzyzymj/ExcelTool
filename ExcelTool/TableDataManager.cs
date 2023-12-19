@@ -74,6 +74,57 @@ namespace ExcelTool
             return null;
         }
 
+        public void StartExportData()
+        {
+            var _exportFile = GetExportFileData();
+            if (_exportFile == null)
+            {
+                MessageBox.Show("StartExportData 但是 _exportFile 文件没有配置，请检查", "错误");
+                return;
+            }
+
+            var _keyListData = _exportFile.GetCurrentWorkSheet()?.GetKeyListData();
+            if (_keyListData == null)
+            {
+                MessageBox.Show("无法获取 _exportFile 当前 Sheet 的 Key数据，请检查", "错误");
+                return;
+            }
+
+            bool _anyConnect = false;
+
+            // 这里检查一下，看是否至少有一个是设置关联了的
+            for (int i = 0; i < _keyListData.Count; ++i)
+            {
+                if (_keyListData[i].GetNextConnectKey() != null)
+                {
+                    _anyConnect = true;
+                    break;
+                }
+            }
+
+            if (!_anyConnect)
+            {
+                MessageBox.Show("导出文件至少要设置一个关联数据!", "错误");
+                return;
+            }
+
+            var _sourceFile = GetSourceFileData();
+            if (_sourceFile == null)
+            {
+                MessageBox.Show("StartExportData 但是 _sourceFile 文件没有配置，请检查", "错误");
+                return;
+            }
+
+            var _inDataList = _sourceFile.GetFilteredDataList();
+            if (_inDataList == null || _inDataList.Count < 1)
+            {
+                MessageBox.Show("过滤后的源数据为空，没有写入的必要，请检查一下", "提示");
+                return;
+            }
+
+            _exportFile.WriteData(_inDataList);
+        }
+
         public void TrySetExportTargetFile(TableBaseData targetData)
         {
             mExportTargetFile = targetData;
@@ -93,7 +144,27 @@ namespace ExcelTool
 
         public TableBaseData? TryChooseSourceFile(string absoluteFilePath)
         {
-            mSourceFile = TryLoadFile(absoluteFilePath, false);
+            var _tempFile = TryLoadFile(absoluteFilePath, true);
+            if (_tempFile == null)
+            {
+                return null;
+            }
+
+            // 这里是确保 SourceFile 一定在第一个
+            if (mSourceFile != null)
+            {
+                // 如果原来已经有了
+                mDataList.Remove(_tempFile);
+                List<TableBaseData> _tempList = new List<TableBaseData>()
+                {
+                    _tempFile
+                };
+
+                _tempList.AddRange(mDataList);
+                mDataList = _tempList;
+            }
+
+            mSourceFile = _tempFile;
 
             return mSourceFile;
         }
@@ -107,6 +178,7 @@ namespace ExcelTool
         {
             return mSourceFile;
         }
+
 
         public TableBaseData? TryLoadFile(string absoluteFilePath, bool checkExistAndAdd)
         {

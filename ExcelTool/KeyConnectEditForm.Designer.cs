@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
             BtnLoadNewFile = new Button();
             ComboBoxForLoadedFile = new ComboBox();
             label1 = new Label();
@@ -41,7 +41,7 @@
             IsDataSource = new DataGridViewCheckBoxColumn();
             label2 = new Label();
             LabelForFromTable = new Label();
-            button1 = new Button();
+            BtnFinishConfig = new Button();
             label3 = new Label();
             ComboBoxForWorkSheet = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)DataViewForKeyConfig).BeginInit();
@@ -99,8 +99,8 @@
             // 
             // KeyName
             // 
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            KeyName.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            KeyName.DefaultCellStyle = dataGridViewCellStyle5;
             KeyName.FillWeight = 160F;
             KeyName.HeaderText = "Key名字";
             KeyName.Name = "KeyName";
@@ -110,8 +110,8 @@
             // RelatInfo
             // 
             RelatInfo.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            RelatInfo.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            RelatInfo.DefaultCellStyle = dataGridViewCellStyle6;
             RelatInfo.FillWeight = 160F;
             RelatInfo.HeaderText = "关联信息";
             RelatInfo.Name = "RelatInfo";
@@ -134,7 +134,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label2.Location = new Point(23, 22);
+            label2.Location = new Point(13, 22);
             label2.Name = "label2";
             label2.Size = new Size(90, 21);
             label2.TabIndex = 21;
@@ -144,21 +144,22 @@
             // 
             LabelForFromTable.AutoSize = true;
             LabelForFromTable.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            LabelForFromTable.Location = new Point(124, 22);
+            LabelForFromTable.Location = new Point(91, 22);
             LabelForFromTable.Name = "LabelForFromTable";
             LabelForFromTable.Size = new Size(74, 21);
             LabelForFromTable.TabIndex = 22;
             LabelForFromTable.Text = "目标文件";
             // 
-            // button1
+            // BtnFinishConfig
             // 
-            button1.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            button1.Location = new Point(878, 542);
-            button1.Name = "button1";
-            button1.Size = new Size(130, 30);
-            button1.TabIndex = 23;
-            button1.Text = "设置完成";
-            button1.UseVisualStyleBackColor = true;
+            BtnFinishConfig.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            BtnFinishConfig.Location = new Point(878, 542);
+            BtnFinishConfig.Name = "BtnFinishConfig";
+            BtnFinishConfig.Size = new Size(130, 30);
+            BtnFinishConfig.TabIndex = 23;
+            BtnFinishConfig.Text = "设置完成";
+            BtnFinishConfig.UseVisualStyleBackColor = true;
+            BtnFinishConfig.Click += BtnFinishConfig_Click;
             // 
             // label3
             // 
@@ -187,7 +188,7 @@
             ClientSize = new Size(1020, 584);
             Controls.Add(label3);
             Controls.Add(ComboBoxForWorkSheet);
-            Controls.Add(button1);
+            Controls.Add(BtnFinishConfig);
             Controls.Add(LabelForFromTable);
             Controls.Add(label2);
             Controls.Add(DataViewForKeyConfig);
@@ -195,7 +196,7 @@
             Controls.Add(ComboBoxForLoadedFile);
             Controls.Add(BtnLoadNewFile);
             Name = "KeyConnectEditForm";
-            Text = "EditRelateExcelSetting";
+            Text = "KeyConnectEditForm";
             Load += KeyConnectEditForm_Load;
             ((System.ComponentModel.ISupportInitialize)DataViewForKeyConfig).EndInit();
             ResumeLayout(false);
@@ -214,7 +215,7 @@
         private DataGridViewCheckBoxColumn IsDataSource;
         private Label label2;
         private Label LabelForFromTable;
-        private Button button1;
+        private Button BtnFinishConfig;
         private Label label3;
         private ComboBox ComboBoxForWorkSheet;
     }

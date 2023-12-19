@@ -93,7 +93,7 @@ namespace ExcelTool
                 return string.Empty;
             }
 
-            var _result = targetData.GetRelateInfo();
+            var _result = targetData.GetConnectInfo();
 
             for (int i = 0; i < 1000; ++i)
             {

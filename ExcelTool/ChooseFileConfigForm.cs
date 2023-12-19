@@ -94,6 +94,19 @@ namespace ExcelTool
             return "所有文件|*.*";
         }
 
+        private void InternalChangeNotice()
+        {
+            var _targetFile = InternalGetFileData();
+            if (_targetFile is ExcelFileData)
+            {
+                LabelForNotice.Text = "注意，所选文件为 Excel 文件，下标是从 【 1 】开始！！！";
+            }
+            else if (_targetFile is CSVFileData)
+            {
+                LabelForNotice.Text = "注意，所选文件为 CSV 文件，下标是从 【 0 】开始！！！";
+            }
+        }
+
         private void BtnChooseFile_Click(object sender, EventArgs e)
         {
             OpenFileDialog _openfileDialog = new OpenFileDialog();
@@ -124,9 +137,11 @@ namespace ExcelTool
                     return;
                 }
 
+                InternalChangeNotice();
+
                 TextForFilePath.Text = _openfileDialog.FileName;
 
-                PanelForConfigs.Visible = true;
+                PanelForConfigs.Enabled = true;
 
                 TextBoxForKeyStartRow.Text = _targetFile.GetKeyStartRowIndex().ToString();
                 TextBoxForKeyStartColm.Text = _targetFile.GetKeyStartColmIndex().ToString();
@@ -324,7 +339,10 @@ namespace ExcelTool
             var _targetFile = InternalGetFileData();
             if (_targetFile != null)
             {
-                PanelForConfigs.Visible = true;
+                InternalChangeNotice();
+
+                PanelForConfigs.Enabled = true;
+
                 TextBoxForKeyStartRow.Text = _targetFile.GetKeyStartRowIndex().ToString();
                 TextBoxForKeyStartColm.Text = _targetFile.GetKeyStartColmIndex().ToString();
                 TextBoxForContentStartRow.Text = _targetFile.GetContentStartRowIndex().ToString();
@@ -346,7 +364,7 @@ namespace ExcelTool
             }
             else
             {
-                PanelForConfigs.Visible = false;
+                PanelForConfigs.Enabled = false;
             }
 
             InternalInitForSheetComboBox();
