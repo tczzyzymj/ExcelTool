@@ -11,6 +11,12 @@ namespace ExcelTool
     {
         private string[]? mAllDataArray = null;
 
+        public string SplitSymbol
+        {
+            get;
+            set;
+        } = ",";
+
         public override bool InternalLoadFile(string absolutePath)
         {
             mAllDataArray = File.ReadAllLines(absolutePath);
@@ -21,8 +27,13 @@ namespace ExcelTool
             }
 
             var _newSheetData = new CSVSheetData();
+            if (!_newSheetData.Init(new WeakReference<TableBaseData>(this), mAllDataArray, 0, 0, "Sheet"))
+            {
+                return false;
+            }
+
             mWorkSheetList.Add(_newSheetData);
-            _newSheetData.Init(new WeakReference<TableBaseData>(this), mAllDataArray, 0, 0, "Sheet");
+
             mCurrentWorkSheet = _newSheetData;
 
             return true;

@@ -110,14 +110,7 @@ namespace ExcelTool
 
             var _ownerTable = _targetSheet.GetOwnerTable();
 
-            if (_ownerTable == null)
-            {
-                return null;
-            }
-
-            _ownerTable.TryGetTarget(out TableBaseData? _targetTable);
-
-            return _targetTable;
+            return _ownerTable;
         }
 
         public string GetOwnerTableName(bool isFullName)

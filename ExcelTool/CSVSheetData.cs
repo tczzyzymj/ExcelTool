@@ -9,18 +9,26 @@ namespace ExcelTool
     internal class CSVSheetData : CommonWorkSheetData
     {
         private string[]? mSheetData = null;
+
         protected override bool InternalInitWithKey(object sheetData)
         {
             mSheetData = sheetData as string[];
             if (mSheetData == null)
             {
-                MessageBox.Show("传入的数据为空，请检查！", "错误");
+                MessageBox.Show("传入的数据为空，请检查!", "错误");
+                return false;
+            }
+
+            var _ownerTable = GetOwnerTable() as CSVFileData;
+            if (_ownerTable == null)
+            {
+                MessageBox.Show("表格数据为空，请检查!", "错误");
                 return false;
             }
 
             // 这里是 key，初始化的时候只初始化一下 key，内容放到后面的解析去做
             {
-                var _splitArray = mSheetData[0].Split(',');
+                var _splitArray = mSheetData[_ownerTable.GetKeyStartRowIndex()].Split(_ownerTable.SplitSymbol);
 
                 for (int _i = 0; _i < _splitArray.Length; ++_i)
                 {
@@ -61,7 +69,7 @@ namespace ExcelTool
                 var _newList = new List<CellValueData>();
                 mCellData2DList.Add(_newList);
 
-                var _rowArray = mSheetData[_row].Split(';');
+                var _rowArray = mSheetData[_row].Split(',');
 
                 for (int _colum = _keyStartColum; _colum <= _rowArray.Length; ++_colum)
                 {

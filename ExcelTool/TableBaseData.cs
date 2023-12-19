@@ -34,6 +34,15 @@ namespace ExcelTool
 
         protected string mChooseSheetName = string.Empty;
 
+        /// <summary>
+        /// ID的列下标
+        /// </summary>
+        public int IDIndex
+        {
+            get;
+            set;
+        } = 0;
+
         // combobox显示用的index
         public int DisplayIndex
         {

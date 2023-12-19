@@ -50,10 +50,6 @@ namespace ExcelTool
                     return;
                 }
 
-                TextBoxForKeyStartRow_TextChanged(null, null);
-                TextBoxForKeyStartColm_TextChanged(null, null);
-                TextBoxForContentStartRow_TextChanged(null, null);
-
                 TextForFilePath.Text = _openfileDialog.FileName;
                 var _workSheetList = _sourceFile.GetWorkSheetList();
                 if (_workSheetList == null || _workSheetList.Count < 1)
@@ -61,13 +57,42 @@ namespace ExcelTool
                     return;
                 }
 
+                PanelForConfigs.Visible = true;
+
+                if (_sourceFile is ExcelFileData)
+                {
+                    LableForSplitSymbol.Visible = false;
+                    this.TextBoxSplitSymbol.Visible = false;
+
+                    TextBoxForKeyStartRow.Text = "2";
+                    TextBoxForKeyStartColm.Text = "1";
+                    TextBoxForContentStartRow.Text = "4";
+                    TextBoxForIDColumIndex.Text = "1";
+                }
+                else if (_sourceFile is CSVFileData)
+                {
+                    LableForSplitSymbol.Visible = true;
+                    this.TextBoxSplitSymbol.Visible = true;
+
+                    TextBoxForKeyStartRow.Text = "0";
+                    TextBoxForKeyStartColm.Text = "0";
+                    TextBoxForContentStartRow.Text = "3";
+                    TextBoxForIDColumIndex.Text = "0";
+
+                    TextBoxSplitSymbol.Text = ",";
+                }
+
+                TextBoxForKeyStartRow_TextChanged(null, null);
+                TextBoxForKeyStartColm_TextChanged(null, null);
+                TextBoxForContentStartRow_TextChanged(null, null);
+                TextBoxForIDColumIndex_TextChanged(null, null);
+
                 ComboBoxForSelectSheet.BeginUpdate();
                 ComboBoxForSelectSheet.DataSource = _workSheetList;
                 ComboBoxForSelectSheet.ValueMember = "IndexInListForShow";
                 ComboBoxForSelectSheet.DisplayMember = "DisplayName";
                 ComboBoxForSelectSheet.SelectedIndex = 0;
                 ComboBoxForSelectSheet.EndUpdate();
-                InternalProcessOnSheetSelectChanged();
             }
         }
 
@@ -113,11 +138,6 @@ namespace ExcelTool
         }
 
         private void ComboBoxForSelectSheet_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            InternalProcessOnSheetSelectChanged();
-        }
-
-        private void InternalProcessOnSheetSelectChanged()
         {
             var _sourceFile = TableDataManager.Instance().GetSourceFileData();
             var _selectItem = ComboBoxForSelectSheet.SelectedItem as CommonWorkSheetData;
@@ -206,7 +226,6 @@ namespace ExcelTool
 
         private void SourceFileConfigForm_Load(object sender, EventArgs e)
         {
-
             var _owner = this.Owner as ExcelTool;
             if (_owner == null)
             {
@@ -217,10 +236,29 @@ namespace ExcelTool
             var _sourceFile = TableDataManager.Instance().GetSourceFileData();
             if (_sourceFile != null)
             {
+                PanelForConfigs.Visible = true;
                 TextBoxForKeyStartRow.Text = _sourceFile.GetKeyStartRowIndex().ToString();
                 TextBoxForKeyStartColm.Text = _sourceFile.GetKeyStartColmIndex().ToString();
                 TextBoxForContentStartRow.Text = _sourceFile.GetContentStartRowIndex().ToString();
+                TextBoxForIDColumIndex.Text = _sourceFile.IDIndex.ToString();
+
+                if (_sourceFile is CSVFileData _csvFile)
+                {
+                    LableForSplitSymbol.Visible = true;
+                    TextBoxSplitSymbol.Visible = true;
+                    TextBoxSplitSymbol.Text = _csvFile.SplitSymbol;
+                }
+                else
+                {
+                    LableForSplitSymbol.Visible = false;
+                    TextBoxSplitSymbol.Visible = false;
+                }
+
                 TextForFilePath.Text = _sourceFile.GetFilePath();
+            }
+            else
+            {
+                PanelForConfigs.Visible = false;
             }
         }
 
@@ -273,6 +311,34 @@ namespace ExcelTool
         private void BtnFinishConfig_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
+        }
+
+        private void TextBoxSplitSymbol_TextChanged(object sender, EventArgs e)
+        {
+            var _fileData = TableDataManager.Instance().GetSourceFileData() as CSVFileData;
+            if (_fileData != null)
+            {
+                _fileData.SplitSymbol = TextBoxSplitSymbol.Text;
+            }
+        }
+
+        private void TextBoxForIDColumIndex_TextChanged(object sender, EventArgs e)
+        {
+            var _sourceFile = TableDataManager.Instance().GetSourceFileData();
+            if (_sourceFile == null)
+            {
+                MessageBox.Show("无法获取数据， source File 未加载，请检查!", "错误");
+                return;
+            }
+
+            if (int.TryParse(TextBoxForIDColumIndex.Text, out var _targetValue))
+            {
+                _sourceFile.IDIndex = _targetValue;
+            }
+            else
+            {
+                MessageBox.Show("请输入数字");
+            }
         }
     }
 }
