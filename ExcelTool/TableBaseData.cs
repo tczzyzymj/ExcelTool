@@ -23,6 +23,15 @@ namespace ExcelTool
         [JsonProperty]
         protected int mContentStartRowIndex = 4; // 内容选中的行下标，从2开始，认为1是KEY不能小于2
 
+        /// <summary>
+        /// ID的列下标
+        /// </summary>
+        public int IDIndex
+        {
+            get;
+            set;
+        } = 0;
+
         [JsonProperty]
         private int mChooseWorkSheetIndexInList = 0; // 选中的workSheet需要处理的 workdsheet
 
@@ -33,15 +42,6 @@ namespace ExcelTool
         protected int mChooseSheetIndex = 0;
 
         protected string mChooseSheetName = string.Empty;
-
-        /// <summary>
-        /// ID的列下标
-        /// </summary>
-        public int IDIndex
-        {
-            get;
-            set;
-        } = 0;
 
         // combobox显示用的index
         public int DisplayIndex

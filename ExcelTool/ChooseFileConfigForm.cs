@@ -10,9 +10,14 @@ using System.Windows.Forms;
 
 namespace ExcelTool
 {
-    public partial class SourceFileConfigForm : FormBase
+    public partial class ChooseFileConfigForm : FormBase
     {
-        public SourceFileConfigForm()
+        /// <summary>
+        /// 1表示读取的是exportfile , 2 表示读取的是 sourcefile
+        /// </summary>
+        private int mFileType = 0;
+
+        public ChooseFileConfigForm()
         {
             InitializeComponent();
             this.DataGridViewForKeyFilter.AllowUserToAddRows = false;
@@ -26,6 +31,50 @@ namespace ExcelTool
             {
                 return;
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileType">1表示读取的是exportfile , 2 表示读取的是 sourcefile</param>
+        public void SetInitData(int fileType)
+        {
+            mFileType = fileType;
+        }
+
+        private TableBaseData? InternalGetFileData()
+        {
+            switch (mFileType)
+            {
+                case 1:
+                {
+                    return TableDataManager.Instance().GetExportFileData();
+                }
+                case 2:
+                {
+                    return TableDataManager.Instance().GetSourceFileData();
+                }
+            }
+
+            return null;
+        }
+
+        public TableBaseData? InternalLoadFile(string absolutePath)
+        {
+            switch (mFileType)
+            {
+                case 1:
+                {
+                    return TableDataManager.Instance().TryChooseExportFile(absolutePath);
+
+                }
+                case 2:
+                {
+                    return TableDataManager.Instance().TryChooseSourceFile(absolutePath);
+                }
+            }
+
+            return null;
         }
 
         private void BtnChooseFile_Click(object sender, EventArgs e)
@@ -43,15 +92,15 @@ namespace ExcelTool
                     return;
                 }
 
-                var _sourceFile = TableDataManager.Instance().TryChooseSourceFile(_openfileDialog.FileName);
-                if (_sourceFile == null)
+                var _targetFile = InternalLoadFile(_openfileDialog.FileName);
+                if (_targetFile == null)
                 {
                     MessageBox.Show($"加载目标文件：{_openfileDialog.FileName} 出错，请检查!", "错误");
                     return;
                 }
 
                 TextForFilePath.Text = _openfileDialog.FileName;
-                var _workSheetList = _sourceFile.GetWorkSheetList();
+                var _workSheetList = _targetFile.GetWorkSheetList();
                 if (_workSheetList == null || _workSheetList.Count < 1)
                 {
                     return;
@@ -59,33 +108,18 @@ namespace ExcelTool
 
                 PanelForConfigs.Visible = true;
 
-                if (_sourceFile is ExcelFileData)
+                if (_targetFile is ExcelFileData)
                 {
                     LableForSplitSymbol.Visible = false;
                     this.TextBoxSplitSymbol.Visible = false;
-
-                    TextBoxForKeyStartRow.Text = "2";
-                    TextBoxForKeyStartColm.Text = "1";
-                    TextBoxForContentStartRow.Text = "4";
-                    TextBoxForIDColumIndex.Text = "1";
                 }
-                else if (_sourceFile is CSVFileData)
+                else if (_targetFile is CSVFileData)
                 {
                     LableForSplitSymbol.Visible = true;
                     this.TextBoxSplitSymbol.Visible = true;
 
-                    TextBoxForKeyStartRow.Text = "0";
-                    TextBoxForKeyStartColm.Text = "0";
-                    TextBoxForContentStartRow.Text = "3";
-                    TextBoxForIDColumIndex.Text = "0";
-
                     TextBoxSplitSymbol.Text = ",";
                 }
-
-                TextBoxForKeyStartRow_TextChanged(null, null);
-                TextBoxForKeyStartColm_TextChanged(null, null);
-                TextBoxForContentStartRow_TextChanged(null, null);
-                TextBoxForIDColumIndex_TextChanged(null, null);
 
                 ComboBoxForSelectSheet.BeginUpdate();
                 ComboBoxForSelectSheet.DataSource = _workSheetList;
@@ -106,48 +140,48 @@ namespace ExcelTool
 
         private void TextBoxForKeyStartRow_TextChanged(object sender, EventArgs e)
         {
-            var _sourceFile = TableDataManager.Instance().GetSourceFileData();
-            if (_sourceFile == null)
+            var _targetFile = InternalGetFileData();
+            if (_targetFile == null)
             {
                 return;
             }
             int.TryParse(TextBoxForKeyStartRow.Text, out var _value);
-            _sourceFile.SetKeyStartRowIndex(_value);
+            _targetFile.SetKeyStartRowIndex(_value);
         }
 
         private void TextBoxForKeyStartColm_TextChanged(object sender, EventArgs e)
         {
-            var _sourceFile = TableDataManager.Instance().GetSourceFileData();
-            if (_sourceFile == null)
+            var _targetFile = InternalGetFileData();
+            if (_targetFile == null)
             {
                 return;
             }
             int.TryParse(TextBoxForKeyStartColm.Text, out var _value);
-            _sourceFile.SetKeyStartColmIndex(_value);
+            _targetFile.SetKeyStartColmIndex(_value);
         }
 
         private void TextBoxForContentStartRow_TextChanged(object sender, EventArgs e)
         {
-            var _sourceFile = TableDataManager.Instance().GetSourceFileData();
-            if (_sourceFile == null)
+            var _targetFile = InternalGetFileData();
+            if (_targetFile == null)
             {
                 return;
             }
             int.TryParse(TextBoxForContentStartRow.Text, out var _value);
-            _sourceFile.SetContentStartRowIndex(_value);
+            _targetFile.SetContentStartRowIndex(_value);
         }
 
         private void ComboBoxForSelectSheet_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var _sourceFile = TableDataManager.Instance().GetSourceFileData();
+            var _targetFile = InternalGetFileData();
             var _selectItem = ComboBoxForSelectSheet.SelectedItem as CommonWorkSheetData;
-            if (_selectItem == null || _sourceFile == null)
+            if (_selectItem == null || _targetFile == null)
             {
                 MessageBox.Show("当前的 LoadFile 为空，请检查", "错误");
                 return;
             }
 
-            if (!_sourceFile.TryChooseSheet(_selectItem))
+            if (!_targetFile.TryChooseSheet(_selectItem))
             {
                 MessageBox.Show("选择 Sheet 数据失败，请检查文件，看所选 Sheet 是否有数据", "错误");
                 return;
@@ -157,7 +191,7 @@ namespace ExcelTool
 
             // 这里重置一下数据
             // 这里导出 key 供选择
-            var _currentSheet = _sourceFile.GetCurrentWorkSheet();
+            var _currentSheet = _targetFile.GetCurrentWorkSheet();
             if (_currentSheet == null)
             {
                 MessageBox.Show("当前的 Sheet 数据为空，请检查文件", "错误 ");
@@ -181,8 +215,8 @@ namespace ExcelTool
 
         private void DataGridViewForKeyFilter_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            var _sourceFile = TableDataManager.Instance().GetSourceFileData();
-            if (_sourceFile == null)
+            var _targetFile = InternalGetFileData();
+            if (_targetFile == null)
             {
                 return;
             }
@@ -204,7 +238,7 @@ namespace ExcelTool
                 case 3:
                 {
                     // 编辑过滤类型
-                    var _currentSheet = _sourceFile.GetCurrentWorkSheet();
+                    var _currentSheet = _targetFile.GetCurrentWorkSheet();
                     if (_currentSheet != null)
                     {
                         var _keyListData = _currentSheet.GetKeyListData();
@@ -224,7 +258,7 @@ namespace ExcelTool
             }
         }
 
-        private void SourceFileConfigForm_Load(object sender, EventArgs e)
+        private void ChooseFileConfigForm_Load(object sender, EventArgs e)
         {
             var _owner = this.Owner as ExcelTool;
             if (_owner == null)
@@ -233,16 +267,23 @@ namespace ExcelTool
                 MessageBox.Show("父窗口不是 ExcelTool ，请检查!", "错误");
                 return;
             }
-            var _sourceFile = TableDataManager.Instance().GetSourceFileData();
-            if (_sourceFile != null)
+
+            if (mFileType == 1)
+            {
+                this.DataGridViewForKeyFilter.Columns[2].Visible = false;
+                this.DataGridViewForKeyFilter.Columns[3].Visible = false;
+            }
+
+            var _targetFile = InternalGetFileData();
+            if (_targetFile != null)
             {
                 PanelForConfigs.Visible = true;
-                TextBoxForKeyStartRow.Text = _sourceFile.GetKeyStartRowIndex().ToString();
-                TextBoxForKeyStartColm.Text = _sourceFile.GetKeyStartColmIndex().ToString();
-                TextBoxForContentStartRow.Text = _sourceFile.GetContentStartRowIndex().ToString();
-                TextBoxForIDColumIndex.Text = _sourceFile.IDIndex.ToString();
+                TextBoxForKeyStartRow.Text = _targetFile.GetKeyStartRowIndex().ToString();
+                TextBoxForKeyStartColm.Text = _targetFile.GetKeyStartColmIndex().ToString();
+                TextBoxForContentStartRow.Text = _targetFile.GetContentStartRowIndex().ToString();
+                TextBoxForIDColumIndex.Text = _targetFile.IDIndex.ToString();
 
-                if (_sourceFile is CSVFileData _csvFile)
+                if (_targetFile is CSVFileData _csvFile)
                 {
                     LableForSplitSymbol.Visible = true;
                     TextBoxSplitSymbol.Visible = true;
@@ -254,7 +295,7 @@ namespace ExcelTool
                     TextBoxSplitSymbol.Visible = false;
                 }
 
-                TextForFilePath.Text = _sourceFile.GetFilePath();
+                TextForFilePath.Text = _targetFile.GetFilePath();
             }
             else
             {
@@ -264,14 +305,14 @@ namespace ExcelTool
 
         private void BtnSearch_Click(object sender, EventArgs e)
         {
-            var _sourceFile = TableDataManager.Instance().GetSourceFileData();
-            if (_sourceFile == null)
+            var _targetFile = InternalGetFileData();
+            if (_targetFile == null)
             {
                 return;
             }
 
             // 这里导出 key 供选择
-            var _currentSheet = _sourceFile.GetCurrentWorkSheet();
+            var _currentSheet = _targetFile.GetCurrentWorkSheet();
             if (_currentSheet == null)
             {
                 MessageBox.Show("没有 workSheet 数据，请检查", "错误");
@@ -315,7 +356,7 @@ namespace ExcelTool
 
         private void TextBoxSplitSymbol_TextChanged(object sender, EventArgs e)
         {
-            var _fileData = TableDataManager.Instance().GetSourceFileData() as CSVFileData;
+            var _fileData = InternalGetFileData() as CSVFileData;
             if (_fileData != null)
             {
                 _fileData.SplitSymbol = TextBoxSplitSymbol.Text;
@@ -324,8 +365,8 @@ namespace ExcelTool
 
         private void TextBoxForIDColumIndex_TextChanged(object sender, EventArgs e)
         {
-            var _sourceFile = TableDataManager.Instance().GetSourceFileData();
-            if (_sourceFile == null)
+            var _targetFile = InternalGetFileData();
+            if (_targetFile == null)
             {
                 MessageBox.Show("无法获取数据， source File 未加载，请检查!", "错误");
                 return;
@@ -333,7 +374,7 @@ namespace ExcelTool
 
             if (int.TryParse(TextBoxForIDColumIndex.Text, out var _targetValue))
             {
-                _sourceFile.IDIndex = _targetValue;
+                _targetFile.IDIndex = _targetValue;
             }
             else
             {

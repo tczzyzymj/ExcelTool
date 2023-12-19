@@ -1,6 +1,6 @@
 ﻿namespace ExcelTool
 {
-    partial class SourceFileConfigForm
+    partial class ChooseFileConfigForm
     {
         /// <summary>
         /// Required designer variable.
@@ -54,6 +54,7 @@
             TextBoxSplitSymbol = new TextBox();
             LableForSplitSymbol = new Label();
             PanelForConfigs = new Panel();
+            BtnRefreshKey = new Button();
             ((System.ComponentModel.ISupportInitialize)DataGridViewForKeyFilter).BeginInit();
             PanelForConfigs.SuspendLayout();
             SuspendLayout();
@@ -246,7 +247,7 @@
             BtnSearch.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             BtnSearch.Location = new Point(407, 186);
             BtnSearch.Name = "BtnSearch";
-            BtnSearch.Size = new Size(130, 30);
+            BtnSearch.Size = new Size(78, 30);
             BtnSearch.TabIndex = 38;
             BtnSearch.Text = "查找";
             BtnSearch.UseVisualStyleBackColor = true;
@@ -255,9 +256,9 @@
             // BtnReset
             // 
             BtnReset.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            BtnReset.Location = new Point(554, 185);
+            BtnReset.Location = new Point(493, 186);
             BtnReset.Name = "BtnReset";
-            BtnReset.Size = new Size(130, 30);
+            BtnReset.Size = new Size(79, 30);
             BtnReset.TabIndex = 39;
             BtnReset.Text = "重置";
             BtnReset.UseVisualStyleBackColor = true;
@@ -279,7 +280,7 @@
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label6.Location = new Point(5, 22);
+            label6.Location = new Point(3, 22);
             label6.Name = "label6";
             label6.Size = new Size(75, 21);
             label6.TabIndex = 40;
@@ -318,16 +319,27 @@
             PanelForConfigs.Controls.Add(TextBoxForKeyStartColm);
             PanelForConfigs.Controls.Add(label3);
             PanelForConfigs.Controls.Add(TextBoxForContentStartRow);
-            PanelForConfigs.Location = new Point(15, 118);
+            PanelForConfigs.Location = new Point(13, 118);
             PanelForConfigs.Name = "PanelForConfigs";
             PanelForConfigs.Size = new Size(768, 62);
             PanelForConfigs.TabIndex = 44;
             // 
-            // SourceFileConfigForm
+            // BtnRefreshKey
+            // 
+            BtnRefreshKey.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            BtnRefreshKey.Location = new Point(651, 184);
+            BtnRefreshKey.Name = "BtnRefreshKey";
+            BtnRefreshKey.Size = new Size(130, 30);
+            BtnRefreshKey.TabIndex = 45;
+            BtnRefreshKey.Text = "刷新Key数据";
+            BtnRefreshKey.UseVisualStyleBackColor = true;
+            // 
+            // ChooseFileConfigForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(795, 564);
+            Controls.Add(BtnRefreshKey);
             Controls.Add(PanelForConfigs);
             Controls.Add(BtnReset);
             Controls.Add(BtnSearch);
@@ -341,9 +353,9 @@
             Controls.Add(label1);
             Controls.Add(TextForFilePath);
             FormBorderStyle = FormBorderStyle.FixedSingle;
-            Name = "SourceFileConfigForm";
-            Text = "SourceFileConfigForm";
-            Load += SourceFileConfigForm_Load;
+            Name = "ChooseFileConfigForm";
+            Text = "ChooseFileConfigForm";
+            Load += ChooseFileConfigForm_Load;
             ((System.ComponentModel.ISupportInitialize)DataGridViewForKeyFilter).EndInit();
             PanelForConfigs.ResumeLayout(false);
             PanelForConfigs.PerformLayout();
@@ -379,5 +391,6 @@
         private TextBox TextBoxSplitSymbol;
         private Label LableForSplitSymbol;
         private Panel PanelForConfigs;
+        private Button BtnRefreshKey;
     }
 }
