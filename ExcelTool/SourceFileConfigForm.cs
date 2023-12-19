@@ -12,8 +12,6 @@ namespace ExcelTool
 {
     public partial class SourceFileConfigForm : FormBase
     {
-        private TableBaseData? mLoadedFile = null;
-
         public SourceFileConfigForm()
         {
             InitializeComponent();
@@ -30,7 +28,7 @@ namespace ExcelTool
             }
         }
 
-        private void BtnChooseExportFile_Click(object sender, EventArgs e)
+        private void BtnChooseFile_Click(object sender, EventArgs e)
         {
             OpenFileDialog _openfileDialog = new OpenFileDialog();
             _openfileDialog.Filter = "csv|*.csv|New excel|*.xlsx|Old excel|*.xls";
@@ -45,8 +43,8 @@ namespace ExcelTool
                     return;
                 }
 
-                mLoadedFile = _owner.TryChooseSourceFile(_openfileDialog.FileName);
-                if (mLoadedFile == null)
+                var _sourceFile = TableDataManager.Instance().TryChooseSourceFile(_openfileDialog.FileName);
+                if (_sourceFile == null)
                 {
                     MessageBox.Show($"加载目标文件：{_openfileDialog.FileName} 出错，请检查!", "错误");
                     return;
@@ -56,8 +54,8 @@ namespace ExcelTool
                 TextBoxForKeyStartColm_TextChanged(null, null);
                 TextBoxForContentStartRow_TextChanged(null, null);
 
-                TextForExportFilePath.Text = _openfileDialog.FileName;
-                var _workSheetList = mLoadedFile.GetWorkSheetList();
+                TextForFilePath.Text = _openfileDialog.FileName;
+                var _workSheetList = _sourceFile.GetWorkSheetList();
                 if (_workSheetList == null || _workSheetList.Count < 1)
                 {
                     return;
@@ -83,32 +81,35 @@ namespace ExcelTool
 
         private void TextBoxForKeyStartRow_TextChanged(object sender, EventArgs e)
         {
-            if (mLoadedFile == null)
+            var _sourceFile = TableDataManager.Instance().GetSourceFileData();
+            if (_sourceFile == null)
             {
                 return;
             }
             int.TryParse(TextBoxForKeyStartRow.Text, out var _value);
-            mLoadedFile.SetKeyStartRowIndex(_value);
+            _sourceFile.SetKeyStartRowIndex(_value);
         }
 
         private void TextBoxForKeyStartColm_TextChanged(object sender, EventArgs e)
         {
-            if (mLoadedFile == null)
+            var _sourceFile = TableDataManager.Instance().GetSourceFileData();
+            if (_sourceFile == null)
             {
                 return;
             }
             int.TryParse(TextBoxForKeyStartColm.Text, out var _value);
-            mLoadedFile.SetKeyStartColmIndex(_value);
+            _sourceFile.SetKeyStartColmIndex(_value);
         }
 
         private void TextBoxForContentStartRow_TextChanged(object sender, EventArgs e)
         {
-            if (mLoadedFile == null)
+            var _sourceFile = TableDataManager.Instance().GetSourceFileData();
+            if (_sourceFile == null)
             {
                 return;
             }
             int.TryParse(TextBoxForContentStartRow.Text, out var _value);
-            mLoadedFile.SetContentStartRowIndex(_value);
+            _sourceFile.SetContentStartRowIndex(_value);
         }
 
         private void ComboBoxForSelectSheet_SelectedIndexChanged(object sender, EventArgs e)
@@ -118,14 +119,15 @@ namespace ExcelTool
 
         private void InternalProcessOnSheetSelectChanged()
         {
+            var _sourceFile = TableDataManager.Instance().GetSourceFileData();
             var _selectItem = ComboBoxForSelectSheet.SelectedItem as CommonWorkSheetData;
-            if (_selectItem == null || mLoadedFile == null)
+            if (_selectItem == null || _sourceFile == null)
             {
                 MessageBox.Show("当前的 LoadFile 为空，请检查", "错误");
                 return;
             }
 
-            if (!mLoadedFile.TryChooseSheet(_selectItem))
+            if (!_sourceFile.TryChooseSheet(_selectItem))
             {
                 MessageBox.Show("选择 Sheet 数据失败，请检查文件，看所选 Sheet 是否有数据", "错误");
                 return;
@@ -135,7 +137,7 @@ namespace ExcelTool
 
             // 这里重置一下数据
             // 这里导出 key 供选择
-            var _currentSheet = mLoadedFile.GetCurrentWorkSheet();
+            var _currentSheet = _sourceFile.GetCurrentWorkSheet();
             if (_currentSheet == null)
             {
                 MessageBox.Show("当前的 Sheet 数据为空，请检查文件", "错误 ");
@@ -159,7 +161,8 @@ namespace ExcelTool
 
         private void DataGridViewForKeyFilter_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (mLoadedFile == null)
+            var _sourceFile = TableDataManager.Instance().GetSourceFileData();
+            if (_sourceFile == null)
             {
                 return;
             }
@@ -181,7 +184,7 @@ namespace ExcelTool
                 case 3:
                 {
                     // 编辑过滤类型
-                    var _currentSheet = mLoadedFile.GetCurrentWorkSheet();
+                    var _currentSheet = _sourceFile.GetCurrentWorkSheet();
                     if (_currentSheet != null)
                     {
                         var _keyListData = _currentSheet.GetKeyListData();
@@ -203,6 +206,7 @@ namespace ExcelTool
 
         private void SourceFileConfigForm_Load(object sender, EventArgs e)
         {
+
             var _owner = this.Owner as ExcelTool;
             if (_owner == null)
             {
@@ -210,25 +214,26 @@ namespace ExcelTool
                 MessageBox.Show("父窗口不是 ExcelTool ，请检查!", "错误");
                 return;
             }
-            mLoadedFile = _owner.GetSourceFileData();
-            if (mLoadedFile != null)
+            var _sourceFile = TableDataManager.Instance().GetSourceFileData();
+            if (_sourceFile != null)
             {
-                TextBoxForKeyStartRow.Text = mLoadedFile.GetKeyStartRowIndex().ToString();
-                TextBoxForKeyStartColm.Text = mLoadedFile.GetKeyStartColmIndex().ToString();
-                TextBoxForContentStartRow.Text = mLoadedFile.GetContentStartRowIndex().ToString();
-                TextForExportFilePath.Text = mLoadedFile.GetFilePath();
+                TextBoxForKeyStartRow.Text = _sourceFile.GetKeyStartRowIndex().ToString();
+                TextBoxForKeyStartColm.Text = _sourceFile.GetKeyStartColmIndex().ToString();
+                TextBoxForContentStartRow.Text = _sourceFile.GetContentStartRowIndex().ToString();
+                TextForFilePath.Text = _sourceFile.GetFilePath();
             }
         }
 
         private void BtnSearch_Click(object sender, EventArgs e)
         {
-            if (mLoadedFile == null)
+            var _sourceFile = TableDataManager.Instance().GetSourceFileData();
+            if (_sourceFile == null)
             {
                 return;
             }
 
             // 这里导出 key 供选择
-            var _currentSheet = mLoadedFile.GetCurrentWorkSheet();
+            var _currentSheet = _sourceFile.GetCurrentWorkSheet();
             if (_currentSheet == null)
             {
                 MessageBox.Show("没有 workSheet 数据，请检查", "错误");

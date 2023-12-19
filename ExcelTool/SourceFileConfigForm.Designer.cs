@@ -35,9 +35,9 @@
             label2 = new Label();
             TextBoxForKeyStartRow = new TextBox();
             LableKeyStartRowIndex = new Label();
-            BtnChooseExportFile = new Button();
+            BtnChooseFile = new Button();
             label1 = new Label();
-            TextForExportFilePath = new TextBox();
+            TextForFilePath = new TextBox();
             label5 = new Label();
             ComboBoxForSelectSheet = new ComboBox();
             label4 = new Label();
@@ -126,16 +126,16 @@
             LableKeyStartRowIndex.TabIndex = 28;
             LableKeyStartRowIndex.Text = "Key开始行";
             // 
-            // BtnChooseExportFile
+            // BtnChooseFile
             // 
-            BtnChooseExportFile.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            BtnChooseExportFile.Location = new Point(653, 20);
-            BtnChooseExportFile.Name = "BtnChooseExportFile";
-            BtnChooseExportFile.Size = new Size(130, 30);
-            BtnChooseExportFile.TabIndex = 26;
-            BtnChooseExportFile.Text = "选择文件";
-            BtnChooseExportFile.UseVisualStyleBackColor = true;
-            BtnChooseExportFile.Click += BtnChooseExportFile_Click;
+            BtnChooseFile.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            BtnChooseFile.Location = new Point(653, 20);
+            BtnChooseFile.Name = "BtnChooseFile";
+            BtnChooseFile.Size = new Size(130, 30);
+            BtnChooseFile.TabIndex = 26;
+            BtnChooseFile.Text = "选择文件";
+            BtnChooseFile.UseVisualStyleBackColor = true;
+            BtnChooseFile.Click += BtnChooseFile_Click;
             // 
             // label1
             // 
@@ -147,15 +147,15 @@
             label1.TabIndex = 25;
             label1.Text = "目标文件";
             // 
-            // TextForExportFilePath
+            // TextForFilePath
             // 
-            TextForExportFilePath.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
-            TextForExportFilePath.Location = new Point(118, 22);
-            TextForExportFilePath.Name = "TextForExportFilePath";
-            TextForExportFilePath.ReadOnly = true;
-            TextForExportFilePath.Size = new Size(529, 26);
-            TextForExportFilePath.TabIndex = 24;
-            TextForExportFilePath.Text = "请点击选择";
+            TextForFilePath.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
+            TextForFilePath.Location = new Point(118, 22);
+            TextForFilePath.Name = "TextForFilePath";
+            TextForFilePath.ReadOnly = true;
+            TextForFilePath.Size = new Size(529, 26);
+            TextForFilePath.TabIndex = 24;
+            TextForFilePath.Text = "请点击选择";
             // 
             // label5
             // 
@@ -273,9 +273,9 @@
             Controls.Add(label2);
             Controls.Add(TextBoxForKeyStartRow);
             Controls.Add(LableKeyStartRowIndex);
-            Controls.Add(BtnChooseExportFile);
+            Controls.Add(BtnChooseFile);
             Controls.Add(label1);
-            Controls.Add(TextForExportFilePath);
+            Controls.Add(TextForFilePath);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "SourceFileConfigForm";
             Text = "SourceFileConfigForm";
@@ -294,9 +294,9 @@
         private Label label2;
         private TextBox TextBoxForKeyStartRow;
         private Label LableKeyStartRowIndex;
-        private Button BtnChooseExportFile;
+        private Button BtnChooseFile;
         private Label label1;
-        private TextBox TextForExportFilePath;
+        private TextBox TextForFilePath;
         private Label label5;
         private ComboBox ComboBoxForSelectSheet;
         private Label label4;

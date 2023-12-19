@@ -55,7 +55,7 @@ namespace ExcelTool
             {
                 var sheet = _allSheets[i];
                 var _newSheetData = new ExcelSheetData();
-                if (!_newSheetData.Init(this, sheet, i - _startIndex, i, sheet.Name))
+                if (!_newSheetData.Init(new WeakReference<TableBaseData>(this), sheet, i - _startIndex, i, sheet.Name))
                 {
                     continue;
                 }

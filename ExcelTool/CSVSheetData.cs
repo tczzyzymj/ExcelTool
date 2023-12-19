@@ -8,7 +8,7 @@ namespace ExcelTool
 {
     internal class CSVSheetData : CommonWorkSheetData
     {
-        protected override bool InternalInitWithKey(TableBaseData ownerExcelFile, object sheetData, int IndexInListValue, int indexInFileData, string name)
+        protected override bool InternalInitWithKey(object sheetData)
         {
             var _allData = sheetData as string[];
             if (_allData == null)

@@ -12,14 +12,14 @@ namespace ExcelTool
     {
         protected ExcelWorksheet? mData = null; // 原始数据
 
-        protected override bool InternalInitWithKey(TableBaseData ownerExcelFile, object sheetData, int IndexInListValue, int indexInFileData, string name)
+        protected override bool InternalInitWithKey(object sheetData)
         {
             if (mHasInit)
             {
                 return true;
             }
 
-            if (ownerExcelFile == null)
+            if (mOwnerTable == null)
             {
                 MessageBox.Show("传入的 ExcelFileBase 为空，无法初始化，请检查！", "错误");
                 return false;
@@ -38,15 +38,13 @@ namespace ExcelTool
                 return false;
             }
 
-            if (mData.Dimension == null )
+            if (mData.Dimension == null)
             {
                 // 这个 sheet 里面的内容为空，还是要记录一下，所以返回true
                 return true;
             }
 
-            mExcelFileBase = new WeakReference<TableBaseData>(ownerExcelFile);
-
-            if (!mExcelFileBase.TryGetTarget(out TableBaseData? _ownerExcel))
+            if (!mOwnerTable.TryGetTarget(out TableBaseData? _ownerExcel))
             {
                 return false;
             }

@@ -12,7 +12,7 @@ namespace ExcelTool
     {
         protected bool mHasInit = false;
 
-        protected WeakReference<TableBaseData>? mExcelFileBase = null;
+        protected WeakReference<TableBaseData>? mOwnerTable = null;
 
         protected List<KeyData> mKeyDataList = new List<KeyData>();
 
@@ -40,17 +40,23 @@ namespace ExcelTool
             return mIndexInFileData;
         }
 
-        protected abstract bool InternalInitWithKey(TableBaseData ownerExcelFile, object sheetData, int IndexInListValue, int indexInFileData, string name);
+        protected abstract bool InternalInitWithKey(object sheetData);
+
+        public WeakReference<TableBaseData> GetOwnerTable()
+        {
+            return mOwnerTable;
+        }
 
         // 注意，这里只初始化 Key
-        public bool Init(TableBaseData ownerExcelFile, object sheetData, int indexInListValue, int indexInFileData, string name)
+        public bool Init(WeakReference<TableBaseData> ownerExcelFile, object sheetData, int indexInListValue, int indexInFileData, string name)
         {
             mIndexInFileData = indexInFileData;
+            mOwnerTable = ownerExcelFile;
             mSheetName = name;
             IndexInListForShow = indexInListValue + 1;
             DisplayName = $"{IndexInListForShow} : {name}";
             mKeyDataList.Clear();
-            return InternalInitWithKey(ownerExcelFile, sheetData, indexInListValue, indexInFileData, name);
+            return InternalInitWithKey(sheetData);
         }
 
         public List<KeyData> GetKeyListData()
@@ -65,7 +71,7 @@ namespace ExcelTool
                 return false;
             }
 
-            return true;
+            return InternalLoadAllCellData();
         }
 
         protected abstract bool InternalLoadAllCellData();
@@ -87,7 +93,7 @@ namespace ExcelTool
             }
 
             var _newData = new KeyData();
-            _newData.Init(indexInList, indexInSheetData, nameValue);
+            _newData.Init(indexInList, indexInSheetData, nameValue, new WeakReference<CommonWorkSheetData>(this));
             mKeyDataList.Add(_newData);
             return true;
         }

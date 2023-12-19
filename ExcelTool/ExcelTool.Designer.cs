@@ -36,15 +36,16 @@
             BtnChooseExportFile = new Button();
             BtnChooseSourceFile = new Button();
             DataViewConfigForExportFile = new DataGridView();
+            label4 = new Label();
+            ComboBoxForExportWriteWay = new ComboBox();
+            ComboBoxForExportConflictDealWay = new ComboBox();
+            label1 = new Label();
             Key = new DataGridViewTextBoxColumn();
             KeyName = new DataGridViewTextBoxColumn();
             RelatInfo = new DataGridViewTextBoxColumn();
             EditRelateBtnColum = new DataGridViewButtonColumn();
             LeaveEmptyColum = new DataGridViewCheckBoxColumn();
-            label4 = new Label();
-            ComboBoxForExportWriteWay = new ComboBox();
-            ComboBoxForExportConflictDealWay = new ComboBox();
-            label1 = new Label();
+            IsMainKey = new DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)DataViewConfigForExportFile).BeginInit();
             SuspendLayout();
             // 
@@ -107,54 +108,13 @@
             // 
             DataViewConfigForExportFile.BackgroundColor = SystemColors.ControlLight;
             DataViewConfigForExportFile.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            DataViewConfigForExportFile.Columns.AddRange(new DataGridViewColumn[] { Key, KeyName, RelatInfo, EditRelateBtnColum, LeaveEmptyColum });
+            DataViewConfigForExportFile.Columns.AddRange(new DataGridViewColumn[] { Key, KeyName, RelatInfo, EditRelateBtnColum, LeaveEmptyColum, IsMainKey });
             DataViewConfigForExportFile.Location = new Point(12, 116);
             DataViewConfigForExportFile.Name = "DataViewConfigForExportFile";
             DataViewConfigForExportFile.RowTemplate.Height = 25;
             DataViewConfigForExportFile.Size = new Size(1712, 936);
             DataViewConfigForExportFile.TabIndex = 14;
-            DataViewConfigForExportFile.CellClick += DataViewConfigForExportFile_CellClick;
             DataViewConfigForExportFile.CellContentClick += DataViewConfigForExportFile_CellContentClick;
-            DataViewConfigForExportFile.CellValueChanged += DataViewConfigForExportFile_CellValueChanged;
-            // 
-            // Key
-            // 
-            Key.HeaderText = "Key";
-            Key.Name = "Key";
-            Key.Width = 60;
-            // 
-            // KeyName
-            // 
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            KeyName.DefaultCellStyle = dataGridViewCellStyle1;
-            KeyName.FillWeight = 160F;
-            KeyName.HeaderText = "导出目标列名";
-            KeyName.Name = "KeyName";
-            KeyName.ReadOnly = true;
-            KeyName.Width = 200;
-            // 
-            // RelatInfo
-            // 
-            RelatInfo.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            RelatInfo.DefaultCellStyle = dataGridViewCellStyle2;
-            RelatInfo.FillWeight = 160F;
-            RelatInfo.HeaderText = "关联信息";
-            RelatInfo.Name = "RelatInfo";
-            RelatInfo.ReadOnly = true;
-            // 
-            // EditRelateBtnColum
-            // 
-            EditRelateBtnColum.FillWeight = 160F;
-            EditRelateBtnColum.HeaderText = "设置关联";
-            EditRelateBtnColum.Name = "EditRelateBtnColum";
-            EditRelateBtnColum.Text = "编辑";
-            EditRelateBtnColum.ToolTipText = "编辑";
-            // 
-            // LeaveEmptyColum
-            // 
-            LeaveEmptyColum.HeaderText = "是否忽略";
-            LeaveEmptyColum.Name = "LeaveEmptyColum";
             // 
             // label4
             // 
@@ -174,7 +134,7 @@
             ComboBoxForExportWriteWay.Name = "ComboBoxForExportWriteWay";
             ComboBoxForExportWriteWay.Size = new Size(121, 29);
             ComboBoxForExportWriteWay.TabIndex = 16;
-            ComboBoxForExportWriteWay.SelectedIndexChanged += ComboBoxForExportWriteWay_SelectedIndexChanged;
+            ComboBoxForExportWriteWay.SelectionChangeCommitted += ComboBoxForExportWriteWay_SelectedIndexChanged;
             // 
             // ComboBoxForExportConflictDealWay
             // 
@@ -184,7 +144,7 @@
             ComboBoxForExportConflictDealWay.Name = "ComboBoxForExportConflictDealWay";
             ComboBoxForExportConflictDealWay.Size = new Size(121, 29);
             ComboBoxForExportConflictDealWay.TabIndex = 18;
-            ComboBoxForExportConflictDealWay.SelectedIndexChanged += ComboBoxForExportConfigDealWay_SelectedIndexChanged;
+            ComboBoxForExportConflictDealWay.SelectionChangeCommitted += ComboBoxForExportConfigDealWay_SelectedIndexChanged;
             // 
             // label1
             // 
@@ -195,6 +155,55 @@
             label1.Size = new Size(165, 21);
             label1.TabIndex = 17;
             label1.Text = "导出Key重复处理方式";
+            // 
+            // Key
+            // 
+            Key.HeaderText = "Index";
+            Key.Name = "Key";
+            Key.ToolTipText = "下标，以表格为基准";
+            Key.Width = 60;
+            // 
+            // KeyName
+            // 
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            KeyName.DefaultCellStyle = dataGridViewCellStyle1;
+            KeyName.FillWeight = 160F;
+            KeyName.HeaderText = "KeyName";
+            KeyName.Name = "KeyName";
+            KeyName.ReadOnly = true;
+            KeyName.ToolTipText = "选择的导出文件的列名";
+            KeyName.Width = 200;
+            // 
+            // RelatInfo
+            // 
+            RelatInfo.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            RelatInfo.DefaultCellStyle = dataGridViewCellStyle2;
+            RelatInfo.FillWeight = 160F;
+            RelatInfo.HeaderText = "关联信息";
+            RelatInfo.Name = "RelatInfo";
+            RelatInfo.ReadOnly = true;
+            RelatInfo.ToolTipText = "Key的关联信息";
+            // 
+            // EditRelateBtnColum
+            // 
+            EditRelateBtnColum.FillWeight = 160F;
+            EditRelateBtnColum.HeaderText = "设置关联";
+            EditRelateBtnColum.Name = "EditRelateBtnColum";
+            EditRelateBtnColum.Text = "";
+            EditRelateBtnColum.ToolTipText = "设置关联";
+            // 
+            // LeaveEmptyColum
+            // 
+            LeaveEmptyColum.HeaderText = "是否忽略";
+            LeaveEmptyColum.Name = "LeaveEmptyColum";
+            LeaveEmptyColum.ToolTipText = "如果忽略，那么导出的时候不会写入内容";
+            // 
+            // IsMainKey
+            // 
+            IsMainKey.HeaderText = "是否为主Key";
+            IsMainKey.Name = "IsMainKey";
+            IsMainKey.ToolTipText = "当设置为主key，并且没有关联数据的时候，会自动以最大ID为基准+1";
             // 
             // ExcelTool
             // 
@@ -238,5 +247,6 @@
         private DataGridViewTextBoxColumn RelatInfo;
         private DataGridViewButtonColumn EditRelateBtnColum;
         private DataGridViewCheckBoxColumn LeaveEmptyColum;
+        private DataGridViewCheckBoxColumn IsMainKey;
     }
 }

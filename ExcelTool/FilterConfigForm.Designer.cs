@@ -63,7 +63,7 @@
             DataGridViewForFilterFunc.RowTemplate.Height = 25;
             DataGridViewForFilterFunc.Size = new Size(987, 315);
             DataGridViewForFilterFunc.TabIndex = 16;
-            DataGridViewForFilterFunc.CellClick += DataGridViewForFilterFunc_CellClick;
+            DataGridViewForFilterFunc.CellContentClick += DataGridViewForFilterFunc_CellContentClick;
             DataGridViewForFilterFunc.CellValueChanged += DataGridViewForFilterFunc_CellValueChanged;
             // 
             // BtnFinishConfig

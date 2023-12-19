@@ -28,11 +28,25 @@ namespace ExcelTool
 
         protected List<CommonWorkSheetData> mWorkSheetList = new List<CommonWorkSheetData>();
 
-        protected CommonWorkSheetData? mChooseWorkSheet = null; // 当前选中的目标 WorkSheet
+        protected CommonWorkSheetData? mCurrentWorkSheet = null; // 当前选中的目标 WorkSheet
 
         protected int mChooseSheetIndex = 0;
 
         protected string mChooseSheetName = string.Empty;
+
+        // combobox显示用的index
+        public int DisplayIndex
+        {
+            get;
+            set;
+        }
+
+        // combobox显示用的名字
+        public string DisplayName
+        {
+            get;
+            set;
+        } = string.Empty;
 
         protected bool mHasInit = false;
 
@@ -63,9 +77,25 @@ namespace ExcelTool
             return mExcelAbsolutePath;
         }
 
+        /// <summary>
+        /// 注意，下标是从0开始
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public CommonWorkSheetData? GetWorkSheetByIndex(int index)
+        {
+            if (index < 0 || index >= mWorkSheetList.Count)
+            {
+                MessageBox.Show($"GetWorkSheetByIndex 下标 ：[{index}] 越界了，请检查", "错误");
+                return null;
+            }
+
+            return mWorkSheetList[index];
+        }
+
         public CommonWorkSheetData? GetCurrentWorkSheet()
         {
-            return mChooseWorkSheet;
+            return mCurrentWorkSheet;
         }
 
         public bool TryChooseSheet(CommonWorkSheetData targetData)
@@ -91,19 +121,19 @@ namespace ExcelTool
             }
 
             mChooseWorkSheetIndexInList = targetData.IndexInListForShow;
-            mChooseWorkSheet = targetData;
+            mCurrentWorkSheet = targetData;
 
             return true;
         }
 
         public bool IsCurrentSheetValid()
         {
-            if (mChooseWorkSheet == null)
+            if (mCurrentWorkSheet == null)
             {
                 return false;
             }
 
-            var _keyList = mChooseWorkSheet.GetKeyListData();
+            var _keyList = mCurrentWorkSheet.GetKeyListData();
             if (_keyList == null || _keyList.Count < 1)
             {
                 return false;
@@ -119,7 +149,14 @@ namespace ExcelTool
 
         public virtual string GetFileName(bool isFull)
         {
-            return Path.GetFileName(mExcelAbsolutePath);
+            if (isFull)
+            {
+                return mExcelAbsolutePath;
+            }
+            else
+            {
+                return Path.GetFileName(mExcelAbsolutePath);
+            }
         }
 
         public bool AnalysCellData()
@@ -157,6 +194,17 @@ namespace ExcelTool
         public void SetContentStartRowIndex(int targetValue)
         {
             mContentStartRowIndex = targetValue;
+        }
+
+        public void LoadAllCellDataForCurrentSheet()
+        {
+            if (mCurrentWorkSheet == null)
+            {
+                MessageBox.Show("当前未选中 WorkSheet ，请检查！");
+                return;
+            }
+
+            mCurrentWorkSheet.LoadAllCellData();
         }
 
         public abstract bool InternalLoadFile(string absolutePath);

@@ -112,7 +112,7 @@ namespace ExcelTool
             }
         }
 
-        private void DataGridViewForFilterFunc_CellClick(object sender, DataGridViewCellEventArgs e)
+        private void DataGridViewForFilterFunc_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.ColumnIndex == 2)
             {
@@ -222,11 +222,6 @@ namespace ExcelTool
                     _filterFuncList[i].CompareWay
                 );
             }
-        }
-
-        private void DataGridViewForFilterFunc_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
         }
 
         private void BtnFinishConfig_Click(object sender, EventArgs e)

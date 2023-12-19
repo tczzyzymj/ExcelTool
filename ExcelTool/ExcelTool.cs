@@ -9,96 +9,18 @@ namespace ExcelTool
 {
     public partial class ExcelTool : FormBase
     {
-        private TableBaseData? mExportTargetFile = null; // 导出目标文件，其关联在里面设置
+        private const int mColumIndexForSetConnect = 3;
 
-        private TableBaseData? mSourceFile = null; // 数据源文件
+        private const int mColumIndexForSetIgnore = 4;
 
-        protected MainTypeDefine.ExportWriteWayType mExportWriteWayType = MainTypeDefine.ExportWriteWayType.Append;
+        private const int mColumIndexForIsMainKey = 5;
 
-        protected MainTypeDefine.ExportConflictDealWayType mExportConfigDealWayType = MainTypeDefine.ExportConflictDealWayType.UseOldData;
-
-        private bool mHasAnalysData = false;
-
-        private List<TableBaseData> mLoadedTableData = new List<TableBaseData>();
+        private List<KeyData>? mKeyList = null;
 
         public ExcelTool()
         {
             InitializeComponent();
             DataViewConfigForExportFile.AllowUserToAddRows = false;
-        }
-
-        public TableBaseData? TryChooseExportFile(string absoluteFilePath)
-        {
-            mExportTargetFile = InternalLoadFile(absoluteFilePath, false);
-
-            return mExportTargetFile;
-        }
-
-        public TableBaseData? TryChooseSourceFile(string absoluteFilePath)
-        {
-            mSourceFile = InternalLoadFile(absoluteFilePath, false);
-
-            return mSourceFile;
-        }
-
-        private TableBaseData? InternalLoadFile(string absoluteFilePath, bool checkExistAndAdd)
-        {
-            TableBaseData? targetFile = null;
-
-            try
-            {
-                if (checkExistAndAdd)
-                {
-                    var _exitItem = mLoadedTableData.Find(x => x.GetFilePath() == absoluteFilePath);
-                    if (_exitItem != null)
-                    {
-                        return _exitItem;
-                    }
-                }
-
-                TableBaseData? _tempFile = null;
-                var _extension = Path.GetExtension(absoluteFilePath).ToLower();
-                if (_extension.Equals(".xls") || _extension.Equals(".xlsx"))
-                {
-                    _tempFile = new ExcelFileData();
-                }
-                else if (_extension.Equals(".csv"))
-                {
-                    _tempFile = new CSVFileData();
-                }
-                else
-                {
-                    throw new Exception($"文件类型不匹配，请检查文件，目标文件路径为：{absoluteFilePath}");
-                }
-
-                if (!_tempFile.DoLoadFile(absoluteFilePath))
-                {
-                    return null;
-                }
-
-                targetFile = _tempFile;
-
-                if (checkExistAndAdd)
-                {
-                    mLoadedTableData.Add(targetFile);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString(), "报错");
-            }
-
-            return targetFile;
-        }
-
-        public TableBaseData? GetExportFileData()
-        {
-            return mExportTargetFile;
-        }
-
-        public TableBaseData? GetSourceFileData()
-        {
-            return mSourceFile;
         }
 
         private void BtnStartExport_Click(object sender, EventArgs e)
@@ -111,6 +33,7 @@ namespace ExcelTool
             MessageBox.Show("功能制作中", "提示");
             return;
             // 导出配置
+            var mExportTargetFile = TableDataManager.Instance().GetExportFileData();
             if (mExportTargetFile == null)
             {
                 MessageBox.Show("没有可导出的配置", "提示");
@@ -137,6 +60,7 @@ namespace ExcelTool
         {
             MessageBox.Show("功能制作中", "提示");
             return;
+            var mExportTargetFile = TableDataManager.Instance().GetExportFileData();
             // 导入配置
             OpenFileDialog _openfileDialog = new OpenFileDialog();
             if (_openfileDialog.ShowDialog() == DialogResult.OK)
@@ -144,7 +68,7 @@ namespace ExcelTool
                 var _loadedFile = JsonConvert.DeserializeObject<TableBaseData>(_openfileDialog.FileName);
                 if (_loadedFile != null)
                 {
-                    mExportTargetFile = _loadedFile;
+                    TableDataManager.Instance().TrySetExportTargetFile(_loadedFile);
                 }
             }
         }
@@ -160,14 +84,16 @@ namespace ExcelTool
 
         private void InternalAnalysisKey()
         {
+            var _exportFile = TableDataManager.Instance().GetExportFileData();
+
             // 这里只分析一下数据
-            if (this.mExportTargetFile == null)
+            if (_exportFile == null)
             {
                 MessageBox.Show("当前未选中需要导出的目标文件", "错误");
                 return;
             }
 
-            var _workSheet = mExportTargetFile.GetCurrentWorkSheet();
+            var _workSheet = _exportFile.GetCurrentWorkSheet();
             if (_workSheet == null)
             {
                 MessageBox.Show("当前未选中需要导出的目标文件 Sheet", "错误");
@@ -181,6 +107,8 @@ namespace ExcelTool
                 return;
             }
 
+            mKeyList = _keyList;
+
             DataViewConfigForExportFile.Rows.Clear();
 
             for (int i = 0; i < _keyList.Count; ++i)
@@ -192,8 +120,6 @@ namespace ExcelTool
                     "设置"
                 );
             }
-
-            mHasAnalysData = true;
         }
 
         private void ExcelTool_Load(object sender, EventArgs e)
@@ -259,44 +185,99 @@ namespace ExcelTool
 
         private void StartExportBtn_Click(object sender, EventArgs e)
         {
-            if (mExportTargetFile == null || !mExportTargetFile.GetHasInit())
+            var _exportFile = TableDataManager.Instance().GetExportFileData();
+            if (_exportFile == null || !_exportFile.GetHasInit())
             {
                 MessageBox.Show("导出目标文件未准备好，请配置导出目标文件！", "错误");
                 return;
             }
-            if (mSourceFile == null || !mSourceFile.GetHasInit())
+            var _sourceFile = TableDataManager.Instance().GetExportFileData();
+            if (_sourceFile == null || !_sourceFile.GetHasInit())
             {
                 MessageBox.Show("源文件未准备好 ，请配置源文件！", "错误");
                 return;
+            }
+
+            int _startRowIndex = 0;
+
+            switch (TableDataManager.Instance().ExportWriteWayType)
+            {
+                case MainTypeDefine.ExportWriteWayType.OverWriteAll:
+                {
+                    _startRowIndex = _exportFile.GetContentStartRowIndex();
+                    break;
+                }
+                case MainTypeDefine.ExportWriteWayType.Append:
+                {
+                    break;
+                }
+                default:
+                {
+                    MessageBox.Show($"导出写入中，存在未处理的类型：{TableDataManager.Instance().ExportWriteWayType}，请检查");
+                    break;
+                }
             }
         }
 
         private void ComboBoxForExportWriteWay_SelectedIndexChanged(object sender, EventArgs e)
         {
+            var _selectValue = this.ComboBoxForExportWriteWay.SelectedValue as CommonDataForComboBox;
+            if (_selectValue == null)
+            {
+                MessageBox.Show("ComboBoxForExportWriteWay 无法转化为 CommonDataForComboBox ，请检查", "错误");
+                return;
+            }
 
+            TableDataManager.Instance().ExportWriteWayType = (MainTypeDefine.ExportWriteWayType)_selectValue.RealValue;
         }
 
         private void ComboBoxForExportConfigDealWay_SelectedIndexChanged(object sender, EventArgs e)
         {
+            var _selectValue = this.ComboBoxForExportWriteWay.SelectedValue as CommonDataForComboBox;
+            if (_selectValue == null)
+            {
+                MessageBox.Show("omboBoxForExportConfigDealWay 无法转化为 CommonDataForComboBox ，请检查", "错误");
+                return;
+            }
 
+            TableDataManager.Instance().ExportConfigDealWayType = (MainTypeDefine.ExportConflictDealWayType)_selectValue.RealValue;
         }
 
         private void DataViewConfigForExportFile_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-
-        }
-
-        private void DataViewConfigForExportFile_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-        }
-
-        private void DataViewConfigForExportFile_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
             var _columIndex = e.ColumnIndex;
-            if (_columIndex == 2)
+            switch (_columIndex)
             {
-                // 点击了编辑按钮，弹出编辑相关
-                var _rowIndex = e.RowIndex;
+                case mColumIndexForSetConnect:
+                {
+                    // 点击了编辑按钮，弹出编辑相关
+                    if (mKeyList == null || mKeyList.Count < 1 || e.RowIndex >= mKeyList.Count)
+                    {
+                        MessageBox.Show("ColumIndexForSetConnect 下标无效，请检查", "错误");
+                        return;
+                    }
+                    var _targetKey = mKeyList[e.RowIndex];
+                    KeyConnectEditForm _form = new KeyConnectEditForm();
+                    _form.InitData(_targetKey);
+                    if (_form.ShowDialog() == DialogResult.OK)
+                    {
+                        // 这里去检测一下，看 key 的引用是否
+                        if (!CommonUtil.IsSafeNoCycleReferenceForKey(_targetKey))
+                        {
+                            return;
+                        }
+                    }
+
+                    break;
+                }
+                case mColumIndexForSetIgnore:
+                {
+                    break;
+                }
+                case mColumIndexForIsMainKey:
+                {
+                    break;
+                }
             }
         }
     }

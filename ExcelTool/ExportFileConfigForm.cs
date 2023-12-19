@@ -12,8 +12,6 @@ namespace ExcelTool
 {
     public partial class ExportFileConfigForm : FormBase
     {
-        private TableBaseData? mLoadedFile = null;
-
         public ExportFileConfigForm()
         {
             InitializeComponent();
@@ -34,8 +32,8 @@ namespace ExcelTool
                     return;
                 }
 
-                mLoadedFile = _owner.TryChooseExportFile(_openfileDialog.FileName);
-                if (mLoadedFile == null)
+                var _exportFile = TableDataManager.Instance().TryChooseExportFile(_openfileDialog.FileName);
+                if (_exportFile == null)
                 {
                     MessageBox.Show($"加载目标文件：{_openfileDialog.FileName} 出错，请检查!", "错误");
                     return;
@@ -46,7 +44,7 @@ namespace ExcelTool
                 TextBoxForContentStartRow_TextChanged(null, null);
 
                 TextForExportFilePath.Text = _openfileDialog.FileName;
-                var _workSheetList = mLoadedFile.GetWorkSheetList();
+                var _workSheetList = _exportFile.GetWorkSheetList();
                 if (_workSheetList == null || _workSheetList.Count < 1)
                 {
                     return;
@@ -64,12 +62,13 @@ namespace ExcelTool
 
         private void TextBoxForKeyStartRow_TextChanged(object sender, EventArgs e)
         {
-            if (mLoadedFile == null)
+            var _exportFile = TableDataManager.Instance().GetExportFileData();
+            if (_exportFile == null)
             {
                 return;
             }
             int.TryParse(TextBoxForKeyStartRow.Text, out var _value);
-            mLoadedFile.SetKeyStartRowIndex(_value);
+            _exportFile.SetKeyStartRowIndex(_value);
         }
 
         private void TextBoxCommonProcess_KeyPress(object? sender, KeyPressEventArgs e)
@@ -82,22 +81,24 @@ namespace ExcelTool
 
         private void TextBoxForKeyStartColm_TextChanged(object sender, EventArgs e)
         {
-            if (mLoadedFile == null)
+            var _exportFile = TableDataManager.Instance().GetExportFileData();
+            if (_exportFile == null)
             {
                 return;
             }
             int.TryParse(TextBoxForKeyStartColm.Text, out var _value);
-            mLoadedFile.SetKeyStartColmIndex(_value);
+            _exportFile.SetKeyStartColmIndex(_value);
         }
 
         private void TextBoxForContentStartRow_TextChanged(object sender, EventArgs e)
         {
-            if (mLoadedFile == null)
+            var _exportFile = TableDataManager.Instance().GetExportFileData();
+            if (_exportFile == null)
             {
                 return;
             }
             int.TryParse(TextBoxForContentStartRow.Text, out var _value);
-            mLoadedFile.SetContentStartRowIndex(_value);
+            _exportFile.SetContentStartRowIndex(_value);
         }
 
         private void ComboBoxForSelectSheet_SelectedIndexChanged(object sender, EventArgs e)
@@ -105,16 +106,18 @@ namespace ExcelTool
             var _selectItem = this.ComboBoxForSelectSheet.SelectedItem as CommonWorkSheetData;
             if (_selectItem != null)
             {
-                mLoadedFile?.TryChooseSheet(_selectItem);
+                var _exportFile = TableDataManager.Instance().GetExportFileData();
+                _exportFile?.TryChooseSheet(_selectItem);
             }
         }
 
         private void BtnFinishConfig_Click(object sender, EventArgs e)
         {
+            var _exportFile = TableDataManager.Instance().GetExportFileData();
             // 检查一下有效性
-            if (mLoadedFile != null)
+            if (_exportFile != null)
             {
-                if (!mLoadedFile.IsCurrentSheetValid())
+                if (!_exportFile.IsCurrentSheetValid())
                 {
                     MessageBox.Show("当前选中 Sheet 无效，请重新配置", "错误");
                     return;
@@ -134,13 +137,14 @@ namespace ExcelTool
                 MessageBox.Show("父窗口不是 ExcelTool ，请检查!", "错误");
                 return;
             }
-            mLoadedFile = _owner.GetExportFileData();
-            if (mLoadedFile != null)
+            var _exportFIle = TableDataManager.Instance().GetExportFileData();
+            _exportFIle = TableDataManager.Instance().GetExportFileData();
+            if (_exportFIle != null)
             {
-                TextBoxForKeyStartRow.Text = mLoadedFile.GetKeyStartRowIndex().ToString();
-                TextBoxForKeyStartColm.Text = mLoadedFile.GetKeyStartColmIndex().ToString();
-                TextBoxForContentStartRow.Text = mLoadedFile.GetContentStartRowIndex().ToString();
-                TextForExportFilePath.Text = mLoadedFile.GetFilePath();
+                TextBoxForKeyStartRow.Text = _exportFIle.GetKeyStartRowIndex().ToString();
+                TextBoxForKeyStartColm.Text = _exportFIle.GetKeyStartColmIndex().ToString();
+                TextBoxForContentStartRow.Text = _exportFIle.GetContentStartRowIndex().ToString();
+                TextForExportFilePath.Text = _exportFIle.GetFilePath();
             }
         }
     }

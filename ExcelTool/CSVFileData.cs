@@ -22,15 +22,15 @@ namespace ExcelTool
 
             var _newSheetData = new CSVSheetData();
             mWorkSheetList.Add(_newSheetData);
-            _newSheetData.Init(this, mAllDataArray, 0, 0, "Sheet");
-            mChooseWorkSheet = _newSheetData;
+            _newSheetData.Init(new WeakReference<TableBaseData>(this), mAllDataArray, 0, 0, "Sheet");
+            mCurrentWorkSheet = _newSheetData;
 
             return true;
         }
 
         protected override bool InternalAnalysCellData()
         {
-            if (mChooseWorkSheet == null || mAllDataArray == null)
+            if (mCurrentWorkSheet == null || mAllDataArray == null)
             {
                 MessageBox.Show("无法加载数据，读取文件没成功，请检查！", "错误");
                 return false;
