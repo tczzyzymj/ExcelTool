@@ -54,7 +54,7 @@
             TextBoxSplitSymbol = new TextBox();
             LableForSplitSymbol = new Label();
             PanelForConfigs = new Panel();
-            BtnRefreshKey = new Button();
+            BtnReloadKey = new Button();
             ((System.ComponentModel.ISupportInitialize)DataGridViewForKeyFilter).BeginInit();
             PanelForConfigs.SuspendLayout();
             SuspendLayout();
@@ -324,22 +324,23 @@
             PanelForConfigs.Size = new Size(768, 62);
             PanelForConfigs.TabIndex = 44;
             // 
-            // BtnRefreshKey
+            // BtnReloadKey
             // 
-            BtnRefreshKey.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            BtnRefreshKey.Location = new Point(651, 184);
-            BtnRefreshKey.Name = "BtnRefreshKey";
-            BtnRefreshKey.Size = new Size(130, 30);
-            BtnRefreshKey.TabIndex = 45;
-            BtnRefreshKey.Text = "刷新Key数据";
-            BtnRefreshKey.UseVisualStyleBackColor = true;
+            BtnReloadKey.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            BtnReloadKey.Location = new Point(622, 185);
+            BtnReloadKey.Name = "BtnReloadKey";
+            BtnReloadKey.Size = new Size(155, 30);
+            BtnReloadKey.TabIndex = 45;
+            BtnReloadKey.Text = "重新加载Key数据";
+            BtnReloadKey.UseVisualStyleBackColor = true;
+            BtnReloadKey.Click += BtnReloadKey_Click;
             // 
             // ChooseFileConfigForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(795, 564);
-            Controls.Add(BtnRefreshKey);
+            Controls.Add(BtnReloadKey);
             Controls.Add(PanelForConfigs);
             Controls.Add(BtnReset);
             Controls.Add(BtnSearch);
@@ -391,6 +392,6 @@
         private TextBox TextBoxSplitSymbol;
         private Label LableForSplitSymbol;
         private Panel PanelForConfigs;
-        private Button BtnRefreshKey;
+        private Button BtnReloadKey;
     }
 }

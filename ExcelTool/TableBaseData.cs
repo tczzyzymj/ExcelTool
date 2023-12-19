@@ -168,6 +168,18 @@ namespace ExcelTool
             }
         }
 
+        public void ReloadKey()
+        {
+            var _currentSheet = GetCurrentWorkSheet();
+            if (_currentSheet == null)
+            {
+                MessageBox.Show("ReloadKey 但是当前的 Sheet 为空，请检查!", "错误");
+                return;
+            }
+
+            _currentSheet.ReloadKey();
+        }
+
         public bool AnalysCellData()
         {
             return InternalAnalysCellData();

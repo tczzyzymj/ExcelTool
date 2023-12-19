@@ -42,7 +42,12 @@ namespace ExcelTool
             return mIndexInFileData;
         }
 
-        protected abstract bool InternalInitWithKey(object sheetData);
+        public virtual void ReloadKey()
+        {
+            mKeyDataList.Clear();
+        }
+
+        protected abstract bool InternalInitWithKey(object sheetData, bool isForce);
 
         public TableBaseData? GetOwnerTable()
         {
@@ -63,7 +68,7 @@ namespace ExcelTool
             IndexInListForShow = indexInListValue + 1;
             DisplayName = $"{IndexInListForShow} : {name}";
             mKeyDataList.Clear();
-            return InternalInitWithKey(sheetData);
+            return InternalInitWithKey(sheetData, false);
         }
 
         public List<KeyData> GetKeyListData()

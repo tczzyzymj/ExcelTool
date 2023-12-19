@@ -59,7 +59,7 @@ namespace ExcelTool
             return null;
         }
 
-        public TableBaseData? InternalLoadFile(string absolutePath)
+        private TableBaseData? InternalLoadFile(string absolutePath)
         {
             switch (mFileType)
             {
@@ -77,10 +77,28 @@ namespace ExcelTool
             return null;
         }
 
+        private string InternalGetFileFilterStr()
+        {
+            switch (mFileType)
+            {
+                case 1:
+                {
+                    return "New excel|*.xlsx|Old excel|*.xls|csv|*.csv";
+                }
+                case 2:
+                {
+                    return "csv|*.csv|New excel|*.xlsx|Old excel|*.xls";
+                }
+            }
+
+            return "所有文件|*.*";
+        }
+
         private void BtnChooseFile_Click(object sender, EventArgs e)
         {
             OpenFileDialog _openfileDialog = new OpenFileDialog();
-            _openfileDialog.Filter = "csv|*.csv|New excel|*.xlsx|Old excel|*.xls";
+
+            _openfileDialog.Filter = InternalGetFileFilterStr();
             _openfileDialog.Multiselect = false;
             if (_openfileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -106,7 +124,14 @@ namespace ExcelTool
                     return;
                 }
 
+                TextForFilePath.Text = _openfileDialog.FileName;
+
                 PanelForConfigs.Visible = true;
+
+                TextBoxForKeyStartRow.Text = _targetFile.GetKeyStartRowIndex().ToString();
+                TextBoxForKeyStartColm.Text = _targetFile.GetKeyStartColmIndex().ToString();
+                TextBoxForContentStartRow.Text = _targetFile.GetContentStartRowIndex().ToString();
+                TextBoxForIDColumIndex.Text = _targetFile.IDIndex.ToString();
 
                 if (_targetFile is ExcelFileData)
                 {
@@ -121,13 +146,30 @@ namespace ExcelTool
                     TextBoxSplitSymbol.Text = ",";
                 }
 
-                ComboBoxForSelectSheet.BeginUpdate();
-                ComboBoxForSelectSheet.DataSource = _workSheetList;
-                ComboBoxForSelectSheet.ValueMember = "IndexInListForShow";
-                ComboBoxForSelectSheet.DisplayMember = "DisplayName";
-                ComboBoxForSelectSheet.SelectedIndex = 0;
-                ComboBoxForSelectSheet.EndUpdate();
+                InternalInitForSheetComboBox();
             }
+        }
+
+        private void InternalInitForSheetComboBox()
+        {
+            var _targetFile = InternalGetFileData();
+            if (_targetFile == null)
+            {
+                return;
+            }
+
+            var _workSheetList = _targetFile.GetWorkSheetList();
+            if (_workSheetList == null || _workSheetList.Count < 1)
+            {
+                return;
+            }
+
+            ComboBoxForSelectSheet.BeginUpdate();
+            ComboBoxForSelectSheet.DataSource = _workSheetList;
+            ComboBoxForSelectSheet.ValueMember = "IndexInListForShow";
+            ComboBoxForSelectSheet.DisplayMember = "DisplayName";
+            ComboBoxForSelectSheet.SelectedIndex = 0;
+            ComboBoxForSelectSheet.EndUpdate();
         }
 
         private void TextBoxCommonProcess_KeyPress(object? sender, KeyPressEventArgs e)
@@ -172,6 +214,11 @@ namespace ExcelTool
         }
 
         private void ComboBoxForSelectSheet_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            InternalRefreshDataView();
+        }
+
+        private void InternalRefreshDataView()
         {
             var _targetFile = InternalGetFileData();
             var _selectItem = ComboBoxForSelectSheet.SelectedItem as CommonWorkSheetData;
@@ -301,6 +348,8 @@ namespace ExcelTool
             {
                 PanelForConfigs.Visible = false;
             }
+
+            InternalInitForSheetComboBox();
         }
 
         private void BtnSearch_Click(object sender, EventArgs e)
@@ -380,6 +429,20 @@ namespace ExcelTool
             {
                 MessageBox.Show("请输入数字");
             }
+        }
+
+        private void BtnReloadKey_Click(object sender, EventArgs e)
+        {
+            var _targetFile = InternalGetFileData();
+            if (_targetFile == null)
+            {
+                MessageBox.Show("当前未加载文件，请检查！", "错误");
+                return;
+            }
+
+            _targetFile.ReloadKey();
+
+            InternalRefreshDataView();
         }
     }
 }

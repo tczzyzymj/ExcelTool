@@ -10,9 +10,21 @@ namespace ExcelTool
     {
         private string[]? mSheetData = null;
 
-        protected override bool InternalInitWithKey(object sheetData)
+        public override void ReloadKey()
         {
+            base.ReloadKey();
+            InternalInitWithKey(mSheetData, true);
+        }
+
+        protected override bool InternalInitWithKey(object? sheetData, bool isForce)
+        {
+            if (mHasInitKey && !isForce)
+            {
+                return true;
+            }
+
             mSheetData = sheetData as string[];
+
             if (mSheetData == null)
             {
                 MessageBox.Show("传入的数据为空，请检查!", "错误");
@@ -30,11 +42,13 @@ namespace ExcelTool
             {
                 var _splitArray = mSheetData[_ownerTable.GetKeyStartRowIndex()].Split(_ownerTable.SplitSymbol);
 
-                for (int _i = 0; _i < _splitArray.Length; ++_i)
+                for (int _i = _ownerTable.GetKeyStartColmIndex(); _i < _splitArray.Length; ++_i)
                 {
                     AddNewKeyData(_i, _i, _splitArray[_i]);
                 }
             }
+
+            mHasInitKey = true;
 
             return true;
         }

@@ -197,7 +197,7 @@ namespace ExcelTool
                 MessageBox.Show("导出目标文件未准备好，请配置导出目标文件！", "错误");
                 return;
             }
-            var _sourceFile = TableDataManager.Instance().GetExportFileData();
+            var _sourceFile = TableDataManager.Instance().GetSourceFileData();
             if (_sourceFile == null || !_sourceFile.GetHasInit())
             {
                 MessageBox.Show("源文件未准备好 ，请配置源文件！", "错误");

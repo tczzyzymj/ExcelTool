@@ -12,9 +12,15 @@ namespace ExcelTool
     {
         protected ExcelWorksheet? mSheetData = null; // 原始数据
 
-        protected override bool InternalInitWithKey(object sheetData)
+        public override void ReloadKey()
         {
-            if (mHasInitKey)
+            base.ReloadKey();
+            InternalInitWithKey(mSheetData, true);
+        }
+
+        protected override bool InternalInitWithKey(object? sheetData, bool isForce)
+        {
+            if (mHasInitKey && !isForce)
             {
                 return true;
             }
