@@ -36,16 +36,16 @@
             BtnChooseExportFile = new Button();
             BtnChooseSourceFile = new Button();
             DataViewConfigForExportFile = new DataGridView();
-            label4 = new Label();
-            ComboBoxForExportWriteWay = new ComboBox();
-            ComboBoxForExportConflictDealWay = new ComboBox();
-            label1 = new Label();
             Key = new DataGridViewTextBoxColumn();
             KeyName = new DataGridViewTextBoxColumn();
             RelatInfo = new DataGridViewTextBoxColumn();
             EditRelateBtnColum = new DataGridViewButtonColumn();
             LeaveEmptyColum = new DataGridViewCheckBoxColumn();
             IsMainKey = new DataGridViewCheckBoxColumn();
+            label4 = new Label();
+            ComboBoxForExportWriteWay = new ComboBox();
+            ComboBoxForExportConflictDealWay = new ComboBox();
+            label1 = new Label();
             ((System.ComponentModel.ISupportInitialize)DataViewConfigForExportFile).BeginInit();
             SuspendLayout();
             // 
@@ -116,46 +116,6 @@
             DataViewConfigForExportFile.TabIndex = 14;
             DataViewConfigForExportFile.CellContentClick += DataViewConfigForExportFile_CellContentClick;
             // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label4.Location = new Point(341, 65);
-            label4.Name = "label4";
-            label4.Size = new Size(138, 21);
-            label4.TabIndex = 15;
-            label4.Text = "数据导出添加方式";
-            // 
-            // ComboBoxForExportWriteWay
-            // 
-            ComboBoxForExportWriteWay.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            ComboBoxForExportWriteWay.FormattingEnabled = true;
-            ComboBoxForExportWriteWay.Location = new Point(485, 63);
-            ComboBoxForExportWriteWay.Name = "ComboBoxForExportWriteWay";
-            ComboBoxForExportWriteWay.Size = new Size(121, 29);
-            ComboBoxForExportWriteWay.TabIndex = 16;
-            ComboBoxForExportWriteWay.SelectedIndexChanged += ComboBoxForExportWriteWay_SelectedIndexChanged;
-            // 
-            // ComboBoxForExportConflictDealWay
-            // 
-            ComboBoxForExportConflictDealWay.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            ComboBoxForExportConflictDealWay.FormattingEnabled = true;
-            ComboBoxForExportConflictDealWay.Location = new Point(827, 63);
-            ComboBoxForExportConflictDealWay.Name = "ComboBoxForExportConflictDealWay";
-            ComboBoxForExportConflictDealWay.Size = new Size(121, 29);
-            ComboBoxForExportConflictDealWay.TabIndex = 18;
-            ComboBoxForExportConflictDealWay.SelectedIndexChanged += ComboBoxForExportConfigDealWay_SelectedIndexChanged;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label1.Location = new Point(656, 65);
-            label1.Name = "label1";
-            label1.Size = new Size(165, 21);
-            label1.TabIndex = 17;
-            label1.Text = "导出Key重复处理方式";
-            // 
             // Key
             // 
             Key.HeaderText = "Index";
@@ -204,6 +164,46 @@
             IsMainKey.HeaderText = "是否为主Key";
             IsMainKey.Name = "IsMainKey";
             IsMainKey.ToolTipText = "当设置为主key，并且没有关联数据的时候，会自动以最大ID为基准+1";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            label4.Location = new Point(341, 65);
+            label4.Name = "label4";
+            label4.Size = new Size(138, 21);
+            label4.TabIndex = 15;
+            label4.Text = "数据导出添加方式";
+            // 
+            // ComboBoxForExportWriteWay
+            // 
+            ComboBoxForExportWriteWay.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            ComboBoxForExportWriteWay.FormattingEnabled = true;
+            ComboBoxForExportWriteWay.Location = new Point(485, 63);
+            ComboBoxForExportWriteWay.Name = "ComboBoxForExportWriteWay";
+            ComboBoxForExportWriteWay.Size = new Size(121, 29);
+            ComboBoxForExportWriteWay.TabIndex = 16;
+            ComboBoxForExportWriteWay.SelectedIndexChanged += ComboBoxForExportWriteWay_SelectedIndexChanged;
+            // 
+            // ComboBoxForExportConflictDealWay
+            // 
+            ComboBoxForExportConflictDealWay.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            ComboBoxForExportConflictDealWay.FormattingEnabled = true;
+            ComboBoxForExportConflictDealWay.Location = new Point(827, 63);
+            ComboBoxForExportConflictDealWay.Name = "ComboBoxForExportConflictDealWay";
+            ComboBoxForExportConflictDealWay.Size = new Size(121, 29);
+            ComboBoxForExportConflictDealWay.TabIndex = 18;
+            ComboBoxForExportConflictDealWay.SelectedIndexChanged += ComboBoxForExportConfigDealWay_SelectedIndexChanged;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            label1.Location = new Point(656, 65);
+            label1.Name = "label1";
+            label1.Size = new Size(165, 21);
+            label1.TabIndex = 17;
+            label1.Text = "导出Key重复处理方式";
             // 
             // ExcelTool
             // 

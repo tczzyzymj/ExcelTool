@@ -126,23 +126,24 @@ namespace ExcelTool
 
                     if (_colum == _IDIndex)
                     {
-                        if (int.TryParse(_value, out var _targetKeyID))
+                        var _finalValue = _value.Trim();
+                        if (string.IsNullOrEmpty(_finalValue))
                         {
-                            if (mAllDataMap.ContainsKey(_targetKeyID))
+                            _errorMsgBuilder.Append($"尝试添加Key，但 Key 为空，请检查， Sheet 名字：[{this.DisplayName}], 表名:[{GetOwnerTable()?.DisplayName}]");
+                        }
+                        else
+                        {
+                            if (mAllDataMap.ContainsKey(_value))
                             {
-                                _errorMsgBuilder.Append($"存在相同的KEY：{_targetKeyID} 请检查");
+                                _errorMsgBuilder.Append($"存在相同的KEY：{_value} 请检查");
                                 _errorMsgBuilder.Append("\r\n");
                             }
                             else
                             {
-                                mAllDataMap.Add(_targetKeyID, _newList);
+                                mAllDataMap.Add(_value, _newList);
                             }
                         }
-                        else
-                        {
-                            _errorMsgBuilder.Append($"ID 列无法解析为 int ，请检查：{_value?.ToString()} 请检查");
-                            _errorMsgBuilder.Append("\r\n");
-                        }
+
                     }
                 }
             }

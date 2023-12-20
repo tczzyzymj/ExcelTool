@@ -18,9 +18,9 @@ namespace ExcelTool
             InternalInitWithKey(mOriginSheetData, true);
         }
 
-        public override bool WriteData(List<List<CellValueData>> filteredInData)
+        public override bool WriteData(List<List<CellValueData>> sourceFilteredDataList)
         {
-            if (!base.WriteData(filteredInData))
+            if (!base.WriteData(sourceFilteredDataList))
             {
                 return false;
             }
@@ -47,7 +47,6 @@ namespace ExcelTool
             }
 
             int _contentStartRow = _ownerTable.GetContentStartRowIndex();
-            int _contentStartColum = _ownerTable.GetKeyStartColmIndex();
 
             var _writeType = TableDataManager.Instance().ExportWriteWayType;
             switch (_writeType)
@@ -68,34 +67,47 @@ namespace ExcelTool
                 }
             }
 
-            for (int i = 0; i < filteredInData.Count; ++i)
+            for (int i = 0; i < sourceFilteredDataList.Count; ++i)
             {
                 for (int j = 0; j < _keyListData.Count; ++j)
                 {
-                    var _connectKey = _keyListData[j].GetNextConnectKey();
-                    if (_connectKey == null)
+                    var _connectSourceKey = _keyListData[j].GetNextConnectKey();
+                    if (_connectSourceKey == null)
                     {
                         continue;
                     }
 
-                    var _cellData = filteredInData[i][_connectKey.GetKeyColumIndexInList()];
+                    CellValueData _targetCellData = sourceFilteredDataList[i][_connectSourceKey.GetKeyColumIndexInList()];
+                    ;
 
-                    var _nextKey = _connectKey.GetNextConnectKey();
-                    for (int _loop = 0; _loop < 1000; ++_loop)
-                    {
-                        if (_nextKey == null)
-                        {
-                            break;
-                        }
-                    }
+                    InternalRcursionGetDataWithConnectKey(_connectSourceKey, _targetCellData);
 
                     var _cell = mOriginSheetData.Cells[_contentStartRow, _keyListData[j].GetKeyIndexInSheetData()];
-                    _cell.Value = _cellData.GetCellValue();
+                    _cell.Value = _targetCellData.GetCellValue();
                     ++_contentStartRow;
                 }
             }
 
             return true;
+        }
+
+        private CellValueData InternalRcursionGetDataWithConnectKey(KeyData currentKey, CellValueData currentCell)
+        {
+            var _nextKey = currentKey.GetNextConnectKey();
+            if (_nextKey == null)
+            {
+                return currentCell;
+            }
+
+            var _nextKeyOwnerSheet = _nextKey.GetOwnerSheet();
+            if (_nextKeyOwnerSheet == null)
+            {
+                return currentCell;
+            }
+
+            _nextKeyOwnerSheet.LoadAllCellData();
+            //TODO继续递归找
+            return currentCell;
         }
 
         protected override bool InternalInitWithKey(object? sheetData, bool isForce)
@@ -201,7 +213,7 @@ namespace ExcelTool
                     var _newCellData = new CellValueData();
                     _newList.Add(_newCellData);
                     var _value = mOriginSheetData.Cells[_row, _colum].Value;
-                    var _stringValue = _value == null ? string.Empty:_value.ToString();
+                    var _stringValue = _value == null ? string.Empty : _value.ToString();
                     _newCellData.Init(
                         _stringValue,
                         _row,
@@ -213,7 +225,11 @@ namespace ExcelTool
 
                     if (_colum == _IDIndex)
                     {
-                        if (!string.IsNullOrEmpty(_stringValue))
+                        if (string.IsNullOrEmpty(_stringValue))
+                        {
+                            _errorMsgBuilder.Append($"尝试添加Key，但 Key 为空，请检查， Sheet 名字：[{this.DisplayName}], 表名:[{GetOwnerTable()?.DisplayName}]");
+                        }
+                        else
                         {
                             var _keyStr = _stringValue.Trim();
                             if (mAllDataMap.ContainsKey(_keyStr))
@@ -223,20 +239,8 @@ namespace ExcelTool
                             }
                             else
                             {
-                                mAllDataMap.Add(_targetKeyID, _newList);
+                                mAllDataMap.Add(_keyStr, _newList);
                             }
-                        }
-                        else
-                        {
-                        }
-                        if (int.TryParse(_value?.ToString(), out var _targetKeyID))
-                        {
-
-                        }
-                        else
-                        {
-                            _errorMsgBuilder.Append($"ID 列无法解析为 int ，请检查：{_value?.ToString()} 请检查");
-                            _errorMsgBuilder.Append("\r\n");
                         }
                     }
                 }

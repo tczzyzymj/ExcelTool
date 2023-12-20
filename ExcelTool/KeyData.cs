@@ -84,6 +84,19 @@ namespace ExcelTool
             mOwnerSheet = ownerSheet;
         }
 
+        public CommonWorkSheetData? GetOwnerSheet()
+        {
+            if (mOwnerSheet == null)
+            {
+                MessageBox.Show($"Key :{GetKeyName()} 无法获取 Sheet，请检查", "错误");
+                return null;
+            }
+
+            mOwnerSheet.TryGetTarget(out var _result);
+
+            return _result;
+        }
+
         public int GetKeyColumIndexInList()
         {
             return mKeyColumIndexInList;

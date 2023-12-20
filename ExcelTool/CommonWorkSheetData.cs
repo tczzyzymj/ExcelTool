@@ -41,6 +41,16 @@ namespace ExcelTool
             protected set;
         } = string.Empty;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="IDStr"></param>
+        /// <returns></returns>
+        public virtual  List<CellValueData>? GetListCellDataByID(string IDStr)
+        {
+            mAllDataMap.TryGetValue(IDStr, out var cellData);
+            return cellData;
+        }
 
         public int GetIndexInFileData()
         {

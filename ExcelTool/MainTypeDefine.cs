@@ -49,7 +49,6 @@ namespace ExcelTool
         SourceFile,
     }
 
-
     public class CommonDataForComboBox
     {
         public int RealValue

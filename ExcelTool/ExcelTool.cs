@@ -118,7 +118,9 @@ namespace ExcelTool
                     CommonUtil.GetZM(_keyList[i].GetKeyIndexForShow()),
                     _keyList[i].GetKeyName(),
                     "",
-                    "设置"
+                    "设置",
+                    _keyList[i].IsIgnore,
+                    _keyList[i].IsMainKey
                 );
             }
         }
@@ -249,6 +251,11 @@ namespace ExcelTool
 
         private void DataViewConfigForExportFile_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)
+            {
+                return;
+            }
+
             // 点击了编辑按钮，弹出编辑相关
             if (mKeyList == null || mKeyList.Count < 1 || e.RowIndex >= mKeyList.Count)
             {
@@ -262,6 +269,13 @@ namespace ExcelTool
             {
                 case mColumIndexForSetConnect:
                 {
+                    var _sourceFile = TableDataManager.Instance().GetSourceFileData();
+                    if (_sourceFile == null)
+                    {
+                        MessageBox.Show("请先配置数据源文件！", "错误");
+                        return;
+                    }
+
                     KeyConnectEditForm _form = new KeyConnectEditForm();
                     _form.InitData(_targetKey);
                     if (_form.ShowDialog() == DialogResult.OK)
@@ -280,12 +294,35 @@ namespace ExcelTool
                 {
                     var _value = (bool)DataViewConfigForExportFile.Rows[e.RowIndex].Cells[e.ColumnIndex].EditedFormattedValue;
                     _targetKey.IsIgnore = _value;
+                    if (_value)
+                    {
+                        _targetKey.IsMainKey = false;
+                        DataViewConfigForExportFile.Rows[e.RowIndex].Cells[e.ColumnIndex + 1].Value = false;
+                    }
+
                     break;
                 }
                 case mColumIndexForIsMainKey:
                 {
+                    // 目前主KEY只有一个其他的设置为空
                     var _value = (bool)DataViewConfigForExportFile.Rows[e.RowIndex].Cells[e.ColumnIndex].EditedFormattedValue;
                     _targetKey.IsMainKey = _value;
+                    if (_value)
+                    {
+                        _targetKey.IsIgnore = false;
+                        DataViewConfigForExportFile.Rows[e.RowIndex].Cells[e.ColumnIndex - 1].Value = false;
+                    }
+
+                    for (int i = 0; i < this.DataViewConfigForExportFile.RowCount; ++i)
+                    {
+                        if (i == e.RowIndex)
+                        {
+                            continue;
+                        }
+
+                        this.DataViewConfigForExportFile.Rows[i].Cells[e.ColumnIndex].Value = false;
+                    }
+
                     break;
                 }
             }

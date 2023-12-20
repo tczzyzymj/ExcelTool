@@ -49,18 +49,6 @@ namespace ExcelTool
             return true;
         }
 
-        public CellValueData? GetCellValueDataByID(int IDValue)
-        {
-            var _workSheet = GetCurrentWorkSheet();
-            if (_workSheet == null)
-            {
-                MessageBox.Show("无法获取当前 WorkSheet ,请检查!", "错误");
-                return null;
-            }
-
-            return null;
-        }
-
         public override void SaveFile()
         {
             mExcelPackage?.Save();
