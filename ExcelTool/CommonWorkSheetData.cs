@@ -21,9 +21,9 @@ namespace ExcelTool
         protected List<List<CellValueData>>? mCellData2DList = null; // 1维 是行， 2维是列
 
         /// <summary>
-        /// 这里是通过 KEY 可以索引的
+        /// 这里是通过 KEY 可以索引的，原始数据里面都是 string，就直接保存string了
         /// </summary>
-        protected Dictionary<int, List<CellValueData>> mAllDataMap = new Dictionary<int, List<CellValueData>>();
+        protected Dictionary<string, List<CellValueData>> mAllDataMap = new Dictionary<string, List<CellValueData>>();
 
         protected string mSheetName = string.Empty;
 

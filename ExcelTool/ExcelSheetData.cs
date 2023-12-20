@@ -78,7 +78,7 @@ namespace ExcelTool
                         continue;
                     }
 
-                    var _cellData = filteredInData[_connectKey.GetKeyColumIndexInList()];
+                    var _cellData = filteredInData[i][_connectKey.GetKeyColumIndexInList()];
 
                     var _nextKey = _connectKey.GetNextConnectKey();
                     for (int _loop = 0; _loop < 1000; ++_loop)
@@ -90,7 +90,7 @@ namespace ExcelTool
                     }
 
                     var _cell = mOriginSheetData.Cells[_contentStartRow, _keyListData[j].GetKeyIndexInSheetData()];
-
+                    _cell.Value = _cellData.GetCellValue();
                     ++_contentStartRow;
                 }
             }
@@ -201,8 +201,9 @@ namespace ExcelTool
                     var _newCellData = new CellValueData();
                     _newList.Add(_newCellData);
                     var _value = mOriginSheetData.Cells[_row, _colum].Value;
+                    var _stringValue = _value == null ? string.Empty:_value.ToString();
                     _newCellData.Init(
-                        _value == null ? string.Empty : _value.ToString(),
+                        _stringValue,
                         _row,
                         _colum,
                         _row - _contentStartRow,
@@ -212,17 +213,25 @@ namespace ExcelTool
 
                     if (_colum == _IDIndex)
                     {
-                        if (int.TryParse(_value?.ToString(), out var _targetKeyID))
+                        if (!string.IsNullOrEmpty(_stringValue))
                         {
-                            if (mAllDataMap.ContainsKey(_targetKeyID))
+                            var _keyStr = _stringValue.Trim();
+                            if (mAllDataMap.ContainsKey(_keyStr))
                             {
-                                _errorMsgBuilder.Append($"存在相同的KEY：{_targetKeyID} 请检查");
+                                _errorMsgBuilder.Append($"存在相同的KEY：{_stringValue} 请检查");
                                 _errorMsgBuilder.Append("\r\n");
                             }
                             else
                             {
                                 mAllDataMap.Add(_targetKeyID, _newList);
                             }
+                        }
+                        else
+                        {
+                        }
+                        if (int.TryParse(_value?.ToString(), out var _targetKeyID))
+                        {
+
                         }
                         else
                         {

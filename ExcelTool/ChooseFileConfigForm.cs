@@ -31,6 +31,12 @@ namespace ExcelTool
             }
         }
 
+        public string LastChooseFileAbsolutePath
+        {
+            get;
+            private set;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -139,7 +145,7 @@ namespace ExcelTool
                 {
                     return;
                 }
-
+                LastChooseFileAbsolutePath = _targetFile.GetFilePath();
                 InternalChangeNotice();
 
                 TextForFilePath.Text = _openfileDialog.FileName;

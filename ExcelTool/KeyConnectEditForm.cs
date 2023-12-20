@@ -12,14 +12,14 @@ namespace ExcelTool
 {
     public partial class KeyConnectEditForm : FormBase
     {
-        private KeyData? mFromKey = null;
+        private KeyData mFromKey = null;
         private TableBaseData? mSelectTargetTable = null;
         private CommonWorkSheetData? mSelectSheet = null;
         private const int mColumIndexForConnectInfo = 2;
         private const int mColumIndexForEditConnect = 3;
         private const int mColumIndexForSetConnect = 4;
 
-        private List<KeyData>? mKeyDataList = null;
+        private List<KeyData>? mWorkSheetKeyListData = null;
 
         public KeyConnectEditForm()
         {
@@ -29,26 +29,28 @@ namespace ExcelTool
 
         public bool InitData(KeyData targetKey)
         {
+            if (targetKey == null)
+            {
+                MessageBox.Show("传入的 KeyData 为空，请检查！", "错误");
+                this.Close();
+                return false;
+            }
+
             var fromData = targetKey.GetOwnerTable();
             if (fromData == null)
             {
                 MessageBox.Show("传入的 ExcelFileBase 为空，请检查！", "错误");
+                this.Close();
                 return false;
             }
+
             mFromKey = targetKey;
             return true;
         }
 
         private void KeyConnectEditForm_Load(object sender, EventArgs e)
         {
-            if (mFromKey != null)
-            {
-                LabelForFromTable.Text = $"{mFromKey.GetOwnerTableName(false)}--Key:{mFromKey.GetKeyName()}";
-            }
-            else
-            {
-                LabelForFromTable.Text = "文件未加载，请检查";
-            }
+            LabelForFromTable.Text = $"{mFromKey.GetOwnerTableName(false)}--Key:{mFromKey.GetKeyName()}";
 
             // 这里先默认选择一下加载的源数据文件
             mSelectTargetTable = TableDataManager.Instance().GetSourceFileData();
@@ -56,7 +58,7 @@ namespace ExcelTool
             // 这里为 file combobox 的已加载文件做显示
             {
                 ComboBoxForLoadedFile.BeginUpdate();
-                var _dataList = TableDataManager.Instance().GetDataList();
+                var _dataList = TableDataManager.Instance().GetTableDataList();
 
                 ComboBoxForLoadedFile.DataSource = _dataList;
                 ComboBoxForLoadedFile.ValueMember = "DisplayIndex";
@@ -78,17 +80,17 @@ namespace ExcelTool
             {
                 case mColumIndexForEditConnect:
                 {
-                    if (mKeyDataList == null || mFromKey == null)
+                    if (mWorkSheetKeyListData == null)
                     {
                         return;
                     }
 
                     KeyConnectEditForm _newForm = new KeyConnectEditForm();
-                    var _targetKey = mKeyDataList[e.RowIndex];
+                    var _targetKey = mWorkSheetKeyListData[e.RowIndex];
                     _newForm.InitData(_targetKey);
                     if (_newForm.ShowDialog(this) == DialogResult.OK)
                     {
-                        if (!CommonUtil.IsSafeNoCycleReferenceForKey(mKeyDataList[e.RowIndex]))
+                        if (!CommonUtil.IsSafeNoCycleReferenceForKey(mWorkSheetKeyListData[e.RowIndex]))
                         {
                             _targetKey.ClearNextConnectKey();
                         }
@@ -103,7 +105,7 @@ namespace ExcelTool
                 }
                 case mColumIndexForSetConnect:
                 {
-                    if (mKeyDataList == null || mFromKey == null)
+                    if (mWorkSheetKeyListData == null)
                     {
                         return;
                     }
@@ -112,7 +114,7 @@ namespace ExcelTool
                     var _allRows = this.DataViewForKeyConfig.Rows;
                     var _checkBoxCell = (DataGridViewCheckBoxCell)_allRows[e.RowIndex].Cells[e.ColumnIndex];
 
-                    var _triggerKey = mKeyDataList[e.RowIndex];
+                    var _triggerKey = mWorkSheetKeyListData[e.RowIndex];
 
                     bool _isSelect = (bool)_checkBoxCell.EditedFormattedValue;
                     if (_isSelect)
@@ -159,36 +161,18 @@ namespace ExcelTool
             _form.SetInitData(LoadFileType.NormalFile);
             _form.ShowDialog();
 
-            // 这里刷新一下加载
+            var _index = TableDataManager.Instance().TryGetTableIndexByPath(_form.LastChooseFileAbsolutePath);
+            if (_index >= 0)
+            {
+                ComboBoxForLoadedFile.SelectedIndex = _index;
+            }
 
-            //OpenFileDialog _openfileDialog = new OpenFileDialog();
-            //_openfileDialog.Filter = "New excel|*.xlsx|csv|*.csv|Old excel|*.xls";
-            //_openfileDialog.Multiselect = false;
-            //if (_openfileDialog.ShowDialog() == DialogResult.OK)
-            //{
-            //    // 这里去做
-            //    TableDataManager.Instance().TryLoadFile(_openfileDialog.FileName, true);
-
-            //    ComboBoxForLoadedFile.Update();
-
-            //    // 这里去选中新的
-
-            //    var _dataList = TableDataManager.Instance().GetDataList();
-            //    var _index = _dataList.FindIndex(x => x.GetFileName(true) == _openfileDialog.FileName);
-
-            //    if (_index < 0)
-            //    {
-            //        MessageBox.Show("未能找到新加载的文件，请检查");
-            //        return;
-            //    }
-
-            //    ComboBoxForLoadedFile.SelectedIndex = _index;
-            //}
+            this.ComboBoxForLoadedFile.Update();
         }
 
         private void ComboBoxForLoadedFile_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var _dataList = TableDataManager.Instance().GetDataList();
+            var _dataList = TableDataManager.Instance().GetTableDataList();
             var _index = this.ComboBoxForLoadedFile.SelectedIndex;
             mSelectTargetTable = _dataList[_index];
             InternalRefreshSheetComboBox();
@@ -226,6 +210,11 @@ namespace ExcelTool
                 return false;
             }
 
+            if (mFromKey == null)
+            {
+                return false;
+            }
+
             for (int i = 0; i < _keyList.Count; i++)
             {
                 var _key = _keyList[i];
@@ -234,11 +223,11 @@ namespace ExcelTool
                     _key.GetKeyName(),
                     CommonUtil.GetKeyConnectFullInfo(_key),
                     "编辑",
-                    false
+                    mFromKey.GetNextConnectKey() == _key
                 );
             }
 
-            mKeyDataList = _keyList;
+            mWorkSheetKeyListData = _keyList;
 
             return true;
         }

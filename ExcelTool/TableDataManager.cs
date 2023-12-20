@@ -58,7 +58,7 @@ namespace ExcelTool
             }
         }
 
-        public List<TableBaseData> GetDataList()
+        public List<TableBaseData> GetTableDataList()
         {
             return mDataList;
         }
@@ -131,6 +131,16 @@ namespace ExcelTool
             mExportTargetFile = InternalLoadFile(absoluteFilePath, true, false);
 
             return mExportTargetFile;
+        }
+
+        public TableBaseData? TryGetTableByPath(string absolutePath)
+        {
+            return mDataList.Find(x=>x.GetFilePath().Equals(absolutePath));
+        }
+
+        public int TryGetTableIndexByPath(string absolutePath)
+        {
+            return mDataList.FindIndex(x => x.GetFilePath().Equals(absolutePath));
         }
 
         public TableBaseData? TryLoadNormalFile(string absoluteFilePath)
