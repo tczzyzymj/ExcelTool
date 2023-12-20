@@ -30,8 +30,35 @@ namespace ExcelTool
             CloseFile();
         }
 
-        public override void WriteData(List<List<CellValueData>> inDataList)
+        public override bool WriteData(List<List<CellValueData>> filteredInData)
         {
+            if (!base.WriteData(filteredInData))
+            {
+                return false;
+            }
+
+            var _currentWorkSheet = GetCurrentWorkSheet() as ExcelSheetData;
+            if (_currentWorkSheet == null)
+            {
+                MessageBox.Show("当前 WorkSheet 为空，请检查!");
+                return false;
+            }
+
+            _currentWorkSheet.WriteData(filteredInData);
+
+            return true;
+        }
+
+        public CellValueData? GetCellValueDataByID(int IDValue)
+        {
+            var _workSheet = GetCurrentWorkSheet();
+            if (_workSheet == null)
+            {
+                MessageBox.Show("无法获取当前 WorkSheet ,请检查!", "错误");
+                return null;
+            }
+
+            return null;
         }
 
         public override void SaveFile()
@@ -45,7 +72,7 @@ namespace ExcelTool
             FileInfo _info = new FileInfo(absolutePath);
             if (!_info.Exists)
             {
-                MessageBox.Show($"错误，路径 【{absolutePath}】不存在，请检查！");
+                MessageBox.Show($"路径 【{absolutePath}】不存在，请检查！", "错误");
                 return false;
             }
 

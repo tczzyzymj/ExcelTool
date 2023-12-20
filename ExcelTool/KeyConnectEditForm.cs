@@ -155,29 +155,35 @@ namespace ExcelTool
 
         private void BtnLoadNewFile_Click(object sender, EventArgs e)
         {
-            OpenFileDialog _openfileDialog = new OpenFileDialog();
-            _openfileDialog.Filter = "New excel|*.xlsx|csv|*.csv|Old excel|*.xls";
-            _openfileDialog.Multiselect = false;
-            if (_openfileDialog.ShowDialog() == DialogResult.OK)
-            {
-                // 这里去做
-                TableDataManager.Instance().TryLoadFile(_openfileDialog.FileName, true);
+            ChooseFileConfigForm _form = new ChooseFileConfigForm();
+            _form.SetInitData(LoadFileType.NormalFile);
+            _form.ShowDialog();
 
-                ComboBoxForLoadedFile.Update();
+            // 这里刷新一下加载
 
-                // 这里去选中新的
+            //OpenFileDialog _openfileDialog = new OpenFileDialog();
+            //_openfileDialog.Filter = "New excel|*.xlsx|csv|*.csv|Old excel|*.xls";
+            //_openfileDialog.Multiselect = false;
+            //if (_openfileDialog.ShowDialog() == DialogResult.OK)
+            //{
+            //    // 这里去做
+            //    TableDataManager.Instance().TryLoadFile(_openfileDialog.FileName, true);
 
-                var _dataList = TableDataManager.Instance().GetDataList();
-                var _index = _dataList.FindIndex(x => x.GetFileName(true) == _openfileDialog.FileName);
+            //    ComboBoxForLoadedFile.Update();
 
-                if (_index < 0)
-                {
-                    MessageBox.Show("未能找到新加载的文件，请检查");
-                    return;
-                }
+            //    // 这里去选中新的
 
-                ComboBoxForLoadedFile.SelectedIndex = _index;
-            }
+            //    var _dataList = TableDataManager.Instance().GetDataList();
+            //    var _index = _dataList.FindIndex(x => x.GetFileName(true) == _openfileDialog.FileName);
+
+            //    if (_index < 0)
+            //    {
+            //        MessageBox.Show("未能找到新加载的文件，请检查");
+            //        return;
+            //    }
+
+            //    ComboBoxForLoadedFile.SelectedIndex = _index;
+            //}
         }
 
         private void ComboBoxForLoadedFile_SelectedIndexChanged(object sender, EventArgs e)

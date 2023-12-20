@@ -28,8 +28,14 @@ namespace ExcelTool
             set;
         } = ",";
 
-        public override void WriteData(List<List<CellValueData>> inDataList)
+        public override bool WriteData(List<List<CellValueData>> filteredInData)
         {
+            if (!base.WriteData(filteredInData))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public override void SaveFile()

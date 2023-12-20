@@ -7,15 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 
 namespace ExcelTool
 {
     public partial class ChooseFileConfigForm : FormBase
     {
-        /// <summary>
-        /// 1表示读取的是exportfile , 2 表示读取的是 sourcefile
-        /// </summary>
-        private int mFileType = 0;
+        private LoadFileType mFileType = 0;
 
         public ChooseFileConfigForm()
         {
@@ -36,8 +34,8 @@ namespace ExcelTool
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="fileType">1表示读取的是exportfile , 2 表示读取的是 sourcefile</param>
-        public void SetInitData(int fileType)
+        /// <param name="fileType">1表示读取的是exportfile , 2 表示读取的是 sourcefile，3表示普通文件加载</param>
+        public void SetInitData(LoadFileType fileType)
         {
             mFileType = fileType;
         }
@@ -46,11 +44,11 @@ namespace ExcelTool
         {
             switch (mFileType)
             {
-                case 1:
+                case LoadFileType.ExportFile:
                 {
                     return TableDataManager.Instance().GetExportFileData();
                 }
-                case 2:
+                case LoadFileType.SourceFile:
                 {
                     return TableDataManager.Instance().GetSourceFileData();
                 }
@@ -63,14 +61,18 @@ namespace ExcelTool
         {
             switch (mFileType)
             {
-                case 1:
+                case LoadFileType.ExportFile:
                 {
-                    return TableDataManager.Instance().TryChooseExportFile(absolutePath);
+                    return TableDataManager.Instance().TryLoadExportFile(absolutePath);
 
                 }
-                case 2:
+                case LoadFileType.SourceFile:
                 {
-                    return TableDataManager.Instance().TryChooseSourceFile(absolutePath);
+                    return TableDataManager.Instance().TryLoadSourceFile(absolutePath);
+                }
+                case LoadFileType.NormalFile:
+                {
+                    return TableDataManager.Instance().TryLoadNormalFile(absolutePath);
                 }
             }
 
@@ -81,11 +83,12 @@ namespace ExcelTool
         {
             switch (mFileType)
             {
-                case 1:
+                case LoadFileType.ExportFile:
                 {
                     return "New excel|*.xlsx|Old excel|*.xls|csv|*.csv";
                 }
-                case 2:
+                case LoadFileType.SourceFile:
+                case LoadFileType.NormalFile:
                 {
                     return "csv|*.csv|New excel|*.xlsx|Old excel|*.xls";
                 }
@@ -330,10 +333,19 @@ namespace ExcelTool
                 return;
             }
 
-            if (mFileType == 1)
+            switch (mFileType)
             {
-                this.DataGridViewForKeyFilter.Columns[2].Visible = false;
-                this.DataGridViewForKeyFilter.Columns[3].Visible = false;
+                case LoadFileType.ExportFile:
+                {
+                    this.DataGridViewForKeyFilter.Columns[2].Visible = false;
+                    this.DataGridViewForKeyFilter.Columns[3].Visible = false;
+                    break;
+                }
+                case LoadFileType.NormalFile:
+                {
+                    this.DataGridViewForKeyFilter.Columns[3].Visible = false;
+                    break;
+                }
             }
 
             var _targetFile = InternalGetFileData();

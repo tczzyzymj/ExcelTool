@@ -83,31 +83,6 @@ namespace ExcelTool
                 return;
             }
 
-            var _keyListData = _exportFile.GetCurrentWorkSheet()?.GetKeyListData();
-            if (_keyListData == null)
-            {
-                MessageBox.Show("无法获取 _exportFile 当前 Sheet 的 Key数据，请检查", "错误");
-                return;
-            }
-
-            bool _anyConnect = false;
-
-            // 这里检查一下，看是否至少有一个是设置关联了的
-            for (int i = 0; i < _keyListData.Count; ++i)
-            {
-                if (_keyListData[i].GetNextConnectKey() != null)
-                {
-                    _anyConnect = true;
-                    break;
-                }
-            }
-
-            if (!_anyConnect)
-            {
-                MessageBox.Show("导出文件至少要设置一个关联数据!", "错误");
-                return;
-            }
-
             var _sourceFile = GetSourceFileData();
             if (_sourceFile == null)
             {
@@ -122,7 +97,15 @@ namespace ExcelTool
                 return;
             }
 
-            _exportFile.WriteData(_inDataList);
+            if (!_exportFile.WriteData(_inDataList))
+            {
+                MessageBox.Show("数据写入出错，请检查", "错误");
+                return;
+            }
+
+            _exportFile.SaveFile();
+
+            MessageBox.Show("数据导出完成", "提示");
         }
 
         public void TrySetExportTargetFile(TableBaseData targetData)
@@ -135,16 +118,49 @@ namespace ExcelTool
             mSourceFile = targetData;
         }
 
-        public TableBaseData? TryChooseExportFile(string absoluteFilePath)
+        public TableBaseData? TryLoadExportFile(string absoluteFilePath)
         {
-            mExportTargetFile = TryLoadFile(absoluteFilePath, false);
+            if (mExportTargetFile != null)
+            {
+                if (mExportTargetFile.GetFilePath().Equals(absoluteFilePath))
+                {
+                    return mExportTargetFile;
+                }
+            }
+
+            mExportTargetFile = InternalLoadFile(absoluteFilePath, true, false);
 
             return mExportTargetFile;
         }
 
-        public TableBaseData? TryChooseSourceFile(string absoluteFilePath)
+        public TableBaseData? TryLoadNormalFile(string absoluteFilePath)
         {
-            var _tempFile = TryLoadFile(absoluteFilePath, true);
+            if (mExportTargetFile != null)
+            {
+                if (mExportTargetFile.GetFilePath().Equals(absoluteFilePath))
+                {
+                    MessageBox.Show("导出目标文件已经加载，不要重复加载", "提示");
+                    return null;
+                }
+            }
+
+            var _tempFile = InternalLoadFile(absoluteFilePath, true, true);
+
+            return _tempFile;
+        }
+
+        public TableBaseData? TryLoadSourceFile(string absoluteFilePath)
+        {
+            if (mExportTargetFile != null)
+            {
+                if (mExportTargetFile.GetFilePath().Equals(absoluteFilePath))
+                {
+                    MessageBox.Show("导出目标文件已经加载，不要重复加载", "提示");
+                    return null;
+                }
+            }
+
+            var _tempFile = InternalLoadFile(absoluteFilePath, true, true);
             if (_tempFile == null)
             {
                 return null;
@@ -179,14 +195,13 @@ namespace ExcelTool
             return mSourceFile;
         }
 
-
-        public TableBaseData? TryLoadFile(string absoluteFilePath, bool checkExistAndAdd)
+        private TableBaseData? InternalLoadFile(string absoluteFilePath, bool checkExist, bool addList)
         {
             TableBaseData? targetFile = null;
 
             try
             {
-                if (checkExistAndAdd)
+                if (checkExist)
                 {
                     var _existFile = IsFileExist(absoluteFilePath);
                     if (_existFile != null)
@@ -217,7 +232,7 @@ namespace ExcelTool
 
                 targetFile = _tempFile;
 
-                if (checkExistAndAdd)
+                if (addList)
                 {
                     mDataList.Add(_tempFile);
                     _tempFile.DisplayName = _tempFile.GetFileName(false);

@@ -76,7 +76,16 @@ namespace ExcelTool
             return true;
         }
 
-        public abstract void WriteData(List<List<CellValueData>> inDataList);
+        public virtual bool WriteData(List<List<CellValueData>> filteredInData)
+        {
+            if (filteredInData == null || filteredInData.Count < 1)
+            {
+                MessageBox.Show("WriteData 数据无效，请检查", "错误");
+                return false;
+            }
+
+            return true;
+        }
 
         public abstract void SaveFile();
 
@@ -92,7 +101,7 @@ namespace ExcelTool
             return _currentSheet?.GetFilteredDataList();
         }
 
-        public string? GetFilePath()
+        public string GetFilePath()
         {
             return mExcelAbsolutePath;
         }

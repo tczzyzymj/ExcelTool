@@ -17,6 +17,24 @@ namespace ExcelTool
             InternalInitWithKey(mSheetData, true);
         }
 
+        public override bool WriteData(List<List<CellValueData>> filteredInData)
+        {
+            if (!base.WriteData(filteredInData))
+            {
+                return false;
+            }
+
+            var _keyListData = GetKeyListData();
+            if (_keyListData == null)
+            {
+                MessageBox.Show("WriteData ，但是 KeyList 为空，请检查", "错误");
+
+                return false;
+            }
+
+            return true;
+        }
+
         protected override bool InternalInitWithKey(object? sheetData, bool isForce)
         {
             if (mHasInitKey && !isForce)

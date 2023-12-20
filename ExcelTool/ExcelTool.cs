@@ -76,7 +76,7 @@ namespace ExcelTool
         private void BntChooseExportFile_Click(object sender, EventArgs e)
         {
             ChooseFileConfigForm _exportConfigForm = new ChooseFileConfigForm();
-            _exportConfigForm.SetInitData(1);
+            _exportConfigForm.SetInitData(LoadFileType.ExportFile);
             if (_exportConfigForm.ShowDialog(this) == DialogResult.OK)
             {
                 InternalAnalysisKey();
@@ -183,7 +183,7 @@ namespace ExcelTool
         private void BtnChooseSourceFile_Click(object sender, EventArgs e)
         {
             ChooseFileConfigForm _form = new ChooseFileConfigForm();
-            _form.SetInitData(2);
+            _form.SetInitData(LoadFileType.SourceFile);
             if (_form.ShowDialog(this) == DialogResult.OK)
             {
             }

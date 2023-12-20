@@ -37,6 +37,18 @@ namespace ExcelTool
         }
     }
 
+    public enum LoadFileType
+    {
+        // 普通文件
+        NormalFile,
+
+        // 导出目标文件
+        ExportFile,
+
+        // 数据源文件
+        SourceFile,
+    }
+
 
     public class CommonDataForComboBox
     {

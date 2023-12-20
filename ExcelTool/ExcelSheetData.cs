@@ -10,12 +10,92 @@ namespace ExcelTool
 {
     internal class ExcelSheetData : CommonWorkSheetData
     {
-        protected ExcelWorksheet? mSheetData = null; // 原始数据
+        protected ExcelWorksheet? mOriginSheetData = null; // 原始数据
 
         public override void ReloadKey()
         {
             base.ReloadKey();
-            InternalInitWithKey(mSheetData, true);
+            InternalInitWithKey(mOriginSheetData, true);
+        }
+
+        public override bool WriteData(List<List<CellValueData>> filteredInData)
+        {
+            if (!base.WriteData(filteredInData))
+            {
+                return false;
+            }
+
+            if (mOriginSheetData == null)
+            {
+                MessageBox.Show("ExcelSheetData.WriteData ，但是 ExcelWorksheet 数据为空，请检查", "错误");
+                return false;
+            }
+
+            var _keyListData = GetKeyListData();
+            if (_keyListData == null)
+            {
+                MessageBox.Show("ExcelSheetData.WriteData ，但是 KeyList 为空，请检查", "错误");
+
+                return false;
+            }
+
+            var _ownerTable = GetOwnerTable();
+            if (_ownerTable == null)
+            {
+                MessageBox.Show("ExcelSheetData.WriteData 时，GetOwnerTable 为空，请检查", "错误");
+                return false;
+            }
+
+            int _contentStartRow = _ownerTable.GetContentStartRowIndex();
+            int _contentStartColum = _ownerTable.GetKeyStartColmIndex();
+
+            var _writeType = TableDataManager.Instance().ExportWriteWayType;
+            switch (_writeType)
+            {
+                case MainTypeDefine.ExportWriteWayType.Append:
+                {
+                    _contentStartRow = mOriginSheetData.Dimension.Rows + 1;
+                    break;
+                }
+                case MainTypeDefine.ExportWriteWayType.OverWriteAll:
+                {
+                    break;
+                }
+                default:
+                {
+                    MessageBox.Show($"WriteData 时，选择了 ExportWriteWayType 未实现的类型：{_writeType}", "错误");
+                    return false;
+                }
+            }
+
+            for (int i = 0; i < filteredInData.Count; ++i)
+            {
+                for (int j = 0; j < _keyListData.Count; ++j)
+                {
+                    var _connectKey = _keyListData[j].GetNextConnectKey();
+                    if (_connectKey == null)
+                    {
+                        continue;
+                    }
+
+                    var _cellData = filteredInData[_connectKey.GetKeyColumIndexInList()];
+
+                    var _nextKey = _connectKey.GetNextConnectKey();
+                    for (int _loop = 0; _loop < 1000; ++_loop)
+                    {
+                        if (_nextKey == null)
+                        {
+                            break;
+                        }
+                    }
+
+                    var _cell = mOriginSheetData.Cells[_contentStartRow, _keyListData[j].GetKeyIndexInSheetData()];
+
+                    ++_contentStartRow;
+                }
+            }
+
+            return true;
         }
 
         protected override bool InternalInitWithKey(object? sheetData, bool isForce)
@@ -37,14 +117,14 @@ namespace ExcelTool
                 return false;
             }
             var _finalData = sheetData as ExcelWorksheet;
-            mSheetData = _finalData;
-            if (mSheetData == null)
+            mOriginSheetData = _finalData;
+            if (mOriginSheetData == null)
             {
                 MessageBox.Show("传入的 Data 数据无法解析为 ExcelWorksheet，请检查", "错误");
                 return false;
             }
 
-            if (mSheetData.Dimension == null)
+            if (mOriginSheetData.Dimension == null)
             {
                 // 这个 sheet 里面的内容为空，还是要记录一下，所以返回true
                 return true;
@@ -57,18 +137,18 @@ namespace ExcelTool
 
             var _rowIndex = _ownerExcel.GetKeyStartRowIndex();
 
-            for (int _colm = _ownerExcel.GetKeyStartColmIndex(); _colm <= mSheetData.Dimension.Columns; ++_colm)
+            for (int _colm = _ownerExcel.GetKeyStartColmIndex(); _colm <= mOriginSheetData.Dimension.Columns; ++_colm)
             {
-                var _tempValue = mSheetData.Cells[_rowIndex, _colm].Value;
+                var _tempValue = mOriginSheetData.Cells[_rowIndex, _colm].Value;
                 if (_tempValue == null)
                 {
-                    MessageBox.Show($"表格的 key 有空列，请检查，文件：{_ownerExcel.GetFileName(true)}, sheet:{mSheetData.Name}，行：{_rowIndex}, 列：{_colm}", "错误");
+                    MessageBox.Show($"表格的 key 有空列，请检查，文件：{_ownerExcel.GetFileName(true)}, sheet:{mOriginSheetData.Name}，行：{_rowIndex}, 列：{_colm}", "错误");
                     return false;
                 }
                 string? _finalStr = _tempValue as string;
                 if (string.IsNullOrEmpty(_finalStr))
                 {
-                    MessageBox.Show($"表格的 key 有空列，请检查，文件：{_ownerExcel.GetFileName(true)}, sheet:{mSheetData.Name}", "错误");
+                    MessageBox.Show($"表格的 key 有空列，请检查，文件：{_ownerExcel.GetFileName(true)}, sheet:{mOriginSheetData.Name}", "错误");
                     return false;
                 }
 
@@ -93,7 +173,7 @@ namespace ExcelTool
                 return false;
             }
 
-            if (mSheetData == null)
+            if (mOriginSheetData == null)
             {
                 MessageBox.Show("InternalLoadAllCellData 无法获取 SheetData，请检查！", "错误");
                 return false;
@@ -105,22 +185,22 @@ namespace ExcelTool
             var _contentStartRow = _ownerTable.GetContentStartRowIndex();
             var _keyStartColum = _ownerTable.GetKeyStartColmIndex();
 
-            mCellData2DList = new List<List<CellValueData>>(mSheetData.Dimension.Rows - 4);
+            mCellData2DList = new List<List<CellValueData>>(mOriginSheetData.Dimension.Rows - 4);
 
             var _IDIndex = _ownerTable.IDIndex;
 
             StringBuilder _errorMsgBuilder = new StringBuilder();
 
-            for (int _row = _contentStartRow; _row <= mSheetData.Dimension.Rows; ++_row)
+            for (int _row = _contentStartRow; _row <= mOriginSheetData.Dimension.Rows; ++_row)
             {
                 var _newList = new List<CellValueData>();
                 mCellData2DList.Add(_newList);
 
-                for (int _colum = _keyStartColum; _colum <= mSheetData.Dimension.Columns; ++_colum)
+                for (int _colum = _keyStartColum; _colum <= mOriginSheetData.Dimension.Columns; ++_colum)
                 {
                     var _newCellData = new CellValueData();
                     _newList.Add(_newCellData);
-                    var _value = mSheetData.Cells[_row, _colum].Value;
+                    var _value = mOriginSheetData.Cells[_row, _colum].Value;
                     _newCellData.Init(
                         _value == null ? string.Empty : _value.ToString(),
                         _row,

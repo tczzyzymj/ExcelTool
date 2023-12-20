@@ -84,7 +84,7 @@ namespace ExcelTool
             mOwnerSheet = ownerSheet;
         }
 
-        public int GetKeyIndexInList()
+        public int GetKeyColumIndexInList()
         {
             return mKeyColumIndexInList;
         }
