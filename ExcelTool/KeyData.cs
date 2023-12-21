@@ -21,8 +21,6 @@ namespace ExcelTool
         // 目前源文件 source file 用，其他的目前用不到，用来筛选数据
         private List<FilterFuncBase> mFilterFuncList = new List<FilterFuncBase>();
 
-        private WeakReference<KeyData>? mNextConnectKey = null; // 要避免循环引用，是基于表格的，每次设置关联之后，会检测一次
-
         private WeakReference<CommonWorkSheetData>? mOwnerSheet = null;
 
         /// <summary>
@@ -177,51 +175,6 @@ namespace ExcelTool
             }
 
             return string.Empty;
-        }
-
-        public string GetConnectInfo()
-        {
-            if (mNextConnectKey == null)
-            {
-                return string.Empty;
-            }
-
-            if (!mNextConnectKey.TryGetTarget(out KeyData? _targetKey))
-            {
-                return string.Empty;
-            }
-
-            return $"{_targetKey.GetOwnerTableName(false)}[{_targetKey.GetOwnerSheetName()}][{_targetKey.GetKeyName()}]";
-        }
-
-        // 避免循环引用，是基于表格的
-        public bool SetNextConnectKey(WeakReference<KeyData> connectKey)
-        {
-            if (connectKey == null || !connectKey.TryGetTarget(out var _tempConnectKey))
-            {
-                MessageBox.Show("尝试 SetNextConnectKey，但传入的数据为空，请检查!", "错误");
-                return false;
-            }
-
-            mNextConnectKey = connectKey;
-
-            return true;
-        }
-
-        public void ClearNextConnectKey()
-        {
-            mNextConnectKey = null;
-        }
-
-        public KeyData? GetNextConnectKey()
-        {
-            if (mNextConnectKey == null)
-            {
-                return null;
-            }
-
-            mNextConnectKey.TryGetTarget(out var _nextKey);
-            return _nextKey;
         }
     }
 }

@@ -30,6 +30,24 @@ namespace ExcelTool
 
         private TableBaseData? mSourceFile = null; // 数据源文件
 
+        /// <summary>
+        /// 源文件的数据过滤器
+        /// </summary>
+        private Dictionary<KeyData, FilterFuncBase> SourceDataFilterMap
+        {
+            get;
+            set;
+        } = new Dictionary<KeyData, FilterFuncBase>();
+
+        /// <summary>
+        /// 目标文件的数据过滤器，考虑到可能是对原有数据的更新
+        /// </summary>
+        private Dictionary<KeyData, FilterFuncBase> ExportDataFilterMap
+        {
+            get;
+            set;
+        } = new Dictionary<KeyData, FilterFuncBase>();
+
         public MainTypeDefine.ExportWriteWayType ExportWriteWayType
         {
             get;
@@ -135,7 +153,7 @@ namespace ExcelTool
 
         public TableBaseData? TryGetTableByPath(string absolutePath)
         {
-            return mDataList.Find(x=>x.GetFilePath().Equals(absolutePath));
+            return mDataList.Find(x => x.GetFilePath().Equals(absolutePath));
         }
 
         public int TryGetTableIndexByPath(string absolutePath)

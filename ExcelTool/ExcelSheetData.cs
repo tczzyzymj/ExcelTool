@@ -71,43 +71,11 @@ namespace ExcelTool
             {
                 for (int j = 0; j < _keyListData.Count; ++j)
                 {
-                    var _connectSourceKey = _keyListData[j].GetNextConnectKey();
-                    if (_connectSourceKey == null)
-                    {
-                        continue;
-                    }
 
-                    CellValueData _targetCellData = sourceFilteredDataList[i][_connectSourceKey.GetKeyColumIndexInList()];
-                    ;
-
-                    InternalRcursionGetDataWithConnectKey(_connectSourceKey, _targetCellData);
-
-                    var _cell = mOriginSheetData.Cells[_contentStartRow, _keyListData[j].GetKeyIndexInSheetData()];
-                    _cell.Value = _targetCellData.GetCellValue();
-                    ++_contentStartRow;
                 }
             }
 
             return true;
-        }
-
-        private CellValueData InternalRcursionGetDataWithConnectKey(KeyData currentKey, CellValueData currentCell)
-        {
-            var _nextKey = currentKey.GetNextConnectKey();
-            if (_nextKey == null)
-            {
-                return currentCell;
-            }
-
-            var _nextKeyOwnerSheet = _nextKey.GetOwnerSheet();
-            if (_nextKeyOwnerSheet == null)
-            {
-                return currentCell;
-            }
-
-            _nextKeyOwnerSheet.LoadAllCellData();
-            //TODO继续递归找
-            return currentCell;
         }
 
         protected override bool InternalInitWithKey(object? sheetData, bool isForce)

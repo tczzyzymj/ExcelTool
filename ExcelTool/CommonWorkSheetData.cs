@@ -99,7 +99,7 @@ namespace ExcelTool
             return _result;
         }
 
-        public virtual bool WriteData(List<List<CellValueData>> filteredInData)
+        public virtual bool WriteData(List<List<CellValueData>> filteredInDataList)
         {
             var _keyListData = GetKeyListData();
             if (_keyListData == null)
@@ -110,15 +110,6 @@ namespace ExcelTool
             }
 
             // 这里检查一下，看是否至少有一个是设置关联了的
-            for (int i = 0; i < _keyListData.Count; ++i)
-            {
-                var _connectKey = _keyListData[i].GetNextConnectKey();
-                if (_connectKey == null && !_keyListData[i].IsIgnore)
-                {
-                    MessageBox.Show($"导出目标 Key : {_keyListData[i].GetKeyName()} 没有设置关联，也没有忽略，请检查！");
-                    return false;
-                }
-            }
 
             return true;
         }

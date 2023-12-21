@@ -114,7 +114,7 @@ namespace ExcelTool
             {
                 return false;
             }
-            
+
             CompareValue = targetValue;
 
             return true;
