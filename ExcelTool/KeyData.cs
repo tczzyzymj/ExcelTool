@@ -18,9 +18,9 @@ namespace ExcelTool
 
         private int mKeyColumIndexForShow = 0;
 
-        // 目前源文件 source file 用，其他的目前用不到，用来筛选数据
-        private List<FilterFuncBase> mFilterFuncList = new List<FilterFuncBase>();
-
+        /// <summary>
+        /// 这个是子类对父类的引用，所以用的弱引用
+        /// </summary>
         private WeakReference<CommonWorkSheetData>? mOwnerSheet = null;
 
         /// <summary>
@@ -100,24 +100,6 @@ namespace ExcelTool
             return mKeyColumIndexInList;
         }
 
-        public bool IsMatchFilter(string? content)
-        {
-            if (mFilterFuncList.Count < 1)
-            {
-                return true;
-            }
-
-            for (int i = 0; i < mFilterFuncList.Count; ++i)
-            {
-                if (!mFilterFuncList[i].IsMatchFilter(content))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         public int GetKeyIndexForShow()
         {
             return mKeyColumIndexForShow;
@@ -131,11 +113,6 @@ namespace ExcelTool
         public int GetKeyIndexInSheetData()
         {
             return mKeyColumIndexInSheetData;
-        }
-
-        public List<FilterFuncBase> GetFilterFuncList()
-        {
-            return mFilterFuncList;
         }
 
         public TableBaseData? GetOwnerTable()

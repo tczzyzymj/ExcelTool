@@ -20,6 +20,7 @@ namespace ExcelTool
 
         protected List<List<CellValueData>>? mCellData2DList = null; // 1维 是行， 2维是列
 
+
         /// <summary>
         /// 这里是通过 KEY 可以索引的，原始数据里面都是 string，就直接保存string了
         /// </summary>
@@ -46,7 +47,7 @@ namespace ExcelTool
         /// </summary>
         /// <param name="IDStr"></param>
         /// <returns></returns>
-        public virtual  List<CellValueData>? GetListCellDataByID(string IDStr)
+        public virtual List<CellValueData>? GetListCellDataByID(string IDStr)
         {
             mAllDataMap.TryGetValue(IDStr, out var cellData);
             return cellData;
@@ -57,35 +58,54 @@ namespace ExcelTool
             return mIndexInFileData;
         }
 
+        /// <summary>
+        /// 从key 里面移除一个 筛选方法
+        /// </summary>
+        /// <param name="keyIndex"></param>
+        /// <returns></returns>
+        public bool RemoveFilterFromKey(int keyIndex, int filterIndex)
+        {
+            if (keyIndex < 0 || keyIndex >= mFilterDataMap.Count)
+            {
+                return false;
+            }
+
+            mFilterDataMap[keyIndex].RemoveAt(filterIndex);
+
+            return true;
+        }
+
         public List<List<CellValueData>>? GetFilteredDataList()
         {
             if (mCellData2DList == null)
             {
                 return null;
             }
+            List<int> _checkColumIndexList = new List<int>();
 
-            List<List<CellValueData>> _result = new List<List<CellValueData>>(mCellData2DList.Count);
-
-            var _keyDataList = GetKeyListData();
-            List<KeyData> _filterKeyData = new List<KeyData>(_keyDataList.Count);
-            for (int i = 0; i < _keyDataList.Count; ++i)
+            foreach (var _pair in mFilterDataMap)
             {
-                if (_keyDataList[i].GetFilterFuncList().Count > 0)
-                {
-                    _filterKeyData.Add(_keyDataList[i]);
-                }
+                _checkColumIndexList.Add(_pair.Key);
             }
 
+            List<List<CellValueData>> _result = new List<List<CellValueData>>(mCellData2DList.Count);
             for (int _row = 0; _row < mCellData2DList.Count; ++_row)
             {
                 var _rowData = mCellData2DList[_row];
                 bool _match = true;
-                for (int i = 0; i < _filterKeyData.Count; ++i)
+                foreach (var _columIndex in _checkColumIndexList)
                 {
-                    if (!_filterKeyData[i].IsMatchFilter(_rowData[_filterKeyData[i].GetKeyColumIndexInList()].GetCellValue()))
+                    foreach (var _filterFunc in mFilterDataMap[_columIndex])
                     {
-                        _match = false;
+                        if (!_filterFunc.IsMatchFilter(_rowData[_columIndex].GetCellValue()))
+                        {
+                            _match = false;
+                            break;
+                        }
+                    }
 
+                    if (!_match)
+                    {
                         break;
                     }
                 }

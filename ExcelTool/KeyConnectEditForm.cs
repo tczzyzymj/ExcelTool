@@ -90,16 +90,17 @@ namespace ExcelTool
                     _newForm.InitData(_targetKey);
                     if (_newForm.ShowDialog(this) == DialogResult.OK)
                     {
-                        if (!CommonUtil.IsSafeNoCycleReferenceForKey(mWorkSheetKeyListData[e.RowIndex]))
-                        {
-                            _targetKey.ClearNextConnectKey();
-                        }
-                        else
-                        {
-                            var _cell = DataViewForKeyConfig.Rows[e.RowIndex].Cells[mColumIndexForConnectInfo];
-                            _cell.Value = _targetKey.GetConnectInfo();
-                            this.DataViewForKeyConfig.UpdateCellValue(mColumIndexForConnectInfo, e.RowIndex);
-                        }
+                        // TODO  这里去检测一下，看 key 是否循环引用
+                        //if (!CommonUtil.IsSafeNoCycleReferenceForKey(mWorkSheetKeyListData[e.RowIndex]))
+                        //{
+                        //    _targetKey.ClearNextConnectKey();
+                        //}
+                        //else
+                        //{
+                        //    var _cell = DataViewForKeyConfig.Rows[e.RowIndex].Cells[mColumIndexForConnectInfo];
+                        //    _cell.Value = _targetKey.GetConnectInfo();
+                        //    this.DataViewForKeyConfig.UpdateCellValue(mColumIndexForConnectInfo, e.RowIndex);
+                        //}
                     }
                     break;
                 }
@@ -117,24 +118,25 @@ namespace ExcelTool
                     var _triggerKey = mWorkSheetKeyListData[e.RowIndex];
 
                     bool _isSelect = (bool)_checkBoxCell.EditedFormattedValue;
-                    if (_isSelect)
-                    {
-                        mFromKey.SetNextConnectKey(new WeakReference<KeyData>(_triggerKey));
-                        for (int _row = 0; _row < _allRows.Count; ++_row)
-                        {
-                            if (_row == e.RowIndex)
-                            {
-                                continue;
-                            }
+                    // TODO 这里重新设置成为 ChaineKeyData
+                    //if (_isSelect)
+                    //{
+                    //    mFromKey.SetNextConnectKey(new WeakReference<KeyData>(_triggerKey));
+                    //    for (int _row = 0; _row < _allRows.Count; ++_row)
+                    //    {
+                    //        if (_row == e.RowIndex)
+                    //        {
+                    //            continue;
+                    //        }
 
-                            var _cell = (DataGridViewCheckBoxCell)_allRows[_row].Cells[mColumIndexForSetConnect];
-                            _cell.Value = false;
-                        }
-                    }
-                    else
-                    {
-                        mFromKey.ClearNextConnectKey();
-                    }
+                    //        var _cell = (DataGridViewCheckBoxCell)_allRows[_row].Cells[mColumIndexForSetConnect];
+                    //        _cell.Value = false;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    mFromKey.ClearNextConnectKey();
+                    //}
 
                     break;
                 }
@@ -221,9 +223,9 @@ namespace ExcelTool
                 this.DataViewForKeyConfig.Rows.Add(
                     CommonUtil.GetZM(_key.GetKeyIndexForShow()),
                     _key.GetKeyName(),
-                    CommonUtil.GetKeyConnectFullInfo(_key),
+                    string.Empty,//CommonUtil.GetKeyConnectFullInfo(_key),
                     "编辑",
-                    mFromKey.GetNextConnectKey() == _key
+                    false//mFromKey.GetNextConnectKey() == _key
                 );
             }
 

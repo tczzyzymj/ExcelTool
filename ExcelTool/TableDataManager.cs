@@ -30,23 +30,9 @@ namespace ExcelTool
 
         private TableBaseData? mSourceFile = null; // 数据源文件
 
-        /// <summary>
-        /// 源文件的数据过滤器
-        /// </summary>
-        private Dictionary<KeyData, FilterFuncBase> SourceDataFilterMap
-        {
-            get;
-            set;
-        } = new Dictionary<KeyData, FilterFuncBase>();
-
-        /// <summary>
-        /// 目标文件的数据过滤器，考虑到可能是对原有数据的更新
-        /// </summary>
-        private Dictionary<KeyData, FilterFuncBase> ExportDataFilterMap
-        {
-            get;
-            set;
-        } = new Dictionary<KeyData, FilterFuncBase>();
+        // 是和Key对应的
+        private Dictionary<CommonWorkSheetData, List<ChaineKeyData>> mExportChaineKeyMap =
+            new Dictionary<CommonWorkSheetData, List<ChaineKeyData>>();
 
         public MainTypeDefine.ExportWriteWayType ExportWriteWayType
         {
@@ -126,9 +112,8 @@ namespace ExcelTool
             MessageBox.Show("数据导出完成", "提示");
         }
 
-        public void TrySetExportTargetFile(TableBaseData targetData)
+        public void TryImportConfigFile(string targetFile)
         {
-            mExportTargetFile = targetData;
         }
 
         public void TrySetSourceTargetFile(TableBaseData targetData)

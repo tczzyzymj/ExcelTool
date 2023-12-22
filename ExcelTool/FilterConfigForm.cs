@@ -47,8 +47,12 @@ namespace ExcelTool
                 MessageBox.Show("内容为空，请检查!", "错误");
                 return;
             }
-
-            var _funcList = mKeyData.GetFilterFuncList();
+            var _ownerSheet = mKeyData.GetOwnerSheet();
+            if (_ownerSheet == null)
+            {
+                MessageBox.Show("BtnAddFilterFunc_Click 无法获取 GetOwnerSheet，请检查!", "错误");
+                return;
+            }
 
             if (!Enum.TryParse(typeof(MainTypeDefine.FilterCompareValueType), this.ComboBoxForValueType.SelectedIndex.ToString(), out var _tempCompareValueType))
             {
@@ -116,12 +120,25 @@ namespace ExcelTool
         {
             if (e.ColumnIndex == 2)
             {
-                // 点击移除按钮
-                var _funcList = mKeyData.GetFilterFuncList();
-                _funcList.RemoveAt(e.RowIndex);
+                if (mKeyData == null)
+                {
+                    MessageBox.Show("KeyData 为空，请检查", "错误");
+                    return;
+                }
 
-                // 刷新一下
-                DataGridViewForFilterFunc.Rows.RemoveAt(e.RowIndex);
+                // 点击移除按钮
+                var _ownerSheet = mKeyData.GetOwnerSheet();
+                if (_ownerSheet != null)
+                {
+                    _ownerSheet.RemoveFilterFromKey(this.mKeyData.GetKeyColumIndexInList(), e.RowIndex);
+
+                    // 刷新一下
+                    DataGridViewForFilterFunc.Rows.RemoveAt(e.RowIndex);
+                }
+                else
+                {
+                    MessageBox.Show("无法获取 WorkSheet 数据，请检查!");
+                }
             }
         }
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ExcelTool
 {
     /// <summary>
-    /// 这里注意 
+    /// 这里注意
     /// </summary>
     public class ChaineKeyData
     {
@@ -18,10 +18,7 @@ namespace ExcelTool
         /// </summary>
         public KeyData? MainKey = null;
 
-        /// <summary>
-        /// 当前KEY所关联的内容
-        /// </summary>
-        public List<CellValueData> MainCellValue = new List<CellValueData>();
+        public CellValueData? MainCellValue = null;
 
         /// <summary>
         /// 关联哪个表
@@ -29,8 +26,22 @@ namespace ExcelTool
         public CommonWorkSheetData? ConnectWorkSheet = null;
 
         /// <summary>
-        /// 关联表里的哪些KEY
+        /// 关联表里的哪些KEY，和下面的VALUE是匹配的
         /// </summary>
-        public List<ChaineKeyData> ConnectSheetKeyList = new List<ChaineKeyData>();
+        public List<ChaineKeyData> ConnectDataSourceKeyList = new List<ChaineKeyData>();
+
+        /// <summary>
+        /// 关联KEY所指向的内容，和KEY是匹配的
+        /// </summary>
+        public List<CellValueData> ConnectCellValueList = new List<CellValueData>();
+
+        /// <summary>
+        /// 关联目标的过滤方法
+        /// </summary>
+        public Dictionary<int, List<FilterFuncBase>> ConnectWorkSheetFilterMap
+        {
+            get;
+            set;
+        } = new Dictionary<int, List<FilterFuncBase>>();
     }
 }

@@ -65,11 +65,7 @@ namespace ExcelTool
             OpenFileDialog _openfileDialog = new OpenFileDialog();
             if (_openfileDialog.ShowDialog() == DialogResult.OK)
             {
-                var _loadedFile = JsonConvert.DeserializeObject<TableBaseData>(_openfileDialog.FileName);
-                if (_loadedFile != null)
-                {
-                    TableDataManager.Instance().TrySetExportTargetFile(_loadedFile);
-                }
+                    TableDataManager.Instance().TryImportConfigFile(_openfileDialog.FileName);
             }
         }
 
@@ -280,12 +276,7 @@ namespace ExcelTool
                     _form.InitData(_targetKey);
                     if (_form.ShowDialog() == DialogResult.OK)
                     {
-                        // 这里去检测一下，看 key 的引用是否
-                        if (!CommonUtil.IsSafeNoCycleReferenceForKey(_targetKey))
-                        {
-                            _targetKey.ClearNextConnectKey();
-                            return;
-                        }
+                        // TODO  这里去检测一下，看 key 是否循环引用
                     }
 
                     break;
