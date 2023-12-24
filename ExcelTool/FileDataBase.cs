@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace ExcelTool
 {
     // 这里是最基本的类，后续自己分一下
-    public abstract class TableBaseData
+    public abstract class FileDataBase
     {
         [JsonProperty]
         protected string mExcelAbsolutePath = string.Empty;
@@ -23,14 +23,11 @@ namespace ExcelTool
         [JsonProperty]
         protected int mContentStartRowIndex = 4; // 内容选中的行下标，从2开始，认为1是KEY不能小于2
 
-        /// <summary>
-        /// ID的列下标
-        /// </summary>
-        public int IDIndex
+        public LoadFileType FileType
         {
             get;
-            set;
-        } = 0;
+            private set;
+        } = LoadFileType.NormalFile;
 
         [JsonProperty]
         private int mChooseWorkSheetIndexInList = 0; // 选中的workSheet需要处理的 workdsheet
@@ -59,7 +56,7 @@ namespace ExcelTool
 
         protected bool mHasInit = false;
 
-        public bool DoLoadFile(string absolutePath)
+        public bool DoLoadFile(string absolutePath, LoadFileType fileType)
         {
             if (!File.Exists(absolutePath))
             {
@@ -70,7 +67,7 @@ namespace ExcelTool
             {
                 return false;
             }
-
+            FileType = fileType;
             mExcelAbsolutePath = absolutePath;
             mHasInit = true;
             return true;

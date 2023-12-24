@@ -112,5 +112,22 @@ namespace ExcelTool
             return _result;
         }
     }
+
+    public class DataProcessActionForReturnAsUERotateY : DataProcessActionBase
+    {
+        public override List<string> FindTargetValueAndProcess(List<CellValueData> rowData)
+        {
+            List<string> _result = new List<string>();
+            for (int i = 0; i < MatchKeyList.Count; ++i)
+            {
+                var _cell = rowData[MatchKeyList[i].GetKeyColumIndexInList()];
+                var _tempCellValue = _cell.GetCellValue();
+                float.TryParse(_tempCellValue, out var _floatValue);
+                var _finalStr = ((int)(_floatValue * 100)).ToString();
+                _result.Add(_finalStr);
+            }
+            return _result;
+        }
+    }
 }
 

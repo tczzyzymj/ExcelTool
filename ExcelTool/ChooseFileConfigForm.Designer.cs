@@ -49,8 +49,6 @@
             TextBoxForSearch = new TextBox();
             BtnSearch = new Button();
             BtnReset = new Button();
-            TextBoxForIDColumIndex = new TextBox();
-            label6 = new Label();
             TextBoxSplitSymbol = new TextBox();
             LableForSplitSymbol = new Label();
             PanelForConfigs = new Panel();
@@ -74,7 +72,7 @@
             // TextBoxForContentStartRow
             // 
             TextBoxForContentStartRow.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxForContentStartRow.Location = new Point(570, 52);
+            TextBoxForContentStartRow.Location = new Point(408, 52);
             TextBoxForContentStartRow.Name = "TextBoxForContentStartRow";
             TextBoxForContentStartRow.RightToLeft = RightToLeft.Yes;
             TextBoxForContentStartRow.Size = new Size(39, 28);
@@ -87,7 +85,7 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label3.Location = new Point(478, 55);
+            label3.Location = new Point(316, 55);
             label3.Name = "label3";
             label3.Size = new Size(90, 21);
             label3.TabIndex = 32;
@@ -96,7 +94,7 @@
             // TextBoxForKeyStartColm
             // 
             TextBoxForKeyStartColm.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxForKeyStartColm.Location = new Point(410, 52);
+            TextBoxForKeyStartColm.Location = new Point(248, 52);
             TextBoxForKeyStartColm.Name = "TextBoxForKeyStartColm";
             TextBoxForKeyStartColm.RightToLeft = RightToLeft.Yes;
             TextBoxForKeyStartColm.Size = new Size(39, 28);
@@ -109,7 +107,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label2.Location = new Point(323, 55);
+            label2.Location = new Point(161, 55);
             label2.Name = "label2";
             label2.Size = new Size(85, 21);
             label2.TabIndex = 30;
@@ -118,7 +116,7 @@
             // TextBoxForKeyStartRow
             // 
             TextBoxForKeyStartRow.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxForKeyStartRow.Location = new Point(253, 52);
+            TextBoxForKeyStartRow.Location = new Point(91, 52);
             TextBoxForKeyStartRow.Name = "TextBoxForKeyStartRow";
             TextBoxForKeyStartRow.RightToLeft = RightToLeft.Yes;
             TextBoxForKeyStartRow.Size = new Size(39, 28);
@@ -131,7 +129,7 @@
             // 
             LableKeyStartRowIndex.AutoSize = true;
             LableKeyStartRowIndex.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            LableKeyStartRowIndex.Location = new Point(166, 55);
+            LableKeyStartRowIndex.Location = new Point(4, 55);
             LableKeyStartRowIndex.Name = "LableKeyStartRowIndex";
             LableKeyStartRowIndex.Size = new Size(85, 21);
             LableKeyStartRowIndex.TabIndex = 28;
@@ -265,28 +263,6 @@
             BtnReset.UseVisualStyleBackColor = true;
             BtnReset.Click += BtnReset_Click;
             // 
-            // TextBoxForIDColumIndex
-            // 
-            TextBoxForIDColumIndex.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxForIDColumIndex.Location = new Point(89, 52);
-            TextBoxForIDColumIndex.Name = "TextBoxForIDColumIndex";
-            TextBoxForIDColumIndex.RightToLeft = RightToLeft.Yes;
-            TextBoxForIDColumIndex.Size = new Size(39, 28);
-            TextBoxForIDColumIndex.TabIndex = 41;
-            TextBoxForIDColumIndex.Text = "0";
-            TextBoxForIDColumIndex.TextChanged += TextBoxForIDColumIndex_TextChanged;
-            TextBoxForIDColumIndex.KeyPress += TextBoxCommonProcess_KeyPress;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label6.Location = new Point(3, 55);
-            label6.Name = "label6";
-            label6.Size = new Size(75, 21);
-            label6.TabIndex = 40;
-            label6.Text = "ID指定列";
-            // 
             // TextBoxSplitSymbol
             // 
             TextBoxSplitSymbol.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
@@ -311,13 +287,11 @@
             // PanelForConfigs
             // 
             PanelForConfigs.Controls.Add(LabelForNotice);
-            PanelForConfigs.Controls.Add(TextBoxForIDColumIndex);
             PanelForConfigs.Controls.Add(TextBoxSplitSymbol);
             PanelForConfigs.Controls.Add(LableKeyStartRowIndex);
             PanelForConfigs.Controls.Add(LableForSplitSymbol);
             PanelForConfigs.Controls.Add(TextBoxForKeyStartRow);
             PanelForConfigs.Controls.Add(label2);
-            PanelForConfigs.Controls.Add(label6);
             PanelForConfigs.Controls.Add(TextBoxForKeyStartColm);
             PanelForConfigs.Controls.Add(label3);
             PanelForConfigs.Controls.Add(TextBoxForContentStartRow);
@@ -351,7 +325,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(795, 564);
+            ClientSize = new Size(796, 568);
             Controls.Add(BtnReloadKey);
             Controls.Add(PanelForConfigs);
             Controls.Add(BtnReset);
@@ -399,8 +373,6 @@
         private DataGridViewTextBoxColumn KeyName;
         private DataGridViewCheckBoxColumn CheckColum;
         private DataGridViewButtonColumn EditFilterBtnColum;
-        private TextBox TextBoxForIDColumIndex;
-        private Label label6;
         private TextBox TextBoxSplitSymbol;
         private Label LableForSplitSymbol;
         private Panel PanelForConfigs;

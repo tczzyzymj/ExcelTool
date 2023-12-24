@@ -24,11 +24,11 @@ namespace ExcelTool
 
         private static TableDataManager mIns = null;
 
-        private static List<TableBaseData> mDataList = new List<TableBaseData>();
+        private static List<FileDataBase> mDataList = new List<FileDataBase>();
 
-        private TableBaseData? mExportTargetFile = null; // 导出目标文件，其关联在里面设置
+        private FileDataBase? mExportTargetFile = null; // 导出目标文件，其关联在里面设置
 
-        private TableBaseData? mSourceFile = null; // 数据源文件
+        private FileDataBase? mSourceFile = null; // 数据源文件
 
         /// <summary>
         /// 源文件的数据过滤器
@@ -60,7 +60,7 @@ namespace ExcelTool
             set;
         } = MainTypeDefine.ExportConflictDealWayType.UseOldData;
 
-        public void RemoveData(TableBaseData targetData)
+        public void RemoveData(FileDataBase targetData)
         {
             if (mDataList.Remove(targetData))
             {
@@ -76,12 +76,12 @@ namespace ExcelTool
             }
         }
 
-        public List<TableBaseData> GetTableDataList()
+        public List<FileDataBase> GetTableDataList()
         {
             return mDataList;
         }
 
-        public TableBaseData? IsFileExist(string absoluteFilePath)
+        public FileDataBase? IsFileExist(string absoluteFilePath)
         {
             var _exitItem = mDataList.Find(x => x.GetFilePath() == absoluteFilePath);
             if (_exitItem != null)
@@ -126,17 +126,17 @@ namespace ExcelTool
             MessageBox.Show("数据导出完成", "提示");
         }
 
-        public void TrySetExportTargetFile(TableBaseData targetData)
+        public void TrySetExportTargetFile(FileDataBase targetData)
         {
             mExportTargetFile = targetData;
         }
 
-        public void TrySetSourceTargetFile(TableBaseData targetData)
+        public void TrySetSourceTargetFile(FileDataBase targetData)
         {
             mSourceFile = targetData;
         }
 
-        public TableBaseData? TryLoadExportFile(string absoluteFilePath)
+        public FileDataBase? TryLoadExportFile(string absoluteFilePath)
         {
             if (mExportTargetFile != null)
             {
@@ -146,12 +146,12 @@ namespace ExcelTool
                 }
             }
 
-            mExportTargetFile = InternalLoadFile(absoluteFilePath, true, false);
+            mExportTargetFile = InternalLoadFile(absoluteFilePath, true, LoadFileType.ExportFile);
 
             return mExportTargetFile;
         }
 
-        public TableBaseData? TryGetTableByPath(string absolutePath)
+        public FileDataBase? TryGetTableByPath(string absolutePath)
         {
             return mDataList.Find(x => x.GetFilePath().Equals(absolutePath));
         }
@@ -161,7 +161,7 @@ namespace ExcelTool
             return mDataList.FindIndex(x => x.GetFilePath().Equals(absolutePath));
         }
 
-        public TableBaseData? TryLoadNormalFile(string absoluteFilePath)
+        public FileDataBase? TryLoadNormalFile(string absoluteFilePath)
         {
             if (mExportTargetFile != null)
             {
@@ -172,12 +172,12 @@ namespace ExcelTool
                 }
             }
 
-            var _tempFile = InternalLoadFile(absoluteFilePath, true, true);
+            var _tempFile = InternalLoadFile(absoluteFilePath, true, LoadFileType.NormalFile);
 
             return _tempFile;
         }
 
-        public TableBaseData? TryLoadSourceFile(string absoluteFilePath)
+        public FileDataBase? TryLoadSourceFile(string absoluteFilePath)
         {
             if (mExportTargetFile != null)
             {
@@ -188,7 +188,7 @@ namespace ExcelTool
                 }
             }
 
-            var _tempFile = InternalLoadFile(absoluteFilePath, true, true);
+            var _tempFile = InternalLoadFile(absoluteFilePath, true, LoadFileType.SourceFile);
             if (_tempFile == null)
             {
                 return null;
@@ -199,7 +199,7 @@ namespace ExcelTool
             {
                 // 如果原来已经有了
                 mDataList.Remove(_tempFile);
-                List<TableBaseData> _tempList = new List<TableBaseData>()
+                List<FileDataBase> _tempList = new List<FileDataBase>()
                 {
                     _tempFile
                 };
@@ -213,19 +213,19 @@ namespace ExcelTool
             return mSourceFile;
         }
 
-        public TableBaseData? GetExportFileData()
+        public FileDataBase? GetExportFileData()
         {
             return mExportTargetFile;
         }
 
-        public TableBaseData? GetSourceFileData()
+        public FileDataBase? GetSourceFileData()
         {
             return mSourceFile;
         }
 
-        private TableBaseData? InternalLoadFile(string absoluteFilePath, bool checkExist, bool addList)
+        private FileDataBase? InternalLoadFile(string absoluteFilePath, bool checkExist, LoadFileType fileType)
         {
-            TableBaseData? targetFile = null;
+            FileDataBase? targetFile = null;
 
             try
             {
@@ -238,7 +238,7 @@ namespace ExcelTool
                     }
                 }
 
-                TableBaseData? _tempFile = null;
+                FileDataBase? _tempFile = null;
                 var _extension = Path.GetExtension(absoluteFilePath).ToLower();
                 if (_extension.Equals(".xls") || _extension.Equals(".xlsx"))
                 {
@@ -253,19 +253,16 @@ namespace ExcelTool
                     throw new Exception($"文件类型不匹配，请检查文件，目标文件路径为：{absoluteFilePath}");
                 }
 
-                if (!_tempFile.DoLoadFile(absoluteFilePath))
+                if (!_tempFile.DoLoadFile(absoluteFilePath, fileType))
                 {
                     return null;
                 }
 
                 targetFile = _tempFile;
 
-                if (addList)
-                {
-                    mDataList.Add(_tempFile);
-                    _tempFile.DisplayName = _tempFile.GetFileName(false);
-                    InternalSetSortIndex();
-                }
+                mDataList.Add(_tempFile);
+                _tempFile.DisplayName = _tempFile.GetFileName(false);
+                InternalSetSortIndex();
             }
             catch (Exception ex)
             {

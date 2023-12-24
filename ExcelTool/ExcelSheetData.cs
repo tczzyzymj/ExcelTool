@@ -110,7 +110,7 @@ namespace ExcelTool
                 return true;
             }
 
-            if (!mOwnerTable.TryGetTarget(out TableBaseData? _ownerExcel))
+            if (!mOwnerTable.TryGetTarget(out FileDataBase? _ownerExcel))
             {
                 return false;
             }

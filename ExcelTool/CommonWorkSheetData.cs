@@ -14,7 +14,7 @@ namespace ExcelTool
 
         protected bool mHasInitKey = false;
 
-        protected WeakReference<TableBaseData>? mOwnerTable = null;
+        protected WeakReference<FileDataBase>? mOwnerTable = null;
 
         protected List<KeyData> mKeyDataList = new List<KeyData>();
 
@@ -187,7 +187,7 @@ namespace ExcelTool
 
         protected abstract bool InternalInitWithKey(object sheetData, bool isForce);
 
-        public TableBaseData? GetOwnerTable()
+        public FileDataBase? GetOwnerTable()
         {
             if (mOwnerTable == null || !mOwnerTable.TryGetTarget(out var _result))
             {
@@ -198,7 +198,7 @@ namespace ExcelTool
         }
 
         // 注意，这里只初始化 Key
-        public bool Init(WeakReference<TableBaseData> ownerExcelFile, object sheetData, int indexInListValue, int indexInFileData, string name)
+        public bool Init(WeakReference<FileDataBase> ownerExcelFile, object sheetData, int indexInListValue, int indexInFileData, string name)
         {
             mIndexInFileData = indexInFileData;
             mOwnerTable = ownerExcelFile;

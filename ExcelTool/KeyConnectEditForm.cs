@@ -13,7 +13,7 @@ namespace ExcelTool
     public partial class KeyConnectEditForm : FormBase
     {
         private KeyData mFromKey = null;
-        private TableBaseData? mSelectTargetTable = null;
+        private FileDataBase? mSelectTargetTable = null;
         private CommonWorkSheetData? mSelectSheet = null;
         private const int mColumIndexForConnectInfo = 2;
         private const int mColumIndexForEditConnect = 3;

@@ -65,7 +65,7 @@ namespace ExcelTool
             OpenFileDialog _openfileDialog = new OpenFileDialog();
             if (_openfileDialog.ShowDialog() == DialogResult.OK)
             {
-                var _loadedFile = JsonConvert.DeserializeObject<TableBaseData>(_openfileDialog.FileName);
+                var _loadedFile = JsonConvert.DeserializeObject<FileDataBase>(_openfileDialog.FileName);
                 if (_loadedFile != null)
                 {
                     TableDataManager.Instance().TrySetExportTargetFile(_loadedFile);

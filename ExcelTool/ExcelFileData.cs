@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ExcelTool
 {
-    public class ExcelFileData : TableBaseData
+    public class ExcelFileData : FileDataBase
     {
         private ExcelPackage? mExcelPackage = null; // 原始数据如果是
 
@@ -85,7 +85,7 @@ namespace ExcelTool
             {
                 var sheet = _allSheets[i];
                 var _newSheetData = new ExcelSheetData();
-                if (!_newSheetData.Init(new WeakReference<TableBaseData>(this), sheet, i - _startIndex, i, sheet.Name))
+                if (!_newSheetData.Init(new WeakReference<FileDataBase>(this), sheet, i - _startIndex, i, sheet.Name))
                 {
                     continue;
                 }

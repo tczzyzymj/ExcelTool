@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ExcelTool
 {
-    public class CSVFileData : TableBaseData
+    public class CSVFileData : FileDataBase
     {
         public CSVFileData()
         {
@@ -52,7 +52,7 @@ namespace ExcelTool
             }
 
             var _newSheetData = new CSVSheetData();
-            if (!_newSheetData.Init(new WeakReference<TableBaseData>(this), mAllDataArray, 0, 0, "Sheet"))
+            if (!_newSheetData.Init(new WeakReference<FileDataBase>(this), mAllDataArray, 0, 0, "Sheet"))
             {
                 return false;
             }

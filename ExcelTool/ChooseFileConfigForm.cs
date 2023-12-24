@@ -13,8 +13,6 @@ namespace ExcelTool
 {
     public partial class ChooseFileConfigForm : FormBase
     {
-        private LoadFileType mFileType = 0;
-
         public ChooseFileConfigForm()
         {
             InitializeComponent();
@@ -46,7 +44,7 @@ namespace ExcelTool
             mFileType = fileType;
         }
 
-        private TableBaseData? InternalGetFileData()
+        private FileDataBase? InternalGetFileData()
         {
             switch (mFileType)
             {
@@ -63,7 +61,7 @@ namespace ExcelTool
             return null;
         }
 
-        private TableBaseData? InternalLoadFile(string absolutePath)
+        private FileDataBase? InternalLoadFile(string absolutePath)
         {
             switch (mFileType)
             {
@@ -155,7 +153,6 @@ namespace ExcelTool
                 TextBoxForKeyStartRow.Text = _targetFile.GetKeyStartRowIndex().ToString();
                 TextBoxForKeyStartColm.Text = _targetFile.GetKeyStartColmIndex().ToString();
                 TextBoxForContentStartRow.Text = _targetFile.GetContentStartRowIndex().ToString();
-                TextBoxForIDColumIndex.Text = _targetFile.IDIndex.ToString();
 
                 if (_targetFile is ExcelFileData)
                 {
@@ -445,25 +442,6 @@ namespace ExcelTool
             if (_fileData != null)
             {
                 _fileData.SplitSymbol = TextBoxSplitSymbol.Text;
-            }
-        }
-
-        private void TextBoxForIDColumIndex_TextChanged(object sender, EventArgs e)
-        {
-            var _targetFile = InternalGetFileData();
-            if (_targetFile == null)
-            {
-                MessageBox.Show("无法获取数据， source File 未加载，请检查!", "错误");
-                return;
-            }
-
-            if (int.TryParse(TextBoxForIDColumIndex.Text, out var _targetValue))
-            {
-                _targetFile.IDIndex = _targetValue;
-            }
-            else
-            {
-                MessageBox.Show("请输入数字");
             }
         }
 

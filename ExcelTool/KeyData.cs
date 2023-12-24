@@ -138,7 +138,7 @@ namespace ExcelTool
             return mFilterFuncList;
         }
 
-        public TableBaseData? GetOwnerTable()
+        public FileDataBase? GetOwnerTable()
         {
             if (mOwnerSheet == null || !mOwnerSheet.TryGetTarget(out CommonWorkSheetData? _targetSheet))
             {
