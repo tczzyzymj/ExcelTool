@@ -46,10 +46,76 @@ namespace ExcelTool
         /// </summary>
         /// <param name="IDStr"></param>
         /// <returns></returns>
-        public virtual  List<CellValueData>? GetListCellDataByID(string IDStr)
+        public virtual List<CellValueData>? GetListCellDataByID(string IDStr)
         {
             mAllDataMap.TryGetValue(IDStr, out var cellData);
             return cellData;
+        }
+
+        /// <summary>
+        /// 通过对比指定的列的值
+        /// </summary>
+        /// <param name="matchKeyList"></param>
+        /// <param name="matchValueList"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public virtual List<CellValueData>? GetRowDataByTargetKeysAndValus(List<KeyData> matchKeyList, List<CellValueData> matchValueList)
+        {
+            if (mCellData2DList == null || mCellData2DList.Count < 1)
+            {
+                throw new Exception("GetListCellDataBySpecificKeysAndValues, mCellData2DList 为空");
+            }
+
+            if (matchKeyList == null || matchKeyList.Count < 1)
+            {
+                throw new Exception("GetListCellDataBySpecificKeysAndValues, 传入的 List<KeyData> matchKeyList 数据为空");
+            }
+
+            if (matchValueList == null || matchValueList.Count < 1)
+            {
+                throw new Exception("GetListCellDataBySpecificKeysAndValues, 传入的 List<CellValueData> matchValueList 数据为空");
+            }
+
+            if (matchValueList.Count != matchValueList.Count)
+            {
+                throw new Exception("GetListCellDataBySpecificKeysAndValues, 传入的数据数量不一致，请检查");
+            }
+
+            List<CellValueData> _result = null;
+
+            for (int _rowIndex = 0; _rowIndex < mCellData2DList.Count; ++_rowIndex)
+            {
+                var _rowData = mCellData2DList[_rowIndex];
+
+                bool _isMatch = true;
+                foreach (var _matchKey in matchKeyList)
+                {
+                    for (int j = 0; j < matchValueList.Count; ++j)
+                    {
+                        if (!string.Equals(
+                                _rowData[_matchKey.GetKeyColumIndexInList()].GetCellValue(),
+                                matchValueList[j].GetCellValue())
+                            )
+                        {
+                            _isMatch = false;
+                            break;
+                        }
+                    }
+
+                    if (!_isMatch)
+                    {
+                        break;
+                    }
+                }
+
+                if (_isMatch)
+                {
+                    _result = _rowData;
+                    break;
+                }
+            }
+
+            return _result;
         }
 
         public int GetIndexInFileData()

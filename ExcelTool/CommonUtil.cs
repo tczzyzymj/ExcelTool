@@ -20,27 +20,28 @@ namespace ExcelTool
             return _columName;
         }
 
-        // 检测看下是否安全，没有循环引用，主要是对比表格和sheet的名字
-        public static bool IsSafeNoCycleReferenceForKey(ChaineKeyData? keyChaine)
-        {
-            if (keyChaine == null)
-            {
-                return false;
-            }
+        // 这里要做下循环检测
+        //// 检测看下是否安全，没有循环引用，主要是对比表格和sheet的名字
+        //public static bool IsSafeNoCycleReferenceForKey(ChaineKeyData? keyChaine)
+        //{
+        //    if (keyChaine == null)
+        //    {
+        //        return false;
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
-        public static string GetKeyConnectFullInfo(ChaineKeyData? targetData)
-        {
-            if (targetData == null)
-            {
-                return string.Empty;
-            }
+        //public static string GetKeyConnectFullInfo(ChaineKeyData? targetData)
+        //{
+        //    if (targetData == null)
+        //    {
+        //        return string.Empty;
+        //    }
 
-            var _result = string.Empty;
+        //    var _result = string.Empty;
 
-            return _result;
-        }
+        //    return _result;
+        //}
     }
 }
