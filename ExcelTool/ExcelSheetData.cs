@@ -159,15 +159,12 @@ namespace ExcelTool
                 return false;
             }
 
-            mAllDataMap.Clear();
             mCellData2DList?.Clear();
 
             var _contentStartRow = _ownerTable.GetContentStartRowIndex();
             var _keyStartColum = _ownerTable.GetKeyStartColmIndex();
 
             mCellData2DList = new List<List<CellValueData>>(mOriginSheetData.Dimension.Rows - 4);
-
-            var _IDIndex = _ownerTable.IDIndex;
 
             StringBuilder _errorMsgBuilder = new StringBuilder();
 
@@ -190,27 +187,6 @@ namespace ExcelTool
                         _colum - _keyStartColum,
                         mKeyDataList[_colum - _keyStartColum]
                     );
-
-                    if (_colum == _IDIndex)
-                    {
-                        if (string.IsNullOrEmpty(_stringValue))
-                        {
-                            _errorMsgBuilder.Append($"尝试添加Key，但 Key 为空，请检查， Sheet 名字：[{this.DisplayName}], 表名:[{GetOwnerTable()?.DisplayName}]");
-                        }
-                        else
-                        {
-                            var _keyStr = _stringValue.Trim();
-                            if (mAllDataMap.ContainsKey(_keyStr))
-                            {
-                                _errorMsgBuilder.Append($"存在相同的KEY：{_stringValue} 请检查");
-                                _errorMsgBuilder.Append("\r\n");
-                            }
-                            else
-                            {
-                                mAllDataMap.Add(_keyStr, _newList);
-                            }
-                        }
-                    }
                 }
             }
 

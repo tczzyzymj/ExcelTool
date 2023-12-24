@@ -84,20 +84,6 @@ namespace ExcelTool
             return true;
         }
 
-        public List<CellValueData>? GetListCellDataByID(string IDStr)
-        {
-            var _workSheet = GetCurrentWorkSheet();
-            if (_workSheet == null)
-            {
-                MessageBox.Show("无法获取当前 WorkSheet ,请检查!", "错误");
-                return null;
-            }
-
-            _workSheet.GetListCellDataByID(IDStr);
-
-            return null;
-        }
-
         public abstract void SaveFile();
 
         public bool GetHasInit()

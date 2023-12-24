@@ -19,10 +19,6 @@ namespace ExcelTool
             mKeyStartRowIndex = 2; // Key 的概念认为是数据列的名字，其开始的行下标，从1开始，不是0
             mKeyStartColmIndex = 1; // Key 的概念认为是数据列的名字，其开始的列下标，从1开始，不是0
             mContentStartRowIndex = 4; // 内容选中的行下标，从2开始，认为1是KEY不能小于2
-            /// <summary>
-            /// ID的列下标
-            /// </summary>
-            IDIndex = 1;
         }
 
         ~ExcelFileData()

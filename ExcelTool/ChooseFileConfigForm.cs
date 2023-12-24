@@ -13,6 +13,8 @@ namespace ExcelTool
 {
     public partial class ChooseFileConfigForm : FormBase
     {
+        private LoadFileType mFileType = 0;
+
         public ChooseFileConfigForm()
         {
             InitializeComponent();
@@ -344,8 +346,15 @@ namespace ExcelTool
                     this.DataGridViewForKeyFilter.Columns[3].Visible = false;
                     break;
                 }
+                case LoadFileType.SourceFile:
+                {
+                    this.DataGridViewForKeyFilter.Columns[2].Visible = false;
+                    this.DataGridViewForKeyFilter.Columns[3].Visible = false;
+                    break;
+                }
                 case LoadFileType.NormalFile:
                 {
+                    this.DataGridViewForKeyFilter.Columns[2].Visible = false;
                     this.DataGridViewForKeyFilter.Columns[3].Visible = false;
                     break;
                 }
@@ -361,7 +370,6 @@ namespace ExcelTool
                 TextBoxForKeyStartRow.Text = _targetFile.GetKeyStartRowIndex().ToString();
                 TextBoxForKeyStartColm.Text = _targetFile.GetKeyStartColmIndex().ToString();
                 TextBoxForContentStartRow.Text = _targetFile.GetContentStartRowIndex().ToString();
-                TextBoxForIDColumIndex.Text = _targetFile.IDIndex.ToString();
 
                 if (_targetFile is CSVFileData _csvFile)
                 {
