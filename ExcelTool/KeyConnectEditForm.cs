@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace ExcelTool
 {
-    public partial class KeyConnectEditForm : FormBase
+    public partial class KeyConnectEditForm : Form
     {
-        private DataProcessActionBase? mFromAction = null;
+        private DataProcessActionBase mFromAction = null;
         private FileDataBase? mSelectTargetTable = null;
         private CommonWorkSheetData? mSelectSheet = null;
         private const int mColumIndexForConnectInfo = 2;
@@ -25,6 +25,7 @@ namespace ExcelTool
         {
             InitializeComponent();
             this.DataViewForKeyList.AllowUserToAddRows = false;
+            DataViewForAction.AllowUserToAddRows = false;
         }
 
         public bool InitData(DataProcessActionBase targetAction)
@@ -68,7 +69,11 @@ namespace ExcelTool
                 ComboBoxForLoadedFile.EndUpdate();
             }
 
+            this.MultiDataSplitSymbol.Text = mFromAction.MultiValueSplitSymbol;
+
             this.InternalRefreshSheetComboBox();
+
+            InternalRefreshComboBoxForSelectKey();
         }
 
         private List<KeyData> mSelectKeyList = new List<KeyData>();
@@ -95,6 +100,8 @@ namespace ExcelTool
                     {
                         mSelectKeyList.Remove(_targetKey);
                     }
+
+                    this.InternalRefreshComboBoxForSelectKey();
 
                     break;
                 }
@@ -140,12 +147,15 @@ namespace ExcelTool
                 return;
             }
             var _sheetList = mSelectTargetTable.GetWorkSheetList();
-            ComboBoxForWorkSheet.BeginUpdate();
-            ComboBoxForWorkSheet.DataSource = _sheetList;
-            ComboBoxForWorkSheet.ValueMember = "IndexInListForShow";
-            ComboBoxForWorkSheet.DisplayMember = "DisplayName";
-            ComboBoxForWorkSheet.SelectedIndex = 0;
-            ComboBoxForWorkSheet.EndUpdate();
+            if (_sheetList.Count > 0)
+            {
+                ComboBoxForWorkSheet.BeginUpdate();
+                ComboBoxForWorkSheet.DataSource = _sheetList;
+                ComboBoxForWorkSheet.ValueMember = "IndexInListForShow";
+                ComboBoxForWorkSheet.DisplayMember = "DisplayName";
+                ComboBoxForWorkSheet.SelectedIndex = 0;
+                ComboBoxForWorkSheet.EndUpdate();
+            }
         }
 
         private void ComboBoxForWorkSheet_SelectedIndexChanged(object sender, EventArgs e)
@@ -175,9 +185,7 @@ namespace ExcelTool
                 this.DataViewForKeyList.Rows.Add(
                     CommonUtil.GetZM(_key.GetKeyIndexForShow()),
                     _key.KeyName,
-                    string.Empty,//CommonUtil.GetKeyConnectFullInfo(_key),
-                    "编辑",
-                    false//mFromKey.GetNextConnectKey() == _key
+                    false
                 );
             }
 
@@ -260,6 +268,35 @@ namespace ExcelTool
                     break;
                 }
             }
+        }
+
+        private void BtnAddAction_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MultiDataSplitSymbol_TextChanged(object sender, EventArgs e)
+        {
+            this.mFromAction.MultiValueSplitSymbol = this.MultiDataSplitSymbol.Text;
+        }
+
+        private void InternalRefreshComboBoxForSelectKey()
+        {
+            ComboBoxForSelectKeyList.BeginUpdate();
+            ComboBoxForSelectKeyList.DataSource = mSelectKeyList;
+            ComboBoxForSelectKeyList.ValueMember = "KeyIndexInList";
+            ComboBoxForSelectKeyList.DisplayMember = "KeyName";
+            //if (mSelectKeyList.Count > 0)
+            //{
+            //    ComboBoxForSelectKeyList.SelectedIndex = 0;
+            //}
+
+            ComboBoxForSelectKeyList.EndUpdate();
+        }
+
+        private void ComboBoxForSelectKeyList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace ExcelTool
 {
-    public partial class FilterConfigForm : FormBase
+    public partial class FilterConfigForm : Form
     {
         private int mRowIndex = 0;
         private int mColumnIndex = 0;
@@ -242,13 +242,6 @@ namespace ExcelTool
 
         private void BtnFinishConfig_Click(object sender, EventArgs e)
         {
-            // 这里要告诉父窗口，是否过滤设置为 true
-            var _ownerBase = this.Owner as FormBase;
-            if (_ownerBase != null)
-            {
-                _ownerBase.SendEvent((int)EventTypeEnum.SetFilterFinished, mRowIndex, mColumnIndex);
-            }
-
             this.DialogResult = DialogResult.OK;
             this.Close();
         }

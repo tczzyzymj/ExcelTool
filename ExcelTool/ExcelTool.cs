@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace ExcelTool
 {
-    public partial class ExcelTool : FormBase
+    public partial class ExcelTool : Form
     {
         /// <summary>
         /// ≈‰÷√ ˝æ›∞¥≈•

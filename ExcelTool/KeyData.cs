@@ -17,10 +17,16 @@ namespace ExcelTool
             private set;
         } = string.Empty;
 
+        public int KeyIndexInList
+        {
+            get;
+            private set;
+        } = 0;
+
         // 注意，这个是内部用的，因为 excel 的数据是从下标1开始的
         private int mKeyColumIndexInSheetData = 1;
 
-        private int mKeyColumIndexForShow = 0;
+        public int mKeyColumIndexForShow = 0;
 
         private WeakReference<CommonWorkSheetData>? mOwnerSheet = null;
 
@@ -43,14 +49,15 @@ namespace ExcelTool
         }
 
         public void Init(
-            int indexForShow,
+            int indexInList,
             int indexInSheetData,
             string nameValue,
             WeakReference<CommonWorkSheetData> ownerSheet
         )
         {
-            mKeyColumIndexInList = indexForShow;
+            mKeyColumIndexInList = indexInList;
             KeyName = nameValue;
+            KeyIndexInList = indexInList;
             mKeyColumIndexInSheetData = indexInSheetData;
             mKeyColumIndexForShow = mKeyColumIndexInList + 1;
             mOwnerSheet = ownerSheet;

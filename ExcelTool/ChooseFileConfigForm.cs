@@ -11,7 +11,7 @@ using System.Windows.Forms.VisualStyles;
 
 namespace ExcelTool
 {
-    public partial class ChooseFileConfigForm : FormBase
+    public partial class ChooseFileConfigForm : Form
     {
         private LoadFileType mFileType = 0;
 
@@ -21,15 +21,6 @@ namespace ExcelTool
             this.DataGridViewForKeyFilter.AllowUserToAddRows = false;
         }
 
-        protected override void OnProcessEvent(params object[] args)
-        {
-            base.OnProcessEvent(args);
-
-            if (args == null || args.Length < 1)
-            {
-                return;
-            }
-        }
 
         public string LastChooseFileAbsolutePath
         {
