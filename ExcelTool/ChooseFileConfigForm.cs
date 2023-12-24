@@ -21,6 +21,8 @@ namespace ExcelTool
             this.DataGridViewForKeyFilter.AllowUserToAddRows = false;
         }
 
+        private FileDataBase? mChooseFile = null;
+
 
         public string LastChooseFileAbsolutePath
         {
@@ -37,23 +39,6 @@ namespace ExcelTool
             mFileType = fileType;
         }
 
-        private FileDataBase? InternalGetFileData()
-        {
-            switch (mFileType)
-            {
-                case LoadFileType.ExportFile:
-                {
-                    return TableDataManager.Ins().GetExportFileData();
-                }
-                case LoadFileType.SourceFile:
-                {
-                    return TableDataManager.Ins().GetSourceFileData();
-                }
-            }
-
-            return null;
-        }
-
         private FileDataBase? InternalLoadFile(string absolutePath)
         {
             switch (mFileType)
@@ -61,7 +46,6 @@ namespace ExcelTool
                 case LoadFileType.ExportFile:
                 {
                     return TableDataManager.Ins().TryLoadExportFile(absolutePath);
-
                 }
                 case LoadFileType.SourceFile:
                 {
@@ -96,7 +80,7 @@ namespace ExcelTool
 
         private void InternalChangeNotice()
         {
-            var _targetFile = InternalGetFileData();
+            var _targetFile = mChooseFile;
             if (_targetFile is ExcelFileData)
             {
                 LabelForNotice.Text = "注意，所选文件为 Excel 文件，下标是从 【 1 】开始！！！";
@@ -115,44 +99,36 @@ namespace ExcelTool
             _openfileDialog.Multiselect = false;
             if (_openfileDialog.ShowDialog() == DialogResult.OK)
             {
-                var _owner = this.Owner as ExcelTool;
-                if (_owner == null)
-                {
-                    this.Close();
-                    MessageBox.Show("父窗口不是 ExcelTool ，请检查!", "错误");
-                    return;
-                }
-
-                var _targetFile = InternalLoadFile(_openfileDialog.FileName);
-                if (_targetFile == null)
+                mChooseFile = InternalLoadFile(_openfileDialog.FileName);
+                if (mChooseFile == null)
                 {
                     MessageBox.Show($"加载目标文件：{_openfileDialog.FileName} 出错，请检查!", "错误");
                     return;
                 }
 
                 TextForFilePath.Text = _openfileDialog.FileName;
-                var _workSheetList = _targetFile.GetWorkSheetList();
+                var _workSheetList = mChooseFile.GetWorkSheetList();
                 if (_workSheetList == null || _workSheetList.Count < 1)
                 {
                     return;
                 }
-                LastChooseFileAbsolutePath = _targetFile.GetFilePath();
+                LastChooseFileAbsolutePath = mChooseFile.GetFilePath();
                 InternalChangeNotice();
 
                 TextForFilePath.Text = _openfileDialog.FileName;
 
                 PanelForConfigs.Enabled = true;
 
-                TextBoxForKeyStartRow.Text = _targetFile.GetKeyStartRowIndex().ToString();
-                TextBoxForKeyStartColm.Text = _targetFile.GetKeyStartColmIndex().ToString();
-                TextBoxForContentStartRow.Text = _targetFile.GetContentStartRowIndex().ToString();
+                TextBoxForKeyStartRow.Text = mChooseFile.GetKeyStartRowIndex().ToString();
+                TextBoxForKeyStartColm.Text = mChooseFile.GetKeyStartColmIndex().ToString();
+                TextBoxForContentStartRow.Text = mChooseFile.GetContentStartRowIndex().ToString();
 
-                if (_targetFile is ExcelFileData)
+                if (mChooseFile is ExcelFileData)
                 {
                     LableForSplitSymbol.Visible = false;
                     this.TextBoxSplitSymbol.Visible = false;
                 }
-                else if (_targetFile is CSVFileData)
+                else if (mChooseFile is CSVFileData)
                 {
                     LableForSplitSymbol.Visible = true;
                     this.TextBoxSplitSymbol.Visible = true;
@@ -160,13 +136,13 @@ namespace ExcelTool
                     TextBoxSplitSymbol.Text = ",";
                 }
 
-                InternalInitForSheetComboBox();
+                InternalInitForSheetComboBox(mChooseFile);
             }
         }
 
-        private void InternalInitForSheetComboBox()
+        private void InternalInitForSheetComboBox(FileDataBase targetFile)
         {
-            var _targetFile = InternalGetFileData();
+            var _targetFile = targetFile;
             if (_targetFile == null)
             {
                 return;
@@ -196,7 +172,7 @@ namespace ExcelTool
 
         private void TextBoxForKeyStartRow_TextChanged(object sender, EventArgs e)
         {
-            var _targetFile = InternalGetFileData();
+            var _targetFile = mChooseFile;
             if (_targetFile == null)
             {
                 return;
@@ -207,7 +183,7 @@ namespace ExcelTool
 
         private void TextBoxForKeyStartColm_TextChanged(object sender, EventArgs e)
         {
-            var _targetFile = InternalGetFileData();
+            var _targetFile = mChooseFile;
             if (_targetFile == null)
             {
                 return;
@@ -218,7 +194,7 @@ namespace ExcelTool
 
         private void TextBoxForContentStartRow_TextChanged(object sender, EventArgs e)
         {
-            var _targetFile = InternalGetFileData();
+            var _targetFile = mChooseFile;
             if (_targetFile == null)
             {
                 return;
@@ -234,7 +210,7 @@ namespace ExcelTool
 
         private void InternalRefreshDataView()
         {
-            var _targetFile = InternalGetFileData();
+            var _targetFile = mChooseFile;
             var _selectItem = ComboBoxForSelectSheet.SelectedItem as CommonWorkSheetData;
             if (_selectItem == null || _targetFile == null)
             {
@@ -276,7 +252,7 @@ namespace ExcelTool
 
         private void DataGridViewForKeyFilter_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            var _targetFile = InternalGetFileData();
+            var _targetFile = mChooseFile;
             if (_targetFile == null)
             {
                 return;
@@ -321,14 +297,6 @@ namespace ExcelTool
 
         private void ChooseFileConfigForm_Load(object sender, EventArgs e)
         {
-            var _owner = this.Owner as ExcelTool;
-            if (_owner == null)
-            {
-                this.Close();
-                MessageBox.Show("父窗口不是 ExcelTool ，请检查!", "错误");
-                return;
-            }
-
             switch (mFileType)
             {
                 case LoadFileType.ExportFile:
@@ -351,7 +319,7 @@ namespace ExcelTool
                 }
             }
 
-            var _targetFile = InternalGetFileData();
+            var _targetFile = mChooseFile;
             if (_targetFile != null)
             {
                 InternalChangeNotice();
@@ -375,18 +343,18 @@ namespace ExcelTool
                 }
 
                 TextForFilePath.Text = _targetFile.GetFilePath();
+
+                InternalInitForSheetComboBox(_targetFile);
             }
             else
             {
                 PanelForConfigs.Enabled = false;
             }
-
-            InternalInitForSheetComboBox();
         }
 
         private void BtnSearch_Click(object sender, EventArgs e)
         {
-            var _targetFile = InternalGetFileData();
+            var _targetFile = mChooseFile;
             if (_targetFile == null)
             {
                 return;
@@ -437,7 +405,7 @@ namespace ExcelTool
 
         private void TextBoxSplitSymbol_TextChanged(object sender, EventArgs e)
         {
-            var _fileData = InternalGetFileData() as CSVFileData;
+            var _fileData = mChooseFile as CSVFileData;
             if (_fileData != null)
             {
                 _fileData.SplitSymbol = TextBoxSplitSymbol.Text;
@@ -446,7 +414,7 @@ namespace ExcelTool
 
         private void BtnReloadKey_Click(object sender, EventArgs e)
         {
-            var _targetFile = InternalGetFileData();
+            var _targetFile = mChooseFile;
             if (_targetFile == null)
             {
                 MessageBox.Show("当前未加载文件，请检查！", "错误");

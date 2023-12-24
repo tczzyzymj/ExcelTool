@@ -17,6 +17,12 @@ namespace ExcelTool
             private set;
         } = string.Empty;
 
+        public string KeyNameWithIndex
+        {
+            get;
+            private set;
+        } = string.Empty;
+
         public int KeyIndexInList
         {
             get;
@@ -58,8 +64,12 @@ namespace ExcelTool
             mKeyColumIndexInList = indexInList;
             KeyName = nameValue;
             KeyIndexInList = indexInList;
+
             mKeyColumIndexInSheetData = indexInSheetData;
             mKeyColumIndexForShow = mKeyColumIndexInList + 1;
+
+            KeyNameWithIndex = $"{CommonUtil.GetZM(mKeyColumIndexForShow)} : {KeyName}";
+
             mOwnerSheet = ownerSheet;
         }
 

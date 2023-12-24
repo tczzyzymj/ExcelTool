@@ -55,12 +55,12 @@
             RemoveBtnColum = new DataGridViewButtonColumn();
             BtnAddAction = new Button();
             label4 = new Label();
-            ComboBoxForSelectKeyList = new ComboBox();
             label6 = new Label();
             ComboBoxForActionTypeList = new ComboBox();
             MultiDataSplitSymbol = new TextBox();
             label7 = new Label();
             contextMenuStrip1 = new ContextMenuStrip(components);
+            ComboBoxForSelectKey = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)DataViewForKeyList).BeginInit();
             ((System.ComponentModel.ISupportInitialize)DataViewForAction).BeginInit();
             SuspendLayout();
@@ -295,22 +295,11 @@
             label4.TabIndex = 48;
             label4.Text = "已选数据列，注意顺序";
             // 
-            // ComboBoxForSelectKeyList
-            // 
-            ComboBoxForSelectKeyList.DropDownStyle = ComboBoxStyle.DropDownList;
-            ComboBoxForSelectKeyList.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            ComboBoxForSelectKeyList.FormattingEnabled = true;
-            ComboBoxForSelectKeyList.Location = new Point(188, 400);
-            ComboBoxForSelectKeyList.Name = "ComboBoxForSelectKeyList";
-            ComboBoxForSelectKeyList.Size = new Size(130, 29);
-            ComboBoxForSelectKeyList.TabIndex = 47;
-            ComboBoxForSelectKeyList.SelectedIndexChanged += ComboBoxForSelectKeyList_SelectedIndexChanged;
-            // 
             // label6
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label6.Location = new Point(377, 403);
+            label6.Location = new Point(468, 403);
             label6.Name = "label6";
             label6.Size = new Size(42, 21);
             label6.TabIndex = 50;
@@ -321,7 +310,7 @@
             ComboBoxForActionTypeList.DropDownStyle = ComboBoxStyle.DropDownList;
             ComboBoxForActionTypeList.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             ComboBoxForActionTypeList.FormattingEnabled = true;
-            ComboBoxForActionTypeList.Location = new Point(420, 400);
+            ComboBoxForActionTypeList.Location = new Point(511, 400);
             ComboBoxForActionTypeList.Name = "ComboBoxForActionTypeList";
             ComboBoxForActionTypeList.Size = new Size(130, 29);
             ComboBoxForActionTypeList.TabIndex = 49;
@@ -353,17 +342,28 @@
             contextMenuStrip1.Name = "contextMenuStrip1";
             contextMenuStrip1.Size = new Size(61, 4);
             // 
+            // ComboBoxForSelectKey
+            // 
+            ComboBoxForSelectKey.DropDownStyle = ComboBoxStyle.DropDownList;
+            ComboBoxForSelectKey.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            ComboBoxForSelectKey.FormattingEnabled = true;
+            ComboBoxForSelectKey.Location = new Point(188, 400);
+            ComboBoxForSelectKey.Name = "ComboBoxForSelectKey";
+            ComboBoxForSelectKey.Size = new Size(242, 29);
+            ComboBoxForSelectKey.TabIndex = 53;
+            ComboBoxForSelectKey.SelectedIndexChanged += ComboBoxForSelectKey_SelectedIndexChanged;
+            // 
             // KeyConnectEditForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1021, 816);
+            Controls.Add(ComboBoxForSelectKey);
             Controls.Add(MultiDataSplitSymbol);
             Controls.Add(label7);
             Controls.Add(label6);
             Controls.Add(ComboBoxForActionTypeList);
             Controls.Add(label4);
-            Controls.Add(ComboBoxForSelectKeyList);
             Controls.Add(BtnAddAction);
             Controls.Add(DataViewForAction);
             Controls.Add(label2);
@@ -405,7 +405,6 @@
         private DataGridView DataViewForAction;
         private Button BtnAddAction;
         private Label label4;
-        private ComboBox ComboBoxForSelectKeyList;
         private Label label6;
         private ComboBox ComboBoxForActionTypeList;
         private DataGridViewTextBoxColumn Key;
@@ -420,5 +419,6 @@
         private TextBox MultiDataSplitSymbol;
         private Label label7;
         private ContextMenuStrip contextMenuStrip1;
+        private ComboBox ComboBoxForSelectKey;
     }
 }

@@ -53,8 +53,21 @@ namespace ExcelTool
             // 这里先默认选择一下加载的源数据文件
             mSelectTargetTable = TableDataManager.Ins().GetSourceFileData();
 
+            InternalRefreshForLoadFiles();
+
+            this.MultiDataSplitSymbol.Text = mFromAction.MultiValueSplitSymbol;
+
+            this.InternalRefreshSheetComboBox();
+
+            InternalRefreshComboBoxForSelectKey();
+        }
+
+        private void InternalRefreshForLoadFiles()
+        {
             // 这里为 file combobox 的已加载文件做显示
             {
+                ComboBoxForLoadedFile.DataSource = null;
+                ComboBoxForLoadedFile.Items.Clear();
                 ComboBoxForLoadedFile.BeginUpdate();
                 var _dataList = TableDataManager.Ins().GetTableDataList();
 
@@ -68,12 +81,6 @@ namespace ExcelTool
 
                 ComboBoxForLoadedFile.EndUpdate();
             }
-
-            this.MultiDataSplitSymbol.Text = mFromAction.MultiValueSplitSymbol;
-
-            this.InternalRefreshSheetComboBox();
-
-            InternalRefreshComboBoxForSelectKey();
         }
 
         private List<KeyData> mSelectKeyList = new List<KeyData>();
@@ -122,21 +129,14 @@ namespace ExcelTool
             ChooseFileConfigForm _form = new ChooseFileConfigForm();
             _form.SetInitData(LoadFileType.NormalFile);
             _form.ShowDialog();
-
+            InternalRefreshForLoadFiles();
             var _index = TableDataManager.Ins().TryGetTableIndexByPath(_form.LastChooseFileAbsolutePath);
-            if (_index >= 0)
-            {
-                ComboBoxForLoadedFile.SelectedIndex = _index;
-            }
-
+            ComboBoxForLoadedFile.SelectedIndex = _index;
             this.ComboBoxForLoadedFile.Update();
         }
 
         private void ComboBoxForLoadedFile_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var _dataList = TableDataManager.Ins().GetTableDataList();
-            var _index = this.ComboBoxForLoadedFile.SelectedIndex;
-            mSelectTargetTable = _dataList[_index];
             InternalRefreshSheetComboBox();
         }
 
@@ -149,6 +149,8 @@ namespace ExcelTool
             var _sheetList = mSelectTargetTable.GetWorkSheetList();
             if (_sheetList.Count > 0)
             {
+                ComboBoxForWorkSheet.DataSource = null;
+                ComboBoxForWorkSheet.Items.Clear();
                 ComboBoxForWorkSheet.BeginUpdate();
                 ComboBoxForWorkSheet.DataSource = _sheetList;
                 ComboBoxForWorkSheet.ValueMember = "IndexInListForShow";
@@ -282,19 +284,26 @@ namespace ExcelTool
 
         private void InternalRefreshComboBoxForSelectKey()
         {
-            ComboBoxForSelectKeyList.BeginUpdate();
-            ComboBoxForSelectKeyList.DataSource = mSelectKeyList;
-            ComboBoxForSelectKeyList.ValueMember = "KeyIndexInList";
-            ComboBoxForSelectKeyList.DisplayMember = "KeyName";
-            //if (mSelectKeyList.Count > 0)
-            //{
-            //    ComboBoxForSelectKeyList.SelectedIndex = 0;
-            //}
+            ComboBoxForSelectKey.DataSource = null;
+            ComboBoxForSelectKey.Items.Clear();
+            ComboBoxForSelectKey.BeginUpdate();
+            ComboBoxForSelectKey.DataSource = mSelectKeyList;
+            ComboBoxForSelectKey.ValueMember = "KeyIndexInList";
+            ComboBoxForSelectKey.DisplayMember = "KeyNameWithIndex";
+            if (mSelectKeyList.Count > 0)
+            {
+                ComboBoxForSelectKey.SelectedIndex = 0;
+            }
 
-            ComboBoxForSelectKeyList.EndUpdate();
+            ComboBoxForSelectKey.EndUpdate();
         }
 
         private void ComboBoxForSelectKeyList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ComboBoxForSelectKey_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }

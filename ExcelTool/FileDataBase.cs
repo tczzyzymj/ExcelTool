@@ -146,8 +146,7 @@ namespace ExcelTool
         {
             if (index < 0 || index >= mWorkSheetList.Count)
             {
-                MessageBox.Show($"GetWorkSheetByIndex 下标 ：[{index}] 越界了，请检查", "错误");
-                return null;
+                index = 0;
             }
 
             return mWorkSheetList[index];
