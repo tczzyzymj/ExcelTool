@@ -288,7 +288,7 @@ namespace ExcelTool
                     KeyConnectEditForm _form = new KeyConnectEditForm();
                     if (!TableDataManager.Ins().ExportKeyActionMap.TryGetValue(_fromKey, out var _action))
                     {
-                        _action = new DataProcessActionForFindRowData();
+                        _action = new SourceAction();
                         TableDataManager.Ins().ExportKeyActionMap.Add(_fromKey, _action);
                     }
                     _form.InitData(_action);

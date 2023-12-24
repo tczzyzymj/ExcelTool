@@ -30,7 +30,7 @@ namespace ExcelTool
 
         private FileDataBase? mSourceFile = null; // 数据源文件
 
-        public Dictionary<KeyData, DataProcessActionForFindRowData> ExportKeyActionMap = new Dictionary<KeyData, DataProcessActionForFindRowData>();
+        public Dictionary<KeyData, SourceAction> ExportKeyActionMap = new Dictionary<KeyData, SourceAction>();
 
         /// <summary>
         /// 源文件的数据过滤器

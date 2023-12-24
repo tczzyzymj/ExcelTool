@@ -8,44 +8,103 @@ namespace ExcelTool
 {
     public abstract class DataProcessActionBase
     {
-        public CommonWorkSheetData? BindSheet = null;
-
         public List<KeyData> MatchKeyList = new List<KeyData>();
 
-        public abstract string FindTargetValueAndProcess(List<CellValueData> matchValueList);
+        public abstract string TryProcessData(List<CellValueData> inRowData);
 
         public string MultiValueSplitSymbol = ",";
+
+        public abstract string ActionName
+        {
+            get;
+        }
     }
 
-    public class DataProcessActionForFindRowData : DataProcessActionBase
+    public class SourceAction : DataProcessActionBase
     {
-        public List<DataProcessActionBase> ActionListAfterFindValues = new List<DataProcessActionBase>();
-
-        public override string FindTargetValueAndProcess(List<CellValueData> matchValueList)
+        public override string ActionName
         {
-            if (BindSheet == null)
+            get
             {
-                throw new Exception($"{FindTargetValueAndProcess} 出错， BindSheet 为空");
+                return "源行为";
+            }
+        }
+
+        public List<DataProcessActionBase> ActionList = new List<DataProcessActionBase>();
+
+        public override string TryProcessData(List<CellValueData> rowValue)
+        {
+            List<string> _resultList = new List<string>();
+
+            for (int i = 0; i < ActionList.Count; ++i)
+            {
+                _resultList.Add(ActionList[i].TryProcessData(rowValue));
             }
 
+            if (_resultList.Count > 1)
+            {
+                StringBuilder _builder = new StringBuilder();
+
+                for (int i = 0; i < _resultList.Count; ++i)
+                {
+                    _builder.Append(_resultList[i]);
+                    if (i < _resultList.Count - 1)
+                    {
+                        _builder.Append(MultiValueSplitSymbol);
+                    }
+                }
+
+                return _builder.ToString();
+            }
+            else
+            {
+                return _resultList[0];
+            }
+        }
+    }
+
+    public class DataProcessActionForFindRowDataInOtherSheet : DataProcessActionBase
+    {
+        public override string ActionName
+        {
+            get
+            {
+                return "跨表查找";
+            }
+        }
+
+        public CommonWorkSheetData SearchTargetSheet;
+
+        public List<DataProcessActionBase> ActionListAfterFindValues = new List<DataProcessActionBase>();
+
+        public List<KeyData> SearchKeyList = new List<KeyData>();
+
+        public override string TryProcessData(List<CellValueData> inRowData)
+        {
             if (ActionListAfterFindValues.Count < 1)
             {
-                throw new Exception($"{FindTargetValueAndProcess} 出错， ActionListAfterFindValues 数量小于1");
+                throw new Exception($"{TryProcessData} 出错， ActionListAfterFindValues 数量小于1");
             }
 
             if (MatchKeyList.Count < 1)
             {
-                throw new Exception($"{FindTargetValueAndProcess} 出错， MatchKeyList 数量小于1");
+                throw new Exception($"{TryProcessData} 出错， MatchKeyList 数量小于1");
+            }
+            if (SearchKeyList.Count < 1)
+            {
+                throw new Exception($"{TryProcessData} 出错，查找表格的列没有数据，请检查");
             }
 
-            if (MatchKeyList.Count != matchValueList.Count)
+            List<CellValueData> _searchInCellList = new List<CellValueData>();
+
+            for (int i = 0; i < MatchKeyList.Count; ++i)
             {
-                throw new Exception($"{FindTargetValueAndProcess} 出错，传入的 matchValueList 和 MatchKeyList 数量不匹配，请检查");
+                _searchInCellList.Add(inRowData[MatchKeyList[i].GetKeyColumIndexInList()]);
             }
 
             List<string> _resultList = new List<string>();
 
-            var _rowData = BindSheet.GetRowDataByTargetKeysAndValus(MatchKeyList, matchValueList);
+            var _rowData = SearchTargetSheet.GetRowDataByTargetKeysAndValus(MatchKeyList, _searchInCellList);
             if (_rowData == null)
             {
                 return string.Empty;
@@ -53,7 +112,7 @@ namespace ExcelTool
 
             for (int i = 0; i < ActionListAfterFindValues.Count; ++i)
             {
-                var _tempValue = ActionListAfterFindValues[i].FindTargetValueAndProcess(_rowData);
+                var _tempValue = ActionListAfterFindValues[i].TryProcessData(_rowData);
 
                 _resultList.Add(_tempValue);
             }
@@ -81,30 +140,19 @@ namespace ExcelTool
     }
 
     /// <summary>
-    /// 找其他的表然后使用其他 ACTION 替换的数据
-    /// </summary>
-    public class DataProcessActionForConnectReplace : DataProcessActionBase
-    {
-        public DataProcessActionForFindRowData TargetProcess = new DataProcessActionForFindRowData();
-
-        public override string FindTargetValueAndProcess(List<CellValueData> rowData)
-        {
-            List<CellValueData> _matchValueList = new List<CellValueData>();
-            for (int i = 0; i < MatchKeyList.Count; ++i)
-            {
-                _matchValueList.Add(rowData[MatchKeyList[i].GetKeyColumIndexInList()]);
-            }
-
-            return TargetProcess.FindTargetValueAndProcess(_matchValueList);
-        }
-    }
-
-    /// <summary>
     /// 直接返回值
     /// </summary>
     public class DataProcessActionForDirectReturn : DataProcessActionBase
     {
-        public override string FindTargetValueAndProcess(List<CellValueData> rowData)
+        public override string ActionName
+        {
+            get
+            {
+                return "直接返回";
+            }
+        }
+
+        public override string TryProcessData(List<CellValueData> rowData)
         {
             List<string> _resultList = new List<string>();
             for (int i = 0; i < MatchKeyList.Count; ++i)
@@ -137,7 +185,15 @@ namespace ExcelTool
 
     public class DataProcessActionForReturnAsUEPos : DataProcessActionBase
     {
-        public override string FindTargetValueAndProcess(List<CellValueData> rowData)
+        public override string ActionName
+        {
+            get
+            {
+                return "返回为UEPos";
+            }
+        }
+
+        public override string TryProcessData(List<CellValueData> rowData)
         {
             List<string> _resultList = new List<string>();
             for (int i = 0; i < MatchKeyList.Count; ++i)
@@ -173,7 +229,15 @@ namespace ExcelTool
 
     public class DataProcessActionForReturnAsUERotateY : DataProcessActionBase
     {
-        public override string FindTargetValueAndProcess(List<CellValueData> rowData)
+        public override string ActionName
+        {
+            get
+            {
+                return "返回为UE旋转";
+            }
+        }
+
+        public override string TryProcessData(List<CellValueData> rowData)
         {
             List<string> _resultList = new List<string>();
             for (int i = 0; i < MatchKeyList.Count; ++i)

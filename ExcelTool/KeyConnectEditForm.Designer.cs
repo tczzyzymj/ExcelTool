@@ -28,18 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle21 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle22 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle23 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle24 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
             BtnLoadNewFile = new Button();
             ComboBoxForLoadedFile = new ComboBox();
             label1 = new Label();
-            DataViewForKeyConfig = new DataGridView();
+            DataViewForKeyList = new DataGridView();
             Key = new DataGridViewTextBoxColumn();
             KeyName = new DataGridViewTextBoxColumn();
-            RelatInfo = new DataGridViewTextBoxColumn();
-            EditRelateBtnColum = new DataGridViewButtonColumn();
             IsDataSource = new DataGridViewCheckBoxColumn();
             LabelForFromTable = new Label();
             BtnFinishConfig = new Button();
@@ -50,19 +45,20 @@
             TextBoxForSearch = new TextBox();
             label5 = new Label();
             label2 = new Label();
-            dataGridView1 = new DataGridView();
-            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
-            dataGridViewButtonColumn1 = new DataGridViewButtonColumn();
-            dataGridViewCheckBoxColumn1 = new DataGridViewCheckBoxColumn();
-            button1 = new Button();
+            DataViewForAction = new DataGridView();
+            BtnAddAction = new Button();
             label4 = new Label();
-            comboBox1 = new ComboBox();
+            ComboBoxForSelectKeyList = new ComboBox();
             label6 = new Label();
-            comboBox2 = new ComboBox();
-            ((System.ComponentModel.ISupportInitialize)DataViewForKeyConfig).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ComboBoxForActionTypeList = new ComboBox();
+            ActionName = new DataGridViewTextBoxColumn();
+            BindKeyList = new DataGridViewComboBoxColumn();
+            dataGridViewButtonColumn1 = new DataGridViewButtonColumn();
+            ConnectKeyActionsColum = new DataGridViewButtonColumn();
+            ConnectInfoColum = new DataGridViewTextBoxColumn();
+            RemoveBtnColum = new DataGridViewButtonColumn();
+            ((System.ComponentModel.ISupportInitialize)DataViewForKeyList).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)DataViewForAction).BeginInit();
             SuspendLayout();
             // 
             // BtnLoadNewFile
@@ -97,18 +93,17 @@
             label1.TabIndex = 19;
             label1.Text = "已加载表格";
             // 
-            // DataViewForKeyConfig
+            // DataViewForKeyList
             // 
-            DataViewForKeyConfig.BackgroundColor = SystemColors.ControlLight;
-            DataViewForKeyConfig.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            DataViewForKeyConfig.Columns.AddRange(new DataGridViewColumn[] { Key, KeyName, RelatInfo, EditRelateBtnColum, IsDataSource });
-            DataViewForKeyConfig.Location = new Point(12, 90);
-            DataViewForKeyConfig.Name = "DataViewForKeyConfig";
-            DataViewForKeyConfig.RowTemplate.Height = 25;
-            DataViewForKeyConfig.Size = new Size(996, 279);
-            DataViewForKeyConfig.TabIndex = 20;
-            DataViewForKeyConfig.CellContentClick += DataViewForKeyConfig_CellContentClick;
-            DataViewForKeyConfig.CellValueChanged += DataViewForKeyConfig_CellValueChanged;
+            DataViewForKeyList.BackgroundColor = SystemColors.ControlLight;
+            DataViewForKeyList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            DataViewForKeyList.Columns.AddRange(new DataGridViewColumn[] { Key, KeyName, IsDataSource });
+            DataViewForKeyList.Location = new Point(12, 90);
+            DataViewForKeyList.Name = "DataViewForKeyList";
+            DataViewForKeyList.RowTemplate.Height = 25;
+            DataViewForKeyList.Size = new Size(996, 279);
+            DataViewForKeyList.TabIndex = 20;
+            DataViewForKeyList.CellContentClick += DataViewForKeyConfig_CellContentClick;
             // 
             // Key
             // 
@@ -118,35 +113,17 @@
             // 
             // KeyName
             // 
-            dataGridViewCellStyle21.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            KeyName.DefaultCellStyle = dataGridViewCellStyle21;
+            KeyName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            KeyName.DefaultCellStyle = dataGridViewCellStyle5;
             KeyName.FillWeight = 160F;
             KeyName.HeaderText = "Key名字";
             KeyName.Name = "KeyName";
             KeyName.ReadOnly = true;
-            KeyName.Width = 200;
-            // 
-            // RelatInfo
-            // 
-            RelatInfo.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle22.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            RelatInfo.DefaultCellStyle = dataGridViewCellStyle22;
-            RelatInfo.FillWeight = 160F;
-            RelatInfo.HeaderText = "关联信息";
-            RelatInfo.Name = "RelatInfo";
-            RelatInfo.ReadOnly = true;
-            // 
-            // EditRelateBtnColum
-            // 
-            EditRelateBtnColum.FillWeight = 160F;
-            EditRelateBtnColum.HeaderText = "设置关联";
-            EditRelateBtnColum.Name = "EditRelateBtnColum";
-            EditRelateBtnColum.Text = "编辑";
-            EditRelateBtnColum.ToolTipText = "编辑";
             // 
             // IsDataSource
             // 
-            IsDataSource.HeaderText = "选为数据源";
+            IsDataSource.HeaderText = "选择数据列";
             IsDataSource.Name = "IsDataSource";
             // 
             // LabelForFromTable
@@ -200,6 +177,7 @@
             BtnReset.TabIndex = 43;
             BtnReset.Text = "重置";
             BtnReset.UseVisualStyleBackColor = true;
+            BtnReset.Click += BtnReset_Click;
             // 
             // BtnSearch
             // 
@@ -210,6 +188,7 @@
             BtnSearch.TabIndex = 42;
             BtnSearch.Text = "查找";
             BtnSearch.UseVisualStyleBackColor = true;
+            BtnSearch.Click += BtnSearch_Click;
             // 
             // TextBoxForSearch
             // 
@@ -239,65 +218,27 @@
             label2.TabIndex = 44;
             label2.Text = "已配置行为";
             // 
-            // dataGridView1
+            // DataViewForAction
             // 
-            dataGridView1.BackgroundColor = SystemColors.ControlLight;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2, dataGridViewTextBoxColumn3, dataGridViewButtonColumn1, dataGridViewCheckBoxColumn1 });
-            dataGridView1.Location = new Point(14, 492);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowTemplate.Height = 25;
-            dataGridView1.Size = new Size(995, 263);
-            dataGridView1.TabIndex = 45;
+            DataViewForAction.BackgroundColor = SystemColors.ControlLight;
+            DataViewForAction.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            DataViewForAction.Columns.AddRange(new DataGridViewColumn[] { ActionName, BindKeyList, dataGridViewButtonColumn1, ConnectKeyActionsColum, ConnectInfoColum, RemoveBtnColum });
+            DataViewForAction.Location = new Point(14, 492);
+            DataViewForAction.Name = "DataViewForAction";
+            DataViewForAction.RowTemplate.Height = 25;
+            DataViewForAction.Size = new Size(995, 263);
+            DataViewForAction.TabIndex = 45;
+            DataViewForAction.CellContentClick += DataViewForAction_CellContentClick;
             // 
-            // dataGridViewTextBoxColumn1
+            // BtnAddAction
             // 
-            dataGridViewTextBoxColumn1.HeaderText = "Index";
-            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            dataGridViewTextBoxColumn1.Width = 60;
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            dataGridViewCellStyle23.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewTextBoxColumn2.DefaultCellStyle = dataGridViewCellStyle23;
-            dataGridViewTextBoxColumn2.FillWeight = 160F;
-            dataGridViewTextBoxColumn2.HeaderText = "Key名字";
-            dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            dataGridViewTextBoxColumn2.ReadOnly = true;
-            dataGridViewTextBoxColumn2.Width = 200;
-            // 
-            // dataGridViewTextBoxColumn3
-            // 
-            dataGridViewTextBoxColumn3.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle24.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle24;
-            dataGridViewTextBoxColumn3.FillWeight = 160F;
-            dataGridViewTextBoxColumn3.HeaderText = "关联信息";
-            dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-            dataGridViewTextBoxColumn3.ReadOnly = true;
-            // 
-            // dataGridViewButtonColumn1
-            // 
-            dataGridViewButtonColumn1.FillWeight = 160F;
-            dataGridViewButtonColumn1.HeaderText = "设置关联";
-            dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
-            dataGridViewButtonColumn1.Text = "编辑";
-            dataGridViewButtonColumn1.ToolTipText = "编辑";
-            // 
-            // dataGridViewCheckBoxColumn1
-            // 
-            dataGridViewCheckBoxColumn1.HeaderText = "选为数据源";
-            dataGridViewCheckBoxColumn1.Name = "dataGridViewCheckBoxColumn1";
-            // 
-            // button1
-            // 
-            button1.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            button1.Location = new Point(878, 403);
-            button1.Name = "button1";
-            button1.Size = new Size(130, 30);
-            button1.TabIndex = 46;
-            button1.Text = "加载新表格";
-            button1.UseVisualStyleBackColor = true;
+            BtnAddAction.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            BtnAddAction.Location = new Point(878, 403);
+            BtnAddAction.Name = "BtnAddAction";
+            BtnAddAction.Size = new Size(130, 30);
+            BtnAddAction.TabIndex = 46;
+            BtnAddAction.Text = "添加行为";
+            BtnAddAction.UseVisualStyleBackColor = true;
             // 
             // label4
             // 
@@ -309,15 +250,15 @@
             label4.TabIndex = 48;
             label4.Text = "已选数据列，注意顺序";
             // 
-            // comboBox1
+            // ComboBoxForSelectKeyList
             // 
-            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox1.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(188, 400);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(130, 29);
-            comboBox1.TabIndex = 47;
+            ComboBoxForSelectKeyList.DropDownStyle = ComboBoxStyle.DropDownList;
+            ComboBoxForSelectKeyList.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            ComboBoxForSelectKeyList.FormattingEnabled = true;
+            ComboBoxForSelectKeyList.Location = new Point(188, 400);
+            ComboBoxForSelectKeyList.Name = "ComboBoxForSelectKeyList";
+            ComboBoxForSelectKeyList.Size = new Size(130, 29);
+            ComboBoxForSelectKeyList.TabIndex = 47;
             // 
             // label6
             // 
@@ -329,16 +270,55 @@
             label6.TabIndex = 50;
             label6.Text = "行为";
             // 
-            // comboBox2
+            // ComboBoxForActionTypeList
             // 
-            comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox2.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            comboBox2.FormattingEnabled = true;
-            comboBox2.Location = new Point(420, 400);
-            comboBox2.Name = "comboBox2";
-            comboBox2.Size = new Size(130, 29);
-            comboBox2.TabIndex = 49;
-            comboBox2.SelectedIndexChanged += comboBox2_SelectedIndexChanged;
+            ComboBoxForActionTypeList.DropDownStyle = ComboBoxStyle.DropDownList;
+            ComboBoxForActionTypeList.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            ComboBoxForActionTypeList.FormattingEnabled = true;
+            ComboBoxForActionTypeList.Location = new Point(420, 400);
+            ComboBoxForActionTypeList.Name = "ComboBoxForActionTypeList";
+            ComboBoxForActionTypeList.Size = new Size(130, 29);
+            ComboBoxForActionTypeList.TabIndex = 49;
+            // 
+            // ActionName
+            // 
+            ActionName.HeaderText = "行为名字";
+            ActionName.Name = "ActionName";
+            ActionName.ReadOnly = true;
+            ActionName.Width = 120;
+            // 
+            // BindKeyList
+            // 
+            BindKeyList.HeaderText = "绑定Key";
+            BindKeyList.Name = "BindKeyList";
+            BindKeyList.ReadOnly = true;
+            BindKeyList.Width = 180;
+            // 
+            // dataGridViewButtonColumn1
+            // 
+            dataGridViewButtonColumn1.FillWeight = 160F;
+            dataGridViewButtonColumn1.HeaderText = "关联其他表Key";
+            dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
+            dataGridViewButtonColumn1.Text = "关联其他表Key";
+            dataGridViewButtonColumn1.ToolTipText = "关联其他表Key";
+            // 
+            // ConnectKeyActionsColum
+            // 
+            ConnectKeyActionsColum.HeaderText = "关联其他表行为";
+            ConnectKeyActionsColum.Name = "ConnectKeyActionsColum";
+            ConnectKeyActionsColum.Text = "关联其他表行为";
+            // 
+            // ConnectInfoColum
+            // 
+            ConnectInfoColum.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            ConnectInfoColum.HeaderText = "关联信息";
+            ConnectInfoColum.Name = "ConnectInfoColum";
+            ConnectInfoColum.ReadOnly = true;
+            // 
+            // RemoveBtnColum
+            // 
+            RemoveBtnColum.HeaderText = "移除按钮";
+            RemoveBtnColum.Name = "RemoveBtnColum";
             // 
             // KeyConnectEditForm
             // 
@@ -346,11 +326,11 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1021, 816);
             Controls.Add(label6);
-            Controls.Add(comboBox2);
+            Controls.Add(ComboBoxForActionTypeList);
             Controls.Add(label4);
-            Controls.Add(comboBox1);
-            Controls.Add(button1);
-            Controls.Add(dataGridView1);
+            Controls.Add(ComboBoxForSelectKeyList);
+            Controls.Add(BtnAddAction);
+            Controls.Add(DataViewForAction);
             Controls.Add(label2);
             Controls.Add(BtnReset);
             Controls.Add(BtnSearch);
@@ -360,15 +340,15 @@
             Controls.Add(ComboBoxForWorkSheet);
             Controls.Add(BtnFinishConfig);
             Controls.Add(LabelForFromTable);
-            Controls.Add(DataViewForKeyConfig);
+            Controls.Add(DataViewForKeyList);
             Controls.Add(label1);
             Controls.Add(ComboBoxForLoadedFile);
             Controls.Add(BtnLoadNewFile);
             Name = "KeyConnectEditForm";
             Text = "KeyConnectEditForm";
             Load += KeyConnectEditForm_Load;
-            ((System.ComponentModel.ISupportInitialize)DataViewForKeyConfig).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)DataViewForKeyList).EndInit();
+            ((System.ComponentModel.ISupportInitialize)DataViewForAction).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -377,12 +357,7 @@
         private Button BtnLoadNewFile;
         private ComboBox ComboBoxForLoadedFile;
         private Label label1;
-        private DataGridView DataViewForKeyConfig;
-        private DataGridViewTextBoxColumn Key;
-        private DataGridViewTextBoxColumn KeyName;
-        private DataGridViewTextBoxColumn RelatInfo;
-        private DataGridViewButtonColumn EditRelateBtnColum;
-        private DataGridViewCheckBoxColumn IsDataSource;
+        private DataGridView DataViewForKeyList;
         private Label LabelForFromTable;
         private Button BtnFinishConfig;
         private Label label3;
@@ -392,16 +367,20 @@
         private TextBox TextBoxForSearch;
         private Label label5;
         private Label label2;
-        private DataGridView dataGridView1;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
-        private DataGridViewButtonColumn dataGridViewButtonColumn1;
-        private DataGridViewCheckBoxColumn dataGridViewCheckBoxColumn1;
-        private Button button1;
+        private DataGridView DataViewForAction;
+        private Button BtnAddAction;
         private Label label4;
-        private ComboBox comboBox1;
+        private ComboBox ComboBoxForSelectKeyList;
         private Label label6;
-        private ComboBox comboBox2;
+        private ComboBox ComboBoxForActionTypeList;
+        private DataGridViewTextBoxColumn Key;
+        private DataGridViewTextBoxColumn KeyName;
+        private DataGridViewCheckBoxColumn IsDataSource;
+        private DataGridViewTextBoxColumn ActionName;
+        private DataGridViewComboBoxColumn BindKeyList;
+        private DataGridViewButtonColumn dataGridViewButtonColumn1;
+        private DataGridViewButtonColumn ConnectKeyActionsColum;
+        private DataGridViewTextBoxColumn ConnectInfoColum;
+        private DataGridViewButtonColumn RemoveBtnColum;
     }
 }

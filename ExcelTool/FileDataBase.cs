@@ -109,7 +109,7 @@ namespace ExcelTool
 
                     _tempMatchValueList.Add(_singleRow[_singleKey.GetKeyColumIndexInList()]);
 
-                    _writeRowData.Add(_action.FindTargetValueAndProcess(_tempMatchValueList));
+                    _writeRowData.Add(_action.TryProcessData(_tempMatchValueList));
                 }
 
                 // 这里直接去写入一个新的

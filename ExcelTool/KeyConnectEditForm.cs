@@ -12,19 +12,19 @@ namespace ExcelTool
 {
     public partial class KeyConnectEditForm : FormBase
     {
-        private DataProcessActionBase mFromAction = null;
+        private DataProcessActionBase? mFromAction = null;
         private FileDataBase? mSelectTargetTable = null;
         private CommonWorkSheetData? mSelectSheet = null;
         private const int mColumIndexForConnectInfo = 2;
         private const int mColumIndexForEditConnect = 3;
         private const int mColumIndexForSetConnect = 4;
 
-        private List<KeyData>? mWorkSheetKeyListData = null;
+        private List<KeyData> mWorkSheetKeyListData = new List<KeyData>();
 
         public KeyConnectEditForm()
         {
             InitializeComponent();
-            this.DataViewForKeyConfig.AllowUserToAddRows = false;
+            this.DataViewForKeyList.AllowUserToAddRows = false;
         }
 
         public bool InitData(DataProcessActionBase targetAction)
@@ -42,7 +42,12 @@ namespace ExcelTool
 
         private void KeyConnectEditForm_Load(object sender, EventArgs e)
         {
-            //LabelForFromTable.Text = $"{mFromAction.GetOwnerTableName(false)}--Key:{mFromAction.GetKeyName()}";
+            if (mFromAction == null)
+            {
+                throw new Exception($"KeyConnectEditForm_Load 错误，mFromAction为空");
+            }
+
+            //LabelForFromTable.Text = $"关联：{mFromAction.SearchTargetSheet.DisplayName}--Key:{mFromAction.GetKeyName()}";
 
             // 这里先默认选择一下加载的源数据文件
             mSelectTargetTable = TableDataManager.Ins().GetSourceFileData();
@@ -66,67 +71,30 @@ namespace ExcelTool
             this.InternalRefreshSheetComboBox();
         }
 
+        private List<KeyData> mSelectKeyList = new List<KeyData>();
+
+        private const int mColumIndexForSelect = 2;
         private void DataViewForKeyConfig_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             switch (e.ColumnIndex)
             {
-                case mColumIndexForEditConnect:
+                case mColumIndexForSelect:
                 {
-                    if (mWorkSheetKeyListData == null)
+                    var _targetKey = this.mWorkSheetKeyListData[e.RowIndex];
+                    var _cell = this.DataViewForKeyList.Rows[e.RowIndex].Cells[e.ColumnIndex];
+
+                    bool _isSelected = (bool)_cell.EditedFormattedValue;
+                    if (_isSelected)
                     {
-                        return;
+                        if (!mSelectKeyList.Contains(_targetKey))
+                        {
+                            mSelectKeyList.Add(_targetKey);
+                        }
                     }
-
-                    //KeyConnectEditForm _newForm = new KeyConnectEditForm();
-                    //var _targetKey = mWorkSheetKeyListData[e.RowIndex];
-                    //_newForm.InitData(_targetKey);
-                    //if (_newForm.ShowDialog(this) == DialogResult.OK)
-                    //{
-                    //    //if (!CommonUtil.IsSafeNoCycleReferenceForKey(mWorkSheetKeyListData[e.RowIndex]))
-                    //    //{
-                    //    //    _targetKey.ClearNextConnectKey();
-                    //    //}
-                    //    //else
-                    //    //{
-                    //    //    var _cell = DataViewForKeyConfig.Rows[e.RowIndex].Cells[mColumIndexForConnectInfo];
-                    //    //    _cell.Value = _targetKey.GetConnectInfo();
-                    //    //    this.DataViewForKeyConfig.UpdateCellValue(mColumIndexForConnectInfo, e.RowIndex);
-                    //    //}
-                    //}
-                    break;
-                }
-                case mColumIndexForSetConnect:
-                {
-                    if (mWorkSheetKeyListData == null)
+                    else
                     {
-                        return;
+                        mSelectKeyList.Remove(_targetKey);
                     }
-
-                    // 设置为了关联的 key , 这里要注意，不是多选，是单选的，如果选中了一个，那么其他的要取消选择
-                    var _allRows = this.DataViewForKeyConfig.Rows;
-                    var _checkBoxCell = (DataGridViewCheckBoxCell)_allRows[e.RowIndex].Cells[e.ColumnIndex];
-
-                    var _triggerKey = mWorkSheetKeyListData[e.RowIndex];
-
-                    bool _isSelect = (bool)_checkBoxCell.EditedFormattedValue;
-                    //if (_isSelect)
-                    //{
-                    //    mFromKey.SetNextConnectKey(new WeakReference<KeyData>(_triggerKey));
-                    //    for (int _row = 0; _row < _allRows.Count; ++_row)
-                    //    {
-                    //        if (_row == e.RowIndex)
-                    //        {
-                    //            continue;
-                    //        }
-
-                    //        var _cell = (DataGridViewCheckBoxCell)_allRows[_row].Cells[mColumIndexForSetConnect];
-                    //        _cell.Value = false;
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    mFromKey.ClearNextConnectKey();
-                    //}
 
                     break;
                 }
@@ -137,12 +105,7 @@ namespace ExcelTool
             }
         }
 
-        private void DataViewForKeyConfig_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
-        private void DataViewForKeyConfig_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        private void InternalRefreshForSelctKeyBox()
         {
 
         }
@@ -193,13 +156,12 @@ namespace ExcelTool
 
         private bool InternalRefreshForKey()
         {
-            this.DataViewForKeyConfig.Rows.Clear();
+            this.DataViewForKeyList.Rows.Clear();
             var _sheetIndex = this.ComboBoxForWorkSheet.SelectedIndex;
             var _keyList = mSelectSheet?.GetKeyListData();
             if (_keyList == null || _keyList.Count < 1)
             {
-                MessageBox.Show($"当前选择的sheet:[{_sheetIndex}] 无法获取 Key 数据，请检查！", "错误");
-                return false;
+                throw new Exception($"当前选择的sheet:[{_sheetIndex}] 无法获取 Key 数据，请检查！");
             }
 
             if (mFromAction == null)
@@ -210,7 +172,7 @@ namespace ExcelTool
             for (int i = 0; i < _keyList.Count; i++)
             {
                 var _key = _keyList[i];
-                this.DataViewForKeyConfig.Rows.Add(
+                this.DataViewForKeyList.Rows.Add(
                     CommonUtil.GetZM(_key.GetKeyIndexForShow()),
                     _key.KeyName,
                     string.Empty,//CommonUtil.GetKeyConnectFullInfo(_key),
@@ -230,9 +192,74 @@ namespace ExcelTool
             this.Close();
         }
 
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        private void BtnSearch_Click(object sender, EventArgs e)
         {
+            var _searchContent = TextBoxForSearch.Text.Trim().ToLower();
 
+            var _rows = this.DataViewForKeyList.Rows;
+            for (int i = 0; i < mWorkSheetKeyListData.Count; ++i)
+            {
+                if (mWorkSheetKeyListData[i].KeyName.ToLower().Contains(_searchContent))
+                {
+                    _rows[i].Visible = true;
+                }
+                else
+                {
+                    _rows[i].Visible = false;
+                }
+            }
+        }
+
+        private void BtnReset_Click(object sender, EventArgs e)
+        {
+            var _rows = this.DataViewForKeyList.Rows;
+            for (int i = 0; i < _rows.Count; ++i)
+            {
+                _rows[i].Visible = true;
+            }
+        }
+
+        private const int mRemoveColumIndex = 5;// 移除按钮
+        private const int mConnectActionBtnColumIndex = 3; // 关联其他表的行为按钮
+        private const int mConnectKeyBtnColumIndex = 2; // 关联其他表的KEY按钮
+
+        private void DataViewForAction_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (mFromAction == null)
+            {
+                throw new Exception($"DataViewForAction_CellContentClick 出错， mFromAction 为空，请检查");
+            }
+
+            switch (e.ColumnIndex)
+            {
+                case mConnectActionBtnColumIndex:
+                {
+                    //var _targetAction = mFromAction.ActionListAfterFindValues[e.RowIndex];
+                    //if (_targetAction is DataProcessActionForFindRowData _finalAction)
+                    //{
+                    //    KeyConnectEditForm _form = new KeyConnectEditForm();
+                    //    _form.InitData(_finalAction);
+                    //    _form.ShowDialog();
+
+                    //    // 都去刷新一下关联数据
+                    //}
+
+                    break;
+                }
+                case mRemoveColumIndex:
+                {
+                    //mFromAction.ActionListAfterFindValues.RemoveAt(e.RowIndex);
+                    break;
+                }
+                case mConnectKeyBtnColumIndex:
+                {
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
         }
     }
 }
