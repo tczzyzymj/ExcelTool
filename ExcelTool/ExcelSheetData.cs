@@ -48,7 +48,7 @@ namespace ExcelTool
 
             int _contentStartRow = _ownerTable.GetContentStartRowIndex();
 
-            var _writeType = TableDataManager.Instance().ExportWriteWayType;
+            var _writeType = TableDataManager.Ins().ExportWriteWayType;
             switch (_writeType)
             {
                 case MainTypeDefine.ExportWriteWayType.Append:

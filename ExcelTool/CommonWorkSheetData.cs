@@ -107,22 +107,29 @@ namespace ExcelTool
             return mIndexInFileData;
         }
 
-        public List<List<CellValueData>>? GetFilteredDataList()
+        public List<List<CellValueData>>? GetFilteredDataList(Dictionary<KeyData, List<FilterFuncBase>> filterDataMap)
         {
             if (mCellData2DList == null)
             {
                 return null;
             }
 
+            if (filterDataMap == null || filterDataMap.Count < 1)
+            {
+                return mCellData2DList;
+            }
+
             List<List<CellValueData>> _result = new List<List<CellValueData>>(mCellData2DList.Count);
 
             var _keyDataList = GetKeyListData();
-            List<KeyData> _filterKeyData = new List<KeyData>(_keyDataList.Count);
+
+            Dictionary<KeyData, List<FilterFuncBase>> _tempFilterMap = new Dictionary<KeyData, List<FilterFuncBase>>();
+
             for (int i = 0; i < _keyDataList.Count; ++i)
             {
-                if (_keyDataList[i].GetFilterFuncList().Count > 0)
+                if (filterDataMap.TryGetValue(_keyDataList[i], out var _tempValue))
                 {
-                    _filterKeyData.Add(_keyDataList[i]);
+                    _tempFilterMap.Add(_keyDataList[i], _tempValue);
                 }
             }
 
@@ -130,13 +137,16 @@ namespace ExcelTool
             {
                 var _rowData = mCellData2DList[_row];
                 bool _match = true;
-                for (int i = 0; i < _filterKeyData.Count; ++i)
+                foreach (var _pair in _tempFilterMap)
                 {
-                    if (!_filterKeyData[i].IsMatchFilter(_rowData[_filterKeyData[i].GetKeyColumIndexInList()].GetCellValue()))
+                    foreach (var _filterFunc in _pair.Value)
                     {
-                        _match = false;
+                        if (!_filterFunc.IsMatchFilter(_rowData[_pair.Key.GetKeyColumIndexInList()].GetCellValue()))
+                        {
+                            _match = false;
 
-                        break;
+                            break;
+                        }
                     }
                 }
 
@@ -215,14 +225,14 @@ namespace ExcelTool
             var _existData = mKeyDataList.Find((x) => x.GetKeyColumIndexInList() == indexInList);
             if (_existData != null)
             {
-                MessageBox.Show($"已经存在相同的 indexInList : {indexInList}, 内容分别是：{_existData.GetKeyName()} {nameValue}");
+                MessageBox.Show($"已经存在相同的 indexInList : {indexInList}, 内容分别是：{_existData.KeyName} {nameValue}");
                 return false;
             }
 
             _existData = mKeyDataList.Find((x) => x.GetKeyIndexInSheetData() == indexInSheetData);
             if (_existData != null)
             {
-                MessageBox.Show($"已经存在相同的 indexInSheetData : {indexInSheetData}, 内容分别是：{_existData.GetKeyName()} {nameValue}");
+                MessageBox.Show($"已经存在相同的 indexInSheetData : {indexInSheetData}, 内容分别是：{_existData.KeyName} {nameValue}");
                 return false;
             }
 

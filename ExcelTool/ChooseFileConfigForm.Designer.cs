@@ -178,6 +178,7 @@
             // 
             // ComboBoxForSelectSheet
             // 
+            ComboBoxForSelectSheet.DropDownStyle = ComboBoxStyle.DropDownList;
             ComboBoxForSelectSheet.FormattingEnabled = true;
             ComboBoxForSelectSheet.Location = new Point(104, 63);
             ComboBoxForSelectSheet.Name = "ComboBoxForSelectSheet";
@@ -266,7 +267,7 @@
             // TextBoxSplitSymbol
             // 
             TextBoxSplitSymbol.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxSplitSymbol.Location = new Point(724, 52);
+            TextBoxSplitSymbol.Location = new Point(726, 52);
             TextBoxSplitSymbol.Name = "TextBoxSplitSymbol";
             TextBoxSplitSymbol.RightToLeft = RightToLeft.Yes;
             TextBoxSplitSymbol.Size = new Size(39, 28);
@@ -278,7 +279,7 @@
             // 
             LableForSplitSymbol.AutoSize = true;
             LableForSplitSymbol.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            LableForSplitSymbol.Location = new Point(653, 55);
+            LableForSplitSymbol.Location = new Point(662, 56);
             LableForSplitSymbol.Name = "LableForSplitSymbol";
             LableForSplitSymbol.Size = new Size(58, 21);
             LableForSplitSymbol.TabIndex = 42;
@@ -297,7 +298,7 @@
             PanelForConfigs.Controls.Add(TextBoxForContentStartRow);
             PanelForConfigs.Location = new Point(12, 93);
             PanelForConfigs.Name = "PanelForConfigs";
-            PanelForConfigs.Size = new Size(768, 89);
+            PanelForConfigs.Size = new Size(772, 89);
             PanelForConfigs.TabIndex = 44;
             // 
             // LabelForNotice
@@ -313,7 +314,7 @@
             // BtnReloadKey
             // 
             BtnReloadKey.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            BtnReloadKey.Location = new Point(622, 185);
+            BtnReloadKey.Location = new Point(628, 186);
             BtnReloadKey.Name = "BtnReloadKey";
             BtnReloadKey.Size = new Size(155, 30);
             BtnReloadKey.TabIndex = 45;

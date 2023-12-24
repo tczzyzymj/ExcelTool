@@ -73,12 +73,46 @@ namespace ExcelTool
             return true;
         }
 
-        public virtual bool WriteData(List<List<CellValueData>> filteredInData)
+        public virtual bool WriteData(List<List<CellValueData>> inRowDataList)
         {
-            if (filteredInData == null || filteredInData.Count < 1)
+            if (inRowDataList == null || inRowDataList.Count < 1)
             {
                 MessageBox.Show("WriteData 数据无效，请检查", "错误");
                 return false;
+            }
+
+            var _keyActionMap = TableDataManager.Ins().ExportKeyActionMap;
+            if (_keyActionMap.Count < 1)
+            {
+                throw new Exception($"{WriteData} 出错，未配置 ExportKeyActionMap，请检查");
+            }
+
+            var _currentKeyList = GetCurrentWorkSheet()?.GetKeyListData();
+            if (_currentKeyList == null)
+            {
+                throw new Exception($"{WriteData} 出错，无法获取当前数据表格的 KeyList，请检查!");
+            }
+
+            List<string> _writeRowData = new List<string>(_currentKeyList.Count);
+            List<CellValueData> _tempMatchValueList = new List<CellValueData>();
+            foreach (var _singleRow in inRowDataList)
+            {
+                _writeRowData.Clear();
+
+                foreach (var _singleKey in _currentKeyList)
+                {
+                    if (!_keyActionMap.TryGetValue(_singleKey, out var _action))
+                    {
+                        _writeRowData.Add(string.Empty);
+                        continue;
+                    }
+
+                    _tempMatchValueList.Add(_singleRow[_singleKey.GetKeyColumIndexInList()]);
+
+                    _writeRowData.Add(_action.FindTargetValueAndProcess(_tempMatchValueList));
+                }
+
+                // 这里直接去写入一个新的
             }
 
             return true;
@@ -91,11 +125,11 @@ namespace ExcelTool
             return mHasInit;
         }
 
-        public List<List<CellValueData>>? GetFilteredDataList()
+        public List<List<CellValueData>>? GetFilteredDataList(Dictionary<KeyData, List<FilterFuncBase>> filterDataMap)
         {
             var _currentSheet = GetCurrentWorkSheet();
 
-            return _currentSheet?.GetFilteredDataList();
+            return _currentSheet?.GetFilteredDataList(filterDataMap);
         }
 
         public string GetFilePath()

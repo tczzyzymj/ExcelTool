@@ -9,10 +9,19 @@ namespace ExcelTool
 {
     public partial class ExcelTool : FormBase
     {
-        private const int mColumIndexForSetConnect = 3;
+        /// <summary>
+        /// 配置数据按钮
+        /// </summary>
+        private const int mColumIndexForConfigDataSource = 3;
 
+        /// <summary>
+        /// 是否忽略
+        /// </summary>
         private const int mColumIndexForSetIgnore = 4;
 
+        /// <summary>
+        /// 是否为主KEY
+        /// </summary>
         private const int mColumIndexForIsMainKey = 5;
 
         private List<KeyData>? mKeyList = null;
@@ -33,24 +42,24 @@ namespace ExcelTool
             MessageBox.Show("功能制作中", "提示");
             return;
             // 导出配置
-            var mExportTargetFile = TableDataManager.Instance().GetExportFileData();
+            var mExportTargetFile = TableDataManager.Ins().GetExportFileData();
             if (mExportTargetFile == null)
             {
                 MessageBox.Show("没有可导出的配置", "提示");
                 return;
             }
 
-            var _serializeContent = JsonConvert.SerializeObject(mExportTargetFile, Formatting.None);
+            //var _serializeContent = JsonConvert.SerializeObject(mExportTargetFile, Formatting.None);
 
             // 弹出保存提示
             SaveFileDialog _saveFileDialog = new SaveFileDialog();
             _saveFileDialog.DefaultExt = ".json";
-            var _timeformat = DateTime.Now.GetDateTimeFormats();
-            _saveFileDialog.FileName = $"{DateTime.Now.ToShortDateString()}_ExportSetting.json";
+            var _timeformat = DateTime.Now.GetDateTimeFormats()[17].Replace("/", "_").Replace(" ", "_").Replace(":", "_");
+            _saveFileDialog.FileName = $"{_timeformat}_ExportSetting.json";
 
             if (_saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                File.WriteAllText(_saveFileDialog.FileName, _serializeContent);
+                //File.WriteAllText(_saveFileDialog.FileName, _serializeContent);
 
                 MessageBox.Show("保存成功", " 提示");
             }
@@ -60,7 +69,7 @@ namespace ExcelTool
         {
             MessageBox.Show("功能制作中", "提示");
             return;
-            var mExportTargetFile = TableDataManager.Instance().GetExportFileData();
+            var mExportTargetFile = TableDataManager.Ins().GetExportFileData();
             // 导入配置
             OpenFileDialog _openfileDialog = new OpenFileDialog();
             if (_openfileDialog.ShowDialog() == DialogResult.OK)
@@ -68,7 +77,7 @@ namespace ExcelTool
                 var _loadedFile = JsonConvert.DeserializeObject<FileDataBase>(_openfileDialog.FileName);
                 if (_loadedFile != null)
                 {
-                    TableDataManager.Instance().TrySetExportTargetFile(_loadedFile);
+                    TableDataManager.Ins().TrySetExportTargetFile(_loadedFile);
                 }
             }
         }
@@ -85,7 +94,7 @@ namespace ExcelTool
 
         private void InternalAnalysisKey()
         {
-            var _exportFile = TableDataManager.Instance().GetExportFileData();
+            var _exportFile = TableDataManager.Ins().GetExportFileData();
 
             // 这里只分析一下数据
             if (_exportFile == null)
@@ -116,9 +125,9 @@ namespace ExcelTool
             {
                 this.DataViewConfigForExportFile.Rows.Add(
                     CommonUtil.GetZM(_keyList[i].GetKeyIndexForShow()),
-                    _keyList[i].GetKeyName(),
+                    _keyList[i].KeyName,
                     "",
-                    "设置",
+                    "配置数据",
                     _keyList[i].IsIgnore,
                     _keyList[i].IsMainKey
                 );
@@ -193,13 +202,13 @@ namespace ExcelTool
 
         private void StartExportBtn_Click(object sender, EventArgs e)
         {
-            var _exportFile = TableDataManager.Instance().GetExportFileData();
+            var _exportFile = TableDataManager.Ins().GetExportFileData();
             if (_exportFile == null || !_exportFile.GetHasInit())
             {
                 MessageBox.Show("导出目标文件未准备好，请配置导出目标文件！", "错误");
                 return;
             }
-            var _sourceFile = TableDataManager.Instance().GetSourceFileData();
+            var _sourceFile = TableDataManager.Ins().GetSourceFileData();
             if (_sourceFile == null || !_sourceFile.GetHasInit())
             {
                 MessageBox.Show("源文件未准备好 ，请配置源文件！", "错误");
@@ -208,7 +217,7 @@ namespace ExcelTool
 
             int _startRowIndex = 0;
 
-            switch (TableDataManager.Instance().ExportWriteWayType)
+            switch (TableDataManager.Ins().ExportWriteWayType)
             {
                 case MainTypeDefine.ExportWriteWayType.OverWriteAll:
                 {
@@ -221,7 +230,7 @@ namespace ExcelTool
                 }
                 default:
                 {
-                    MessageBox.Show($"导出写入中，存在未处理的类型：{TableDataManager.Instance().ExportWriteWayType}，请检查");
+                    MessageBox.Show($"导出写入中，存在未处理的类型：{TableDataManager.Ins().ExportWriteWayType}，请检查");
                     break;
                 }
             }
@@ -235,7 +244,7 @@ namespace ExcelTool
                 return;
             }
 
-            TableDataManager.Instance().ExportWriteWayType = (MainTypeDefine.ExportWriteWayType)_selectValue.RealValue;
+            TableDataManager.Ins().ExportWriteWayType = (MainTypeDefine.ExportWriteWayType)_selectValue.RealValue;
         }
 
         private void ComboBoxForExportConfigDealWay_SelectedIndexChanged(object sender, EventArgs e)
@@ -246,7 +255,7 @@ namespace ExcelTool
                 return;
             }
 
-            TableDataManager.Instance().ExportConfigDealWayType = (MainTypeDefine.ExportConflictDealWayType)_selectValue.RealValue;
+            TableDataManager.Ins().ExportConfigDealWayType = (MainTypeDefine.ExportConflictDealWayType)_selectValue.RealValue;
         }
 
         private void DataViewConfigForExportFile_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -264,12 +273,12 @@ namespace ExcelTool
             }
 
             var _columIndex = e.ColumnIndex;
-            var _targetKey = mKeyList[e.RowIndex];
+            var _fromKey = mKeyList[e.RowIndex];
             switch (_columIndex)
             {
-                case mColumIndexForSetConnect:
+                case mColumIndexForConfigDataSource:
                 {
-                    var _sourceFile = TableDataManager.Instance().GetSourceFileData();
+                    var _sourceFile = TableDataManager.Ins().GetSourceFileData();
                     if (_sourceFile == null)
                     {
                         MessageBox.Show("请先配置数据源文件！", "错误");
@@ -277,10 +286,15 @@ namespace ExcelTool
                     }
 
                     KeyConnectEditForm _form = new KeyConnectEditForm();
-                    _form.InitData(_targetKey);
+                    if (!TableDataManager.Ins().ExportKeyActionMap.TryGetValue(_fromKey, out var _action))
+                    {
+                        _action = new DataProcessActionForFindRowData();
+                        TableDataManager.Ins().ExportKeyActionMap.Add(_fromKey, _action);
+                    }
+                    _form.InitData(_action);
                     if (_form.ShowDialog() == DialogResult.OK)
                     {
-                        // 这里去检测一下，看 key 的引用是否
+                        // TODO 这里去检测一下，看是否有循环引用
                         //if (!CommonUtil.IsSafeNoCycleReferenceForKey(_targetKey))
                         //{
                         //    _targetKey.ClearNextConnectKey();
@@ -293,10 +307,10 @@ namespace ExcelTool
                 case mColumIndexForSetIgnore:
                 {
                     var _value = (bool)DataViewConfigForExportFile.Rows[e.RowIndex].Cells[e.ColumnIndex].EditedFormattedValue;
-                    _targetKey.IsIgnore = _value;
+                    _fromKey.IsIgnore = _value;
                     if (_value)
                     {
-                        _targetKey.IsMainKey = false;
+                        _fromKey.IsMainKey = false;
                         DataViewConfigForExportFile.Rows[e.RowIndex].Cells[e.ColumnIndex + 1].Value = false;
                     }
 
@@ -306,10 +320,10 @@ namespace ExcelTool
                 {
                     // 目前主KEY只有一个其他的设置为空
                     var _value = (bool)DataViewConfigForExportFile.Rows[e.RowIndex].Cells[e.ColumnIndex].EditedFormattedValue;
-                    _targetKey.IsMainKey = _value;
+                    _fromKey.IsMainKey = _value;
                     if (_value)
                     {
-                        _targetKey.IsIgnore = false;
+                        _fromKey.IsIgnore = false;
                         DataViewConfigForExportFile.Rows[e.RowIndex].Cells[e.ColumnIndex - 1].Value = false;
                     }
 

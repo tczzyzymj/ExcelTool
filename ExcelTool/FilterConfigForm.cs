@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OfficeOpenXml.Drawing.Slicer.Style;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -16,9 +17,9 @@ namespace ExcelTool
         private int mColumnIndex = 0;
         private KeyData mKeyData = null;
 
-        private int mCompareDataColumIndex = 0;
+        private const int mCompareDataColumIndex = 0;
 
-        private int mCompareValueColumINdex = 1;
+        private const int mCompareValueColumIndex = 1;
 
         public FilterConfigForm()
         {
@@ -48,7 +49,6 @@ namespace ExcelTool
                 return;
             }
 
-            var _funcList = mKeyData.GetFilterFuncList();
 
             if (!Enum.TryParse(typeof(MainTypeDefine.FilterCompareValueType), this.ComboBoxForValueType.SelectedIndex.ToString(), out var _tempCompareValueType))
             {
@@ -94,10 +94,19 @@ namespace ExcelTool
                 _filterFuncBase.CompareWay = (MainTypeDefine.FilterCompareWayType)_tempCompareWayType;
             }
 
-            _funcList.Add(_filterFuncBase);
+            var _funcList = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mKeyData);
+            if (_funcList != null)
+            {
+                _funcList.Add(_filterFuncBase);
+            }
+            else
+            {
+                TableDataManager.Ins().AddSourceFileDataFilterFunc(mKeyData, _filterFuncBase);
+            }
+
             var _addInex = DataGridViewForFilterFunc.Rows.Add(
-                _filterFuncBase.GetCompareValue(),
                 null,
+                _filterFuncBase.GetCompareValue(),
                 "移除"
             );
 
@@ -117,11 +126,14 @@ namespace ExcelTool
             if (e.ColumnIndex == 2)
             {
                 // 点击移除按钮
-                var _funcList = mKeyData.GetFilterFuncList();
-                _funcList.RemoveAt(e.RowIndex);
+                var _funcList = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mKeyData);
+                if (_funcList != null)
+                {
+                    _funcList.RemoveAt(e.RowIndex);
 
-                // 刷新一下
-                DataGridViewForFilterFunc.Rows.RemoveAt(e.RowIndex);
+                    // 刷新一下
+                    DataGridViewForFilterFunc.Rows.RemoveAt(e.RowIndex);
+                }
             }
         }
 
@@ -131,7 +143,7 @@ namespace ExcelTool
             {
                 return;
             }
-            var _funcList = mKeyData.GetFilterFuncList();
+            var _funcList = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mKeyData);
             var _cell = this.DataGridViewForFilterFunc.Rows[e.RowIndex].Cells[e.ColumnIndex];
             if (_cell == null || _cell.EditedFormattedValue == null)
             {
@@ -140,7 +152,7 @@ namespace ExcelTool
 
             switch (e.ColumnIndex)
             {
-                case 0:
+                case mCompareDataColumIndex:
                 {
                     if (Enum.TryParse(typeof(MainTypeDefine.FilterCompareWayType), _cell.EditedFormattedValue.ToString(), out var _enumValue) && _enumValue != null)
                     {
@@ -149,7 +161,7 @@ namespace ExcelTool
 
                     break;
                 }
-                case 1:
+                case mCompareValueColumIndex:
                 {
                     if (_cell.EditedFormattedValue != null)
                     {
@@ -192,35 +204,39 @@ namespace ExcelTool
                 ComboBoxForCompareType.EndUpdate();
             }
 
-            var _filterFuncList = mKeyData.GetFilterFuncList();
-            for (int i = 0; i < _filterFuncList.Count; ++i)
-            {
-                ComboBox _newBox = new ComboBox();
-                _newBox.DataSource = Enum.GetNames(typeof(MainTypeDefine.FilterCompareWayType));
-                _newBox.SelectedItem = Enum.GetName(
-                    typeof(MainTypeDefine.FilterCompareWayType),
-                    _filterFuncList[i].CompareWay
-                );
+            var _filterFuncList = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mKeyData);
 
-                DataGridViewForFilterFunc.Rows.Add(
-                    null,
-                    _filterFuncList[i].GetCompareValue(),
-                    "移除"
-                );
-            }
-
-            for (int i = 0; i < DataGridViewForFilterFunc.Rows.Count; ++i)
+            if (_filterFuncList != null)
             {
-                var _cell = DataGridViewForFilterFunc.Rows[i].Cells[mCompareDataColumIndex] as DataGridViewComboBoxCell;
-                if (_cell == null)
+                for (int i = 0; i < _filterFuncList.Count; ++i)
                 {
-                    continue;
+                    ComboBox _newBox = new ComboBox();
+                    _newBox.DataSource = Enum.GetNames(typeof(MainTypeDefine.FilterCompareWayType));
+                    _newBox.SelectedItem = Enum.GetName(
+                        typeof(MainTypeDefine.FilterCompareWayType),
+                        _filterFuncList[i].CompareWay
+                    );
+
+                    DataGridViewForFilterFunc.Rows.Add(
+                        null,
+                        _filterFuncList[i].GetCompareValue(),
+                        "移除"
+                    );
                 }
-                _cell.DataSource = Enum.GetNames(typeof(MainTypeDefine.FilterCompareWayType));
-                _cell.Value = Enum.GetName(
-                    typeof(MainTypeDefine.FilterCompareWayType),
-                    _filterFuncList[i].CompareWay
-                );
+
+                for (int i = 0; i < DataGridViewForFilterFunc.Rows.Count; ++i)
+                {
+                    var _cell = DataGridViewForFilterFunc.Rows[i].Cells[mCompareDataColumIndex] as DataGridViewComboBoxCell;
+                    if (_cell == null)
+                    {
+                        continue;
+                    }
+                    _cell.DataSource = Enum.GetNames(typeof(MainTypeDefine.FilterCompareWayType));
+                    _cell.Value = Enum.GetName(
+                        typeof(MainTypeDefine.FilterCompareWayType),
+                        _filterFuncList[i].CompareWay
+                    );
+                }
             }
         }
 
@@ -235,6 +251,11 @@ namespace ExcelTool
 
             this.DialogResult = DialogResult.OK;
             this.Close();
+        }
+
+        private void ComboBoxForValueType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

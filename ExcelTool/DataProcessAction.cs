@@ -12,14 +12,16 @@ namespace ExcelTool
 
         public List<KeyData> MatchKeyList = new List<KeyData>();
 
-        public abstract List<string> FindTargetValueAndProcess(List<CellValueData> matchValueList);
+        public abstract string FindTargetValueAndProcess(List<CellValueData> matchValueList);
+
+        public string MultiValueSplitSymbol = ",";
     }
 
     public class DataProcessActionForFindRowData : DataProcessActionBase
     {
         public List<DataProcessActionBase> ActionListAfterFindValues = new List<DataProcessActionBase>();
 
-        public override List<string> FindTargetValueAndProcess(List<CellValueData> matchValueList)
+        public override string FindTargetValueAndProcess(List<CellValueData> matchValueList)
         {
             if (BindSheet == null)
             {
@@ -41,33 +43,51 @@ namespace ExcelTool
                 throw new Exception($"{FindTargetValueAndProcess} 出错，传入的 matchValueList 和 MatchKeyList 数量不匹配，请检查");
             }
 
-            List<string> _result = new List<string>();
+            List<string> _resultList = new List<string>();
 
             var _rowData = BindSheet.GetRowDataByTargetKeysAndValus(MatchKeyList, matchValueList);
             if (_rowData == null)
             {
-                return _result;
+                return string.Empty;
             }
 
             for (int i = 0; i < ActionListAfterFindValues.Count; ++i)
             {
                 var _tempValue = ActionListAfterFindValues[i].FindTargetValueAndProcess(_rowData);
 
-                _result.AddRange(_tempValue);
+                _resultList.Add(_tempValue);
             }
 
-            return _result;
+            if (_resultList.Count > 1)
+            {
+                StringBuilder _builder = new StringBuilder();
+
+                for (int i = 0; i < _resultList.Count; ++i)
+                {
+                    _builder.Append(_resultList[i]);
+                    if (i < _resultList.Count - 1)
+                    {
+                        _builder.Append(MultiValueSplitSymbol);
+                    }
+                }
+
+                return _builder.ToString();
+            }
+            else
+            {
+                return _resultList[0];
+            }
         }
     }
 
     /// <summary>
-    /// 找其他的然后代替
+    /// 找其他的表然后使用其他 ACTION 替换的数据
     /// </summary>
     public class DataProcessActionForConnectReplace : DataProcessActionBase
     {
         public DataProcessActionForFindRowData TargetProcess = new DataProcessActionForFindRowData();
 
-        public override List<string> FindTargetValueAndProcess(List<CellValueData> rowData)
+        public override string FindTargetValueAndProcess(List<CellValueData> rowData)
         {
             List<CellValueData> _matchValueList = new List<CellValueData>();
             for (int i = 0; i < MatchKeyList.Count; ++i)
@@ -84,49 +104,106 @@ namespace ExcelTool
     /// </summary>
     public class DataProcessActionForDirectReturn : DataProcessActionBase
     {
-        public override List<string> FindTargetValueAndProcess(List<CellValueData> rowData)
+        public override string FindTargetValueAndProcess(List<CellValueData> rowData)
         {
-            List<string> _result = new List<string>();
+            List<string> _resultList = new List<string>();
             for (int i = 0; i < MatchKeyList.Count; ++i)
             {
                 var _cell = rowData[MatchKeyList[i].GetKeyColumIndexInList()];
-                _result.Add(_cell.GetCellValue());
+                _resultList.Add(_cell.GetCellValue());
             }
-            return _result;
+
+            if (_resultList.Count > 1)
+            {
+                StringBuilder _builder = new StringBuilder();
+
+                for (int i = 0; i < _resultList.Count; ++i)
+                {
+                    _builder.Append(_resultList[i]);
+                    if (i < _resultList.Count - 1)
+                    {
+                        _builder.Append(MultiValueSplitSymbol);
+                    }
+                }
+
+                return _builder.ToString();
+            }
+            else
+            {
+                return _resultList[0];
+            }
         }
     }
 
     public class DataProcessActionForReturnAsUEPos : DataProcessActionBase
     {
-        public override List<string> FindTargetValueAndProcess(List<CellValueData> rowData)
+        public override string FindTargetValueAndProcess(List<CellValueData> rowData)
         {
-            List<string> _result = new List<string>();
+            List<string> _resultList = new List<string>();
             for (int i = 0; i < MatchKeyList.Count; ++i)
             {
                 var _cell = rowData[MatchKeyList[i].GetKeyColumIndexInList()];
                 var _tempCellValue = _cell.GetCellValue();
                 float.TryParse(_tempCellValue, out var _floatValue);
                 var _finalStr = ((int)(_floatValue * 100)).ToString();
-                _result.Add(_finalStr);
+                _resultList.Add(_finalStr);
             }
-            return _result;
+
+            if (_resultList.Count > 1)
+            {
+                StringBuilder _builder = new StringBuilder();
+
+                for (int i = 0; i < _resultList.Count; ++i)
+                {
+                    _builder.Append(_resultList[i]);
+                    if (i < _resultList.Count - 1)
+                    {
+                        _builder.Append(MultiValueSplitSymbol);
+                    }
+                }
+
+                return _builder.ToString();
+            }
+            else
+            {
+                return _resultList[0];
+            }
         }
     }
 
     public class DataProcessActionForReturnAsUERotateY : DataProcessActionBase
     {
-        public override List<string> FindTargetValueAndProcess(List<CellValueData> rowData)
+        public override string FindTargetValueAndProcess(List<CellValueData> rowData)
         {
-            List<string> _result = new List<string>();
+            List<string> _resultList = new List<string>();
             for (int i = 0; i < MatchKeyList.Count; ++i)
             {
                 var _cell = rowData[MatchKeyList[i].GetKeyColumIndexInList()];
                 var _tempCellValue = _cell.GetCellValue();
                 float.TryParse(_tempCellValue, out var _floatValue);
-                var _finalStr = ((int)(_floatValue * 100)).ToString();
-                _result.Add(_finalStr);
+                var _finalStr = ((int)(180 / 3.1415926 * _floatValue)).ToString();
+                _resultList.Add(_finalStr);
             }
-            return _result;
+
+            if (_resultList.Count > 1)
+            {
+                StringBuilder _builder = new StringBuilder();
+
+                for (int i = 0; i < _resultList.Count; ++i)
+                {
+                    _builder.Append(_resultList[i]);
+                    if (i < _resultList.Count - 1)
+                    {
+                        _builder.Append(MultiValueSplitSymbol);
+                    }
+                }
+
+                return _builder.ToString();
+            }
+            else
+            {
+                return _resultList[0];
+            }
         }
     }
 }

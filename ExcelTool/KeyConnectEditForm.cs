@@ -12,7 +12,7 @@ namespace ExcelTool
 {
     public partial class KeyConnectEditForm : FormBase
     {
-        private KeyData mFromKey = null;
+        private DataProcessActionBase mFromAction = null;
         private FileDataBase? mSelectTargetTable = null;
         private CommonWorkSheetData? mSelectSheet = null;
         private const int mColumIndexForConnectInfo = 2;
@@ -27,38 +27,30 @@ namespace ExcelTool
             this.DataViewForKeyConfig.AllowUserToAddRows = false;
         }
 
-        public bool InitData(KeyData targetKey)
+        public bool InitData(DataProcessActionBase targetAction)
         {
-            if (targetKey == null)
+            if (targetAction == null)
             {
                 MessageBox.Show("传入的 KeyData 为空，请检查！", "错误");
                 this.Close();
                 return false;
             }
 
-            var fromData = targetKey.GetOwnerTable();
-            if (fromData == null)
-            {
-                MessageBox.Show("传入的 ExcelFileBase 为空，请检查！", "错误");
-                this.Close();
-                return false;
-            }
-
-            mFromKey = targetKey;
+            mFromAction = targetAction;
             return true;
         }
 
         private void KeyConnectEditForm_Load(object sender, EventArgs e)
         {
-            LabelForFromTable.Text = $"{mFromKey.GetOwnerTableName(false)}--Key:{mFromKey.GetKeyName()}";
+            //LabelForFromTable.Text = $"{mFromAction.GetOwnerTableName(false)}--Key:{mFromAction.GetKeyName()}";
 
             // 这里先默认选择一下加载的源数据文件
-            mSelectTargetTable = TableDataManager.Instance().GetSourceFileData();
+            mSelectTargetTable = TableDataManager.Ins().GetSourceFileData();
 
             // 这里为 file combobox 的已加载文件做显示
             {
                 ComboBoxForLoadedFile.BeginUpdate();
-                var _dataList = TableDataManager.Instance().GetTableDataList();
+                var _dataList = TableDataManager.Ins().GetTableDataList();
 
                 ComboBoxForLoadedFile.DataSource = _dataList;
                 ComboBoxForLoadedFile.ValueMember = "DisplayIndex";
@@ -85,22 +77,22 @@ namespace ExcelTool
                         return;
                     }
 
-                    KeyConnectEditForm _newForm = new KeyConnectEditForm();
-                    var _targetKey = mWorkSheetKeyListData[e.RowIndex];
-                    _newForm.InitData(_targetKey);
-                    if (_newForm.ShowDialog(this) == DialogResult.OK)
-                    {
-                        //if (!CommonUtil.IsSafeNoCycleReferenceForKey(mWorkSheetKeyListData[e.RowIndex]))
-                        //{
-                        //    _targetKey.ClearNextConnectKey();
-                        //}
-                        //else
-                        //{
-                        //    var _cell = DataViewForKeyConfig.Rows[e.RowIndex].Cells[mColumIndexForConnectInfo];
-                        //    _cell.Value = _targetKey.GetConnectInfo();
-                        //    this.DataViewForKeyConfig.UpdateCellValue(mColumIndexForConnectInfo, e.RowIndex);
-                        //}
-                    }
+                    //KeyConnectEditForm _newForm = new KeyConnectEditForm();
+                    //var _targetKey = mWorkSheetKeyListData[e.RowIndex];
+                    //_newForm.InitData(_targetKey);
+                    //if (_newForm.ShowDialog(this) == DialogResult.OK)
+                    //{
+                    //    //if (!CommonUtil.IsSafeNoCycleReferenceForKey(mWorkSheetKeyListData[e.RowIndex]))
+                    //    //{
+                    //    //    _targetKey.ClearNextConnectKey();
+                    //    //}
+                    //    //else
+                    //    //{
+                    //    //    var _cell = DataViewForKeyConfig.Rows[e.RowIndex].Cells[mColumIndexForConnectInfo];
+                    //    //    _cell.Value = _targetKey.GetConnectInfo();
+                    //    //    this.DataViewForKeyConfig.UpdateCellValue(mColumIndexForConnectInfo, e.RowIndex);
+                    //    //}
+                    //}
                     break;
                 }
                 case mColumIndexForSetConnect:
@@ -161,7 +153,7 @@ namespace ExcelTool
             _form.SetInitData(LoadFileType.NormalFile);
             _form.ShowDialog();
 
-            var _index = TableDataManager.Instance().TryGetTableIndexByPath(_form.LastChooseFileAbsolutePath);
+            var _index = TableDataManager.Ins().TryGetTableIndexByPath(_form.LastChooseFileAbsolutePath);
             if (_index >= 0)
             {
                 ComboBoxForLoadedFile.SelectedIndex = _index;
@@ -172,7 +164,7 @@ namespace ExcelTool
 
         private void ComboBoxForLoadedFile_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var _dataList = TableDataManager.Instance().GetTableDataList();
+            var _dataList = TableDataManager.Ins().GetTableDataList();
             var _index = this.ComboBoxForLoadedFile.SelectedIndex;
             mSelectTargetTable = _dataList[_index];
             InternalRefreshSheetComboBox();
@@ -210,7 +202,7 @@ namespace ExcelTool
                 return false;
             }
 
-            if (mFromKey == null)
+            if (mFromAction == null)
             {
                 return false;
             }
@@ -220,7 +212,7 @@ namespace ExcelTool
                 var _key = _keyList[i];
                 this.DataViewForKeyConfig.Rows.Add(
                     CommonUtil.GetZM(_key.GetKeyIndexForShow()),
-                    _key.GetKeyName(),
+                    _key.KeyName,
                     string.Empty,//CommonUtil.GetKeyConnectFullInfo(_key),
                     "编辑",
                     false//mFromKey.GetNextConnectKey() == _key
@@ -236,6 +228,11 @@ namespace ExcelTool
         {
             this.DialogResult = DialogResult.OK;
             this.Close();
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

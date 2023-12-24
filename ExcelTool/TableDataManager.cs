@@ -12,7 +12,7 @@ namespace ExcelTool
         {
         }
 
-        public static TableDataManager Instance()
+        public static TableDataManager Ins()
         {
             if (mIns == null)
             {
@@ -30,23 +30,25 @@ namespace ExcelTool
 
         private FileDataBase? mSourceFile = null; // 数据源文件
 
+        public Dictionary<KeyData, DataProcessActionForFindRowData> ExportKeyActionMap = new Dictionary<KeyData, DataProcessActionForFindRowData>();
+
         /// <summary>
         /// 源文件的数据过滤器
         /// </summary>
-        private Dictionary<KeyData, FilterFuncBase> SourceDataFilterMap
+        private Dictionary<KeyData, List<FilterFuncBase>> SourceDataFilterMap
         {
             get;
             set;
-        } = new Dictionary<KeyData, FilterFuncBase>();
+        } = new Dictionary<KeyData, List<FilterFuncBase>>();
 
         /// <summary>
-        /// 目标文件的数据过滤器，考虑到可能是对原有数据的更新
+        /// 导出目标文件的数据过滤器，考虑到可能是对原有数据的更新
         /// </summary>
-        private Dictionary<KeyData, FilterFuncBase> ExportDataFilterMap
+        private Dictionary<KeyData, List<FilterFuncBase>> ExportDataFilterMap
         {
             get;
             set;
-        } = new Dictionary<KeyData, FilterFuncBase>();
+        } = new Dictionary<KeyData, List<FilterFuncBase>>();
 
         public MainTypeDefine.ExportWriteWayType ExportWriteWayType
         {
@@ -67,6 +69,31 @@ namespace ExcelTool
                 InternalSetSortIndex();
             }
         }
+
+        public List<FilterFuncBase>? GetSourceFileDataFilterFuncByKey(KeyData targetKey)
+        {
+            SourceDataFilterMap.TryGetValue(targetKey, out var _funcList);
+            return _funcList;
+        }
+
+        public bool AddSourceFileDataFilterFunc(KeyData targetKey, FilterFuncBase targetFunc)
+        {
+            if (!SourceDataFilterMap.TryGetValue(targetKey, out var _funcList))
+            {
+                _funcList = new List<FilterFuncBase>();
+                SourceDataFilterMap.Add(targetKey, _funcList);
+            }
+
+            if (_funcList.Contains(targetFunc))
+            {
+                return false;
+            }
+
+            _funcList.Add(targetFunc);
+
+            return true;
+        }
+
 
         private void InternalSetSortIndex()
         {
@@ -108,14 +135,14 @@ namespace ExcelTool
                 return;
             }
 
-            var _inDataList = _sourceFile.GetFilteredDataList();
-            if (_inDataList == null || _inDataList.Count < 1)
+            var _inRowDataList = _sourceFile.GetFilteredDataList(SourceDataFilterMap);
+            if (_inRowDataList == null || _inRowDataList.Count < 1)
             {
                 MessageBox.Show("过滤后的源数据为空，没有写入的必要，请检查一下", "提示");
                 return;
             }
 
-            if (!_exportFile.WriteData(_inDataList))
+            if (!_exportFile.WriteData(_inRowDataList))
             {
                 MessageBox.Show("数据写入出错，请检查", "错误");
                 return;

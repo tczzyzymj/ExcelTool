@@ -52,11 +52,11 @@ namespace ExcelTool
             {
                 case LoadFileType.ExportFile:
                 {
-                    return TableDataManager.Instance().GetExportFileData();
+                    return TableDataManager.Ins().GetExportFileData();
                 }
                 case LoadFileType.SourceFile:
                 {
-                    return TableDataManager.Instance().GetSourceFileData();
+                    return TableDataManager.Ins().GetSourceFileData();
                 }
             }
 
@@ -69,16 +69,16 @@ namespace ExcelTool
             {
                 case LoadFileType.ExportFile:
                 {
-                    return TableDataManager.Instance().TryLoadExportFile(absolutePath);
+                    return TableDataManager.Ins().TryLoadExportFile(absolutePath);
 
                 }
                 case LoadFileType.SourceFile:
                 {
-                    return TableDataManager.Instance().TryLoadSourceFile(absolutePath);
+                    return TableDataManager.Ins().TryLoadSourceFile(absolutePath);
                 }
                 case LoadFileType.NormalFile:
                 {
-                    return TableDataManager.Instance().TryLoadNormalFile(absolutePath);
+                    return TableDataManager.Ins().TryLoadNormalFile(absolutePath);
                 }
             }
 
@@ -275,8 +275,8 @@ namespace ExcelTool
                 {
                     DataGridViewForKeyFilter.Rows.Add(
                         CommonUtil.GetZM(_keyListData[i].GetKeyIndexForShow()),
-                        _keyListData[i].GetKeyName(),
-                        _keyListData[i].GetFilterFuncList().Count > 0,
+                        _keyListData[i].KeyName,
+                        false,
                         "设置"
                     );
                 }
@@ -348,8 +348,8 @@ namespace ExcelTool
                 }
                 case LoadFileType.SourceFile:
                 {
-                    this.DataGridViewForKeyFilter.Columns[2].Visible = false;
-                    this.DataGridViewForKeyFilter.Columns[3].Visible = false;
+                    //this.DataGridViewForKeyFilter.Columns[2].Visible = false;
+                    //this.DataGridViewForKeyFilter.Columns[3].Visible = false;
                     break;
                 }
                 case LoadFileType.NormalFile:

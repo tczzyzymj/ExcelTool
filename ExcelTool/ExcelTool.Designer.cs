@@ -148,10 +148,10 @@
             // EditRelateBtnColum
             // 
             EditRelateBtnColum.FillWeight = 160F;
-            EditRelateBtnColum.HeaderText = "设置关联";
+            EditRelateBtnColum.HeaderText = "配置数据";
             EditRelateBtnColum.Name = "EditRelateBtnColum";
-            EditRelateBtnColum.Text = "";
-            EditRelateBtnColum.ToolTipText = "设置关联";
+            EditRelateBtnColum.Text = "配置数据";
+            EditRelateBtnColum.ToolTipText = "配置数据";
             // 
             // LeaveEmptyColum
             // 
@@ -177,6 +177,7 @@
             // 
             // ComboBoxForExportWriteWay
             // 
+            ComboBoxForExportWriteWay.DropDownStyle = ComboBoxStyle.DropDownList;
             ComboBoxForExportWriteWay.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             ComboBoxForExportWriteWay.FormattingEnabled = true;
             ComboBoxForExportWriteWay.Location = new Point(485, 63);
@@ -187,6 +188,7 @@
             // 
             // ComboBoxForExportConflictDealWay
             // 
+            ComboBoxForExportConflictDealWay.DropDownStyle = ComboBoxStyle.DropDownList;
             ComboBoxForExportConflictDealWay.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             ComboBoxForExportConflictDealWay.FormattingEnabled = true;
             ComboBoxForExportConflictDealWay.Location = new Point(827, 63);
