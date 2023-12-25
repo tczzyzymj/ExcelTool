@@ -55,11 +55,14 @@ namespace ExcelTool
                 return false;
             }
 
+            mExcelAbsolutePath = absolutePath; //后面有用到，这里还是先设置一下
+
             if (!InternalLoadFile(absolutePath))
             {
+                mExcelAbsolutePath = string.Empty;
                 return false;
             }
-            mExcelAbsolutePath = absolutePath;
+            
             mHasInit = true;
             return true;
         }

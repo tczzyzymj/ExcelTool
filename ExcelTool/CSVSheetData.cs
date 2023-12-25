@@ -11,7 +11,7 @@ namespace ExcelTool
 {
     internal class CSVSheetData : CommonWorkSheetData
     {
-        private List<string[]> mAllSheetData;
+        private List<string[]> mAllSheetData = new List<string[]>();
 
         public override void ReloadKey()
         {
@@ -92,21 +92,6 @@ namespace ExcelTool
                 return true;
             }
 
-            var _filePath = GetOwnerTable().GetFileAbsulotePath();
-
-            using (StreamReader sr = new StreamReader(_filePath))
-            {
-                using (CsvReader _csvReader = new CsvReader(sr, CultureInfo.InvariantCulture))
-                {
-                    if (_csvReader.Read())
-                    {
-                        var _allArray = _csvReader.GetRecords<string>().ToArray();
-
-                        int a = 0;
-                    }
-                }
-            }
-
             var _ownerTable = GetOwnerTable() as CSVFileData;
             if (_ownerTable == null)
             {
@@ -114,18 +99,44 @@ namespace ExcelTool
                 return false;
             }
 
+            var _contentStartRow = _ownerTable.GetContentStartRowIndex();
+            var _keyStartColum = _ownerTable.GetKeyStartColmIndex();
+
+            var _filePath = _ownerTable.GetFileAbsulotePath();
+
+            using (StreamReader sr = new StreamReader(_filePath))
+            {
+                using (CsvReader _csvReader = new CsvReader(sr, CultureInfo.InvariantCulture))
+                {
+                    for (int i = 0; i < _contentStartRow; ++i)
+                    {
+                        _csvReader.Read();
+                    }
+
+                    while (_csvReader.Read())
+                    {
+                        if (_csvReader.Parser.Record != null)
+                        {
+                            mAllSheetData.Add(_csvReader.Parser.Record);
+                        }
+                    }
+                }
+            }
+
             if (mAllSheetData == null)
             {
                 MessageBox.Show("InternalLoadAllCellData 无法获取 SheetData，请检查！", "错误");
                 return false;
             }
-
-            var _contentStartRow = _ownerTable.GetContentStartRowIndex();
-            var _keyStartColum = _ownerTable.GetKeyStartColmIndex();
-
-            mCellData2DList?.Clear();
-
-            mCellData2DList = new List<List<CellValueData>>(mAllSheetData.Count - _contentStartRow);
+            var _capacity = mAllSheetData.Count - _contentStartRow;
+            if (_capacity > 3)
+            {
+                mCellData2DList = new List<List<CellValueData>>(_capacity);
+            }
+            else
+            {
+                mCellData2DList = new List<List<CellValueData>>();
+            }
 
             for (int _row = _contentStartRow; _row < mAllSheetData.Count; ++_row)
             {

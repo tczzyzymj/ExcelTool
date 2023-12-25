@@ -46,6 +46,7 @@ namespace ExcelTool
             {
                 using (CsvReader _csvReader = new CsvReader(sr, CultureInfo.InvariantCulture))
                 {
+                    _csvReader.Read();
                     _csvReader.ReadHeader();
                     if (_csvReader.HeaderRecord != null)
                     {

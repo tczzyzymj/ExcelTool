@@ -168,7 +168,7 @@ namespace ExcelTool
                 throw new Exception("_exportSheetIndex 无效");
             }
 
-            if (!_exportFile.WriteData(_inRowDataList, _sourceSheetIndex))
+            if (!_exportFile.WriteData(_inRowDataList, _exportSheetIndex))
             {
                 MessageBox.Show("数据写入出错，请检查", "错误");
                 return;

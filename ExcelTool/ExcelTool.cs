@@ -214,7 +214,14 @@ namespace ExcelTool
                 return;
             }
 
-            TableDataManager.Ins().StartExportData();
+            try
+            {
+                TableDataManager.Ins().StartExportData();
+            }
+            catch (Exception _exception)
+            {
+                MessageBox.Show(_exception.ToString());
+            }
         }
 
         private void ComboBoxForExportWriteWay_SelectedIndexChanged(object sender, EventArgs e)

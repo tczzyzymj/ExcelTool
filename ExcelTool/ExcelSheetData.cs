@@ -146,8 +146,15 @@ namespace ExcelTool
 
             var _contentStartRow = _ownerTable.GetContentStartRowIndex();
             var _keyStartColum = _ownerTable.GetKeyStartColmIndex();
-
-            mCellData2DList = new List<List<CellValueData>>(mOriginSheetData.Dimension.Rows - 4);
+            var _capcity = mOriginSheetData.Dimension.Rows - 4;
+            if (_capcity > 3)
+            {
+                mCellData2DList = new List<List<CellValueData>>(_capcity);
+            }
+            else
+            {
+                mCellData2DList = new List<List<CellValueData>>();
+            }
 
             StringBuilder _errorMsgBuilder = new StringBuilder();
 
