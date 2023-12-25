@@ -1,11 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ExcelTool
 {
+    public class CommonDataForClass
+    {
+        public Type TargetType;
+
+        public int Index
+        {
+            get; set;
+        }
+
+        public string Name
+        {
+            get; set;
+        }
+    }
+
     public static class CommonUtil
     {
         public static string GetZM(int indexValue)
@@ -43,5 +60,38 @@ namespace ExcelTool
 
         //    return _result;
         //}
+
+        public static List<CommonDataForClass> CreateComboBoxDataForType<T>() where T : class
+        {
+            List<CommonDataForClass> _result = new List<CommonDataForClass>();
+
+            var _types = Assembly.GetExecutingAssembly().GetTypes();
+            List<Type> _recordList = new List<Type>();
+
+            var _targetType = typeof(T);
+            var _ignoreType = typeof(SourceAction);
+            foreach (var _pair in _types)
+            {
+                if (_pair == _ignoreType)
+                {
+                    continue;
+                }
+                if (_pair.BaseType == _targetType)
+                {
+                    var _newData = new CommonDataForClass();
+                    _newData.Index = _recordList.Count;
+                    _newData.TargetType = _pair;
+                    var _attribute = _pair.GetCustomAttribute<ProcessActionAttribute>();
+                    if (_attribute != null)
+                    {
+                        _newData.Name = _attribute.DisplayName;
+                    }
+
+                    _result.Add(_newData);
+                }
+            }
+
+            return _result;
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -20,6 +21,10 @@ namespace ExcelTool
         private const int mColumIndexForSetConnect = 4;
 
         private List<KeyData> mWorkSheetKeyListData = new List<KeyData>();
+
+        private List<CommonDataForClass> mDataClassList = new List<CommonDataForClass>();
+
+        private CommonDataForClass mChooseActionType = null;
 
         public KeyConnectEditForm()
         {
@@ -48,11 +53,18 @@ namespace ExcelTool
                 throw new Exception($"KeyConnectEditForm_Load 错误，mFromAction为空");
             }
 
+            mDataClassList = CommonUtil.CreateComboBoxDataForType<DataProcessActionBase>();
+            ComboBoxForActionTypeList.DataSource = null;
+            ComboBoxForActionTypeList.Items.Clear();
+            ComboBoxForActionTypeList.DataSource = mDataClassList;
+            ComboBoxForActionTypeList.ValueMember = "Index";
+            ComboBoxForActionTypeList.DisplayMember = "Name";
+
             //LabelForFromTable.Text = $"关联：{mFromAction.SearchTargetSheet.DisplayName}--Key:{mFromAction.GetKeyName()}";
 
             // 这里先默认选择一下加载的源数据文件
             mSelectTargetTable = TableDataManager.Ins().GetSourceFileData();
-
+            InternalRefreshForActionDataView();
             InternalRefreshForLoadFiles();
 
             this.MultiDataSplitSymbol.Text = mFromAction.MultiValueSplitSymbol;
@@ -232,6 +244,9 @@ namespace ExcelTool
         private const int mRemoveColumIndex = 5;// 移除按钮
         private const int mConnectActionBtnColumIndex = 3; // 关联其他表的行为按钮
         private const int mConnectKeyBtnColumIndex = 2; // 关联其他表的KEY按钮
+        private const int mMoveUpColum = 6; // 上移按钮
+        private const int mMoveDownColum = 7; // 下移按钮
+        private const int mBindKeyColumIndex = 1; // 绑定的 key
 
         private void DataViewForAction_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -244,25 +259,56 @@ namespace ExcelTool
             {
                 case mConnectActionBtnColumIndex:
                 {
-                    //var _targetAction = mFromAction.ActionListAfterFindValues[e.RowIndex];
-                    //if (_targetAction is DataProcessActionForFindRowData _finalAction)
-                    //{
-                    //    KeyConnectEditForm _form = new KeyConnectEditForm();
-                    //    _form.InitData(_finalAction);
-                    //    _form.ShowDialog();
-
-                    //    // 都去刷新一下关联数据
-                    //}
+                    var _action = this.mTargetActionList[e.RowIndex];
+                    if (_action is DataProcessActionForFindRowDataInOtherSheet)
+                    {
+                        KeyConnectEditForm _newForm = new KeyConnectEditForm();
+                        _newForm.InitData(_action);
+                        _newForm.ShowDialog();
+                    }
 
                     break;
                 }
                 case mRemoveColumIndex:
                 {
-                    //mFromAction.ActionListAfterFindValues.RemoveAt(e.RowIndex);
+                    mTargetActionList.RemoveAt(e.RowIndex);
+                    InternalRefreshForActionDataView();
                     break;
                 }
                 case mConnectKeyBtnColumIndex:
                 {
+                    var _action = this.mTargetActionList[e.RowIndex];
+                    if (_action is DataProcessActionForFindRowDataInOtherSheet _findAction)
+                    {
+                        SearchOtherSheetKeyConnect _newForm = new SearchOtherSheetKeyConnect();
+                        _newForm.InitData(_findAction);
+                        if (_newForm.ShowDialog() == DialogResult.OK)
+                        {
+                            _findAction.SearchKeyList = _newForm.SelectKeyList;
+                            _findAction.SearchTargetSheet = _newForm.SelectSheet;
+                        }
+                    }
+
+                    break;
+                }
+                case mMoveDownColum:
+                {
+                    // 点击了下移按钮
+                    if (InternalSwapForActionList(e.RowIndex, false))
+                    {
+                        InternalRefreshForActionDataView();
+                    }
+
+                    break;
+                }
+                case mMoveUpColum:
+                {
+                    // 点击了上移按钮
+                    if (InternalSwapForActionList(e.RowIndex, true))
+                    {
+                        InternalRefreshForActionDataView();
+                    }
+
                     break;
                 }
                 default:
@@ -272,9 +318,173 @@ namespace ExcelTool
             }
         }
 
+        private bool InternalSwapForActionList(int chooseIndex, bool isUp)
+        {
+            if (this.mTargetActionList == null || mTargetActionList.Count < 2)
+            {
+                return false;
+            }
+
+            int _targetIndex = chooseIndex;
+            if (isUp)
+            {
+                _targetIndex = _targetIndex - 1;
+            }
+            else
+            {
+                _targetIndex = _targetIndex + 1;
+            }
+
+            if (_targetIndex < 0 || _targetIndex >= mTargetActionList.Count)
+            {
+                return false;
+            }
+
+            var _tempData = mTargetActionList[chooseIndex];
+            mTargetActionList[chooseIndex] = mTargetActionList[_targetIndex];
+            mTargetActionList[_targetIndex] = _tempData;
+
+            return true;
+        }
+
+
         private void BtnAddAction_Click(object sender, EventArgs e)
         {
+            if (mFromAction == null)
+            {
+                MessageBox.Show($"{BtnAddAction_Click} 错误，mFromAction 为空");
+                return;
+            }
 
+            if (mSelectKeyList.Count < 1)
+            {
+                return;
+            }
+
+            if (mChooseActionType == null)
+            {
+                MessageBox.Show($"{BtnAddAction_Click} 错误，mChooseActionType为空，请检查");
+                return;
+            }
+
+            var _newClassIns = GetNewDataForChooseAction();
+            if (_newClassIns == null)
+            {
+                return;
+            }
+
+            _newClassIns.MatchKeyList.AddRange(mSelectKeyList);
+
+            if (mFromAction is SourceAction _sourceAction)
+            {
+                _sourceAction.ActionList.Add(_newClassIns);
+                mSelectKeyList.Clear();
+                InternalClearAllKeySelect();
+                InternalRefreshForActionDataView();
+            }
+            else if (mFromAction is DataProcessActionForFindRowDataInOtherSheet _findAction)
+            {
+                _findAction.ActionListAfterFindValues.Add(_newClassIns);
+                mSelectKeyList.Clear();
+                InternalClearAllKeySelect();
+                InternalRefreshForActionDataView();
+            }
+            else
+            {
+                throw new Exception($"{BtnAddAction_Click} 错误，类型未处理：{mFromAction.GetType().FullName}");
+            }
+        }
+
+        private void InternalClearAllKeySelect()
+        {
+            var _rows = this.DataViewForKeyList.Rows;
+
+            for (int i = 0; i < _rows.Count; ++i)
+            {
+                _rows[i].Cells[mColumIndexForSelect].Value = false;
+            }
+        }
+
+        private List<DataProcessActionBase> mTargetActionList = new List<DataProcessActionBase>();
+
+        /// <summary>
+        /// 刷新当前行为步骤
+        /// </summary>
+        private void InternalRefreshForActionDataView()
+        {
+            if (mFromAction is SourceAction _sourceAction)
+            {
+                mTargetActionList = _sourceAction.ActionList;
+            }
+            else if (mFromAction is DataProcessActionForFindRowDataInOtherSheet _findAction)
+            {
+                mTargetActionList = _findAction.ActionListAfterFindValues;
+            }
+
+            this.DataViewForAction.DataSource = null;
+            this.DataViewForAction.Rows.Clear();
+            for (int i = 0; i < mTargetActionList.Count; ++i)
+            {
+                this.DataViewForAction.Rows.Add(
+                    mTargetActionList[i].GetType().GetCustomAttribute<ProcessActionAttribute>().DisplayName,
+                    null,
+                    mTargetActionList[i] is DataProcessActionForFindRowDataInOtherSheet ? "设置" : "无功能",
+                    mTargetActionList[i] is DataProcessActionForFindRowDataInOtherSheet ? "设置" : "无功能",
+                    string.Empty,
+                    "移除",
+                    "↑",
+                    "↓"
+                );
+
+                var _row = DataViewForAction.Rows[i];
+
+                {
+                    // 处理绑定 KEY
+                    var _cell = _row.Cells[mBindKeyColumIndex] as DataGridViewComboBoxCell;
+                    if (_cell != null)
+                    {
+                        _cell.DataSource = mTargetActionList[i].MatchKeyList;
+                        _cell.DisplayMember = "KeyNameWithIndex";
+                        _cell.ValueMember = "KeyIndexInList";
+                    }
+                }
+            }
+        }
+
+        private DataProcessActionBase? GetNewDataForChooseAction()
+        {
+            DataProcessActionBase _result = null;
+
+            if (mChooseActionType == null)
+            {
+                MessageBox.Show($"{GetNewDataForChooseAction} 错误，mChooseActionType为空，请检查");
+                return null;
+            }
+
+            if (mChooseActionType.TargetType == null)
+            {
+                MessageBox.Show($"{GetNewDataForChooseAction} 错误，mChooseActionType.TargetType 为空，请检查");
+                return null;
+            }
+
+            var _className = mChooseActionType.TargetType.FullName;
+
+            if (string.IsNullOrEmpty(_className))
+            {
+                MessageBox.Show($"{GetNewDataForChooseAction} 错误，mChooseActionType.TargetType.FullName 为空，请检查");
+                return null;
+            }
+
+            _result = Assembly.GetExecutingAssembly().CreateInstance(_className, true) as DataProcessActionBase;
+
+            if (_result == null)
+            {
+                MessageBox.Show($"{GetNewDataForChooseAction} 错误，实例化失败，请检查");
+
+                return null;
+            }
+
+            return _result;
         }
 
         private void MultiDataSplitSymbol_TextChanged(object sender, EventArgs e)
@@ -306,6 +516,15 @@ namespace ExcelTool
         private void ComboBoxForSelectKey_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void ComboBoxForActionTypeList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var _index = this.ComboBoxForActionTypeList.SelectedIndex;
+            if (_index >= 0 && _index < mDataClassList.Count)
+            {
+                mChooseActionType = this.mDataClassList[_index];
+            }
         }
     }
 }

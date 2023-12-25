@@ -23,6 +23,10 @@ namespace ExcelTool
 
         private FileDataBase? mChooseFile = null;
 
+        private CommonWorkSheetData mChooseSheet = null;
+
+        private List<KeyData> mKeyDataList = new List<KeyData>();
+
 
         public string LastChooseFileAbsolutePath
         {
@@ -45,15 +49,19 @@ namespace ExcelTool
             {
                 case LoadFileType.ExportFile:
                 {
-                    return TableDataManager.Ins().TryLoadExportFile(absolutePath);
+                    mChooseFile = TableDataManager.Ins().TryLoadExportFile(absolutePath);
+                    return mChooseFile;
                 }
                 case LoadFileType.SourceFile:
                 {
-                    return TableDataManager.Ins().TryLoadSourceFile(absolutePath);
+                    mChooseFile = TableDataManager.Ins().TryLoadExportFile(absolutePath);
+                    return mChooseFile;
                 }
                 case LoadFileType.NormalFile:
                 {
-                    return TableDataManager.Ins().TryLoadNormalFile(absolutePath);
+
+                    mChooseFile = TableDataManager.Ins().TryLoadNormalFile(absolutePath);
+                    return mChooseFile;
                 }
             }
 
@@ -99,7 +107,7 @@ namespace ExcelTool
             _openfileDialog.Multiselect = false;
             if (_openfileDialog.ShowDialog() == DialogResult.OK)
             {
-                mChooseFile = InternalLoadFile(_openfileDialog.FileName);
+                InternalLoadFile(_openfileDialog.FileName);
                 if (mChooseFile == null)
                 {
                     MessageBox.Show($"加载目标文件：{_openfileDialog.FileName} 出错，请检查!", "错误");
@@ -218,76 +226,61 @@ namespace ExcelTool
                 return;
             }
 
-            if (!_targetFile.TryChooseSheet(_selectItem))
-            {
-                MessageBox.Show("选择 Sheet 数据失败，请检查文件，看所选 Sheet 是否有数据", "错误");
-                return;
-            }
-
-            DataGridViewForKeyFilter.Rows.Clear();
-
+            mChooseSheet = _selectItem;
             // 这里重置一下数据
             // 这里导出 key 供选择
-            var _currentSheet = _targetFile.GetCurrentWorkSheet();
+            var _currentSheet = mChooseSheet;
             if (_currentSheet == null)
             {
                 MessageBox.Show("当前的 Sheet 数据为空，请检查文件", "错误 ");
                 return;
             }
+            mKeyDataList = _currentSheet.GetKeyListData();
 
-            var _keyListData = _currentSheet.GetKeyListData();
-            if (_keyListData != null)
+            DataGridViewForKeyFilter.Rows.Clear();
+
+            for (int i = 0; i < mKeyDataList.Count; i++)
             {
-                for (int i = 0; i < _keyListData.Count; i++)
-                {
-                    DataGridViewForKeyFilter.Rows.Add(
-                        CommonUtil.GetZM(_keyListData[i].GetKeyIndexForShow()),
-                        _keyListData[i].KeyName,
-                        false,
-                        "设置"
-                    );
-                }
+                var _filter = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mKeyDataList[i]);
+                DataGridViewForKeyFilter.Rows.Add(
+                    CommonUtil.GetZM(mKeyDataList[i].GetKeyIndexForShow()),
+                    mKeyDataList[i].KeyName,
+                    _filter != null && _filter.Count > 0,
+                    "设置"
+                );
             }
         }
 
+        private const int mInexForHasSetFilter = 2;
+
+        private const int mIndexForSetButton = 3;
         private void DataGridViewForKeyFilter_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             var _targetFile = mChooseFile;
             if (_targetFile == null)
             {
+                MessageBox.Show($"{DataGridViewForKeyFilter_CellContentClick} 错误，mChooseFile 为空");
                 return;
             }
 
             switch (e.ColumnIndex)
             {
-                case 2:
+                case mInexForHasSetFilter:
                 {
-                    // 确认选择成为过滤KEY
-                    var _targetGridView = sender as DataGridView;
-                    if (_targetGridView != null)
-                    {
-                        var _cell = _targetGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                        var _isSelect = (bool)(_cell.EditedFormattedValue);
-                    }
-
                     break;
                 }
-                case 3:
+                case mIndexForSetButton:
                 {
                     // 编辑过滤类型
-                    var _currentSheet = _targetFile.GetCurrentWorkSheet();
-                    if (_currentSheet != null)
+                    FilterConfigForm _form = new FilterConfigForm();
+                    var _targetKey = mKeyDataList[e.RowIndex];
+                    _form.InitInfo(e.RowIndex, e.ColumnIndex, _targetKey);
+                    if (_form.ShowDialog(this) == DialogResult.OK)
                     {
-                        var _keyListData = _currentSheet.GetKeyListData();
-                        FilterConfigForm _form = new FilterConfigForm();
-                        _form.InitInfo(e.RowIndex, e.ColumnIndex, _keyListData[e.RowIndex]);
-                        if (_form.ShowDialog(this) == DialogResult.OK)
-                        {
-                            var _row = DataGridViewForKeyFilter.Rows;
-                            var _cell = _row[e.RowIndex].Cells[2] as DataGridViewCheckBoxCell;
-                            _cell.Value = true;
-                            DataGridViewForKeyFilter.UpdateCellValue(e.ColumnIndex, e.RowIndex);
-                        }
+                        var _row = DataGridViewForKeyFilter.Rows;
+                        var _cell = _row[e.RowIndex].Cells[mInexForHasSetFilter];
+                        var _filterList = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(_targetKey);
+                        _cell.Value = _filterList != null && _filterList.Count > 0;
                     }
 
                     break;
@@ -301,20 +294,20 @@ namespace ExcelTool
             {
                 case LoadFileType.ExportFile:
                 {
-                    this.DataGridViewForKeyFilter.Columns[2].Visible = false;
-                    this.DataGridViewForKeyFilter.Columns[3].Visible = false;
+                    mChooseFile = TableDataManager.Ins().GetExportFileData();
+                    this.DataGridViewForKeyFilter.Columns[mInexForHasSetFilter].Visible = false;
+                    this.DataGridViewForKeyFilter.Columns[mIndexForSetButton].Visible = false;
                     break;
                 }
                 case LoadFileType.SourceFile:
                 {
-                    //this.DataGridViewForKeyFilter.Columns[2].Visible = false;
-                    //this.DataGridViewForKeyFilter.Columns[3].Visible = false;
+                    mChooseFile = TableDataManager.Ins().GetSourceFileData();
                     break;
                 }
                 case LoadFileType.NormalFile:
                 {
-                    this.DataGridViewForKeyFilter.Columns[2].Visible = false;
-                    this.DataGridViewForKeyFilter.Columns[3].Visible = false;
+                    this.DataGridViewForKeyFilter.Columns[mInexForHasSetFilter].Visible = false;
+                    this.DataGridViewForKeyFilter.Columns[mIndexForSetButton].Visible = false;
                     break;
                 }
             }
@@ -374,12 +367,12 @@ namespace ExcelTool
                 MessageBox.Show("没有 Keylist，请检查", "错误");
                 return;
             }
-            var _serachContent = this.TextBoxForSearch.Text.ToLower();
+            var _searchContentStr = this.TextBoxForSearch.Text.ToLower();
 
             for (int i = 0; i < this.DataGridViewForKeyFilter.Rows.Count; ++i)
             {
                 var _keyName = DataGridViewForKeyFilter.Rows[i].Cells[1].Value as string;
-                if (!string.IsNullOrEmpty(_keyName) && _keyName.ToLower().Contains(_serachContent))
+                if (!string.IsNullOrEmpty(_keyName) && _keyName.ToLower().Contains(_searchContentStr))
                 {
                     DataGridViewForKeyFilter.Rows[i].Visible = true;
                 }
@@ -421,9 +414,23 @@ namespace ExcelTool
                 return;
             }
 
-            _targetFile.ReloadKey();
-
             InternalRefreshDataView();
+        }
+
+        private void BtnShowHasSetFilter_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < this.DataGridViewForKeyFilter.Rows.Count; ++i)
+            {
+                bool _show = false;
+                if (_show)
+                {
+                    DataGridViewForKeyFilter.Rows[i].Visible = true;
+                }
+                else
+                {
+                    DataGridViewForKeyFilter.Rows[i].Visible = false;
+                }
+            }
         }
     }
 }

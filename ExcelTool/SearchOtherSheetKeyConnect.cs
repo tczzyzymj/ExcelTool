@@ -14,7 +14,7 @@ namespace ExcelTool
     {
         private DataProcessActionForFindRowDataInOtherSheet mFromAction = null;
         private FileDataBase? mSelectTargetTable = null;
-        private CommonWorkSheetData? mSelectSheet = null;
+        public CommonWorkSheetData SelectSheet = null;
         private List<KeyData> mWorkSheetKeyListData = new List<KeyData>();
 
         public SearchOtherSheetKeyConnect()
@@ -39,7 +39,7 @@ namespace ExcelTool
         {
             this.DataViewForKeyList.Rows.Clear();
             var _sheetIndex = this.ComboBoxForWorkSheet.SelectedIndex;
-            var _keyList = mSelectSheet?.GetKeyListData();
+            var _keyList = SelectSheet?.GetKeyListData();
             if (_keyList == null || _keyList.Count < 1)
             {
                 throw new Exception($"当前选择的sheet:[{_sheetIndex}] 无法获取 Key 数据，请检查！");
@@ -115,14 +115,23 @@ namespace ExcelTool
 
         private void BtnFinishConfig_Click(object sender, EventArgs e)
         {
+            if (SelectSheet == null)
+            {
+                MessageBox.Show($"{BtnFinishConfig_Click} 错误，SelectSheet 为空");
+                return;
+            }
+
             if (SelectKeyList.Count != mFromAction.MatchKeyList.Count)
             {
                 MessageBox.Show(
-                    $"原操作的 key 数量：{mFromAction.MatchKeyList.Count} ，当前选择匹配 Key 数量：{SelectKeyList.Count} ；不一致，请重新选择"
+                    $"{BtnFinishConfig_Click} 错误，原操作的 key 数量：{mFromAction.MatchKeyList.Count} ，当前选择匹配 Key 数量：{SelectKeyList.Count} ；不一致，请重新选择"
                 );
 
                 return;
             }
+
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
 
         public List<KeyData> SelectKeyList = new List<KeyData>();
@@ -160,7 +169,7 @@ namespace ExcelTool
 
         private void ComboBoxForWorkSheet_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mSelectSheet = mSelectTargetTable?.GetWorkSheetByIndex(this.ComboBoxForWorkSheet.SelectedIndex);
+            SelectSheet = mSelectTargetTable?.GetWorkSheetByIndex(this.ComboBoxForWorkSheet.SelectedIndex);
             InternalRefreshForKey();
         }
 

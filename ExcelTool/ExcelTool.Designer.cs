@@ -36,16 +36,17 @@
             BtnChooseExportFile = new Button();
             BtnChooseSourceFile = new Button();
             DataViewConfigForExportFile = new DataGridView();
-            Key = new DataGridViewTextBoxColumn();
-            KeyName = new DataGridViewTextBoxColumn();
-            RelatInfo = new DataGridViewTextBoxColumn();
-            EditRelateBtnColum = new DataGridViewButtonColumn();
-            LeaveEmptyColum = new DataGridViewCheckBoxColumn();
-            IsMainKey = new DataGridViewCheckBoxColumn();
             label4 = new Label();
             ComboBoxForExportWriteWay = new ComboBox();
             ComboBoxForExportConflictDealWay = new ComboBox();
             label1 = new Label();
+            Key = new DataGridViewTextBoxColumn();
+            KeyName = new DataGridViewTextBoxColumn();
+            RelatInfo = new DataGridViewTextBoxColumn();
+            HasConfigAction = new DataGridViewCheckBoxColumn();
+            EditRelateBtnColum = new DataGridViewButtonColumn();
+            LeaveEmptyColum = new DataGridViewCheckBoxColumn();
+            IsMainKey = new DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)DataViewConfigForExportFile).BeginInit();
             SuspendLayout();
             // 
@@ -108,62 +109,13 @@
             // 
             DataViewConfigForExportFile.BackgroundColor = SystemColors.ControlLight;
             DataViewConfigForExportFile.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            DataViewConfigForExportFile.Columns.AddRange(new DataGridViewColumn[] { Key, KeyName, RelatInfo, EditRelateBtnColum, LeaveEmptyColum, IsMainKey });
+            DataViewConfigForExportFile.Columns.AddRange(new DataGridViewColumn[] { Key, KeyName, RelatInfo, HasConfigAction, EditRelateBtnColum, LeaveEmptyColum, IsMainKey });
             DataViewConfigForExportFile.Location = new Point(12, 116);
             DataViewConfigForExportFile.Name = "DataViewConfigForExportFile";
             DataViewConfigForExportFile.RowTemplate.Height = 25;
             DataViewConfigForExportFile.Size = new Size(1712, 936);
             DataViewConfigForExportFile.TabIndex = 14;
             DataViewConfigForExportFile.CellContentClick += DataViewConfigForExportFile_CellContentClick;
-            // 
-            // Key
-            // 
-            Key.HeaderText = "Index";
-            Key.Name = "Key";
-            Key.ToolTipText = "下标，以表格为基准";
-            Key.Width = 60;
-            // 
-            // KeyName
-            // 
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            KeyName.DefaultCellStyle = dataGridViewCellStyle1;
-            KeyName.FillWeight = 160F;
-            KeyName.HeaderText = "KeyName";
-            KeyName.Name = "KeyName";
-            KeyName.ReadOnly = true;
-            KeyName.ToolTipText = "选择的导出文件的列名";
-            KeyName.Width = 200;
-            // 
-            // RelatInfo
-            // 
-            RelatInfo.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            RelatInfo.DefaultCellStyle = dataGridViewCellStyle2;
-            RelatInfo.FillWeight = 160F;
-            RelatInfo.HeaderText = "关联信息";
-            RelatInfo.Name = "RelatInfo";
-            RelatInfo.ReadOnly = true;
-            RelatInfo.ToolTipText = "Key的关联信息";
-            // 
-            // EditRelateBtnColum
-            // 
-            EditRelateBtnColum.FillWeight = 160F;
-            EditRelateBtnColum.HeaderText = "配置数据";
-            EditRelateBtnColum.Name = "EditRelateBtnColum";
-            EditRelateBtnColum.Text = "配置数据";
-            EditRelateBtnColum.ToolTipText = "配置数据";
-            // 
-            // LeaveEmptyColum
-            // 
-            LeaveEmptyColum.HeaderText = "是否忽略";
-            LeaveEmptyColum.Name = "LeaveEmptyColum";
-            LeaveEmptyColum.ToolTipText = "如果忽略，那么导出的时候不会写入内容";
-            // 
-            // IsMainKey
-            // 
-            IsMainKey.HeaderText = "是否为主Key";
-            IsMainKey.Name = "IsMainKey";
-            IsMainKey.ToolTipText = "当设置为主key，并且没有关联数据的时候，会自动以最大ID为基准+1";
             // 
             // label4
             // 
@@ -207,6 +159,61 @@
             label1.TabIndex = 17;
             label1.Text = "导出Key重复处理方式";
             // 
+            // Key
+            // 
+            Key.HeaderText = "Index";
+            Key.Name = "Key";
+            Key.ToolTipText = "下标，以表格为基准";
+            Key.Width = 60;
+            // 
+            // KeyName
+            // 
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            KeyName.DefaultCellStyle = dataGridViewCellStyle1;
+            KeyName.FillWeight = 160F;
+            KeyName.HeaderText = "KeyName";
+            KeyName.Name = "KeyName";
+            KeyName.ReadOnly = true;
+            KeyName.ToolTipText = "选择的导出文件的列名";
+            KeyName.Width = 200;
+            // 
+            // RelatInfo
+            // 
+            RelatInfo.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            RelatInfo.DefaultCellStyle = dataGridViewCellStyle2;
+            RelatInfo.FillWeight = 160F;
+            RelatInfo.HeaderText = "关联信息";
+            RelatInfo.Name = "RelatInfo";
+            RelatInfo.ReadOnly = true;
+            RelatInfo.ToolTipText = "Key的关联信息";
+            // 
+            // HasConfigAction
+            // 
+            HasConfigAction.HeaderText = "是否已配置";
+            HasConfigAction.Name = "HasConfigAction";
+            HasConfigAction.ReadOnly = true;
+            // 
+            // EditRelateBtnColum
+            // 
+            EditRelateBtnColum.FillWeight = 160F;
+            EditRelateBtnColum.HeaderText = "配置数据";
+            EditRelateBtnColum.Name = "EditRelateBtnColum";
+            EditRelateBtnColum.Text = "配置数据";
+            EditRelateBtnColum.ToolTipText = "配置数据";
+            // 
+            // LeaveEmptyColum
+            // 
+            LeaveEmptyColum.HeaderText = "是否忽略";
+            LeaveEmptyColum.Name = "LeaveEmptyColum";
+            LeaveEmptyColum.ToolTipText = "如果忽略，那么导出的时候不会写入内容";
+            // 
+            // IsMainKey
+            // 
+            IsMainKey.HeaderText = "是否为主Key";
+            IsMainKey.Name = "IsMainKey";
+            IsMainKey.ToolTipText = "当设置为主key，并且没有关联数据的时候，会自动以最大ID为基准+1";
+            // 
             // ExcelTool
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
@@ -247,6 +254,7 @@
         private DataGridViewTextBoxColumn Key;
         private DataGridViewTextBoxColumn KeyName;
         private DataGridViewTextBoxColumn RelatInfo;
+        private DataGridViewCheckBoxColumn HasConfigAction;
         private DataGridViewButtonColumn EditRelateBtnColum;
         private DataGridViewCheckBoxColumn LeaveEmptyColum;
         private DataGridViewCheckBoxColumn IsMainKey;

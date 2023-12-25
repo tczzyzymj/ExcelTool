@@ -42,10 +42,6 @@
             ComboBoxForSelectSheet = new ComboBox();
             label4 = new Label();
             DataGridViewForKeyFilter = new DataGridView();
-            KeyIndex = new DataGridViewTextBoxColumn();
-            KeyName = new DataGridViewTextBoxColumn();
-            CheckColum = new DataGridViewCheckBoxColumn();
-            EditFilterBtnColum = new DataGridViewButtonColumn();
             TextBoxForSearch = new TextBox();
             BtnSearch = new Button();
             BtnReset = new Button();
@@ -54,6 +50,11 @@
             PanelForConfigs = new Panel();
             LabelForNotice = new Label();
             BtnReloadKey = new Button();
+            KeyIndex = new DataGridViewTextBoxColumn();
+            KeyName = new DataGridViewTextBoxColumn();
+            CheckColum = new DataGridViewCheckBoxColumn();
+            EditFilterBtnColum = new DataGridViewButtonColumn();
+            BtnShowHasSetFilter = new Button();
             ((System.ComponentModel.ISupportInitialize)DataGridViewForKeyFilter).BeginInit();
             PanelForConfigs.SuspendLayout();
             SuspendLayout();
@@ -207,45 +208,18 @@
             DataGridViewForKeyFilter.TabIndex = 36;
             DataGridViewForKeyFilter.CellContentClick += DataGridViewForKeyFilter_CellContentClick;
             // 
-            // KeyIndex
-            // 
-            KeyIndex.HeaderText = "Key下标";
-            KeyIndex.Name = "KeyIndex";
-            KeyIndex.ReadOnly = true;
-            KeyIndex.Width = 80;
-            // 
-            // KeyName
-            // 
-            KeyName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            KeyName.HeaderText = "Key名字";
-            KeyName.Name = "KeyName";
-            KeyName.ReadOnly = true;
-            // 
-            // CheckColum
-            // 
-            CheckColum.HeaderText = "是否筛选";
-            CheckColum.Name = "CheckColum";
-            CheckColum.ReadOnly = true;
-            CheckColum.Width = 80;
-            // 
-            // EditFilterBtnColum
-            // 
-            EditFilterBtnColum.HeaderText = "设置过滤方法";
-            EditFilterBtnColum.Name = "EditFilterBtnColum";
-            EditFilterBtnColum.Text = "设置";
-            // 
             // TextBoxForSearch
             // 
             TextBoxForSearch.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
             TextBoxForSearch.Location = new Point(104, 188);
             TextBoxForSearch.Name = "TextBoxForSearch";
-            TextBoxForSearch.Size = new Size(292, 26);
+            TextBoxForSearch.Size = new Size(154, 26);
             TextBoxForSearch.TabIndex = 37;
             // 
             // BtnSearch
             // 
             BtnSearch.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            BtnSearch.Location = new Point(407, 186);
+            BtnSearch.Location = new Point(264, 186);
             BtnSearch.Name = "BtnSearch";
             BtnSearch.Size = new Size(78, 30);
             BtnSearch.TabIndex = 38;
@@ -256,7 +230,7 @@
             // BtnReset
             // 
             BtnReset.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            BtnReset.Location = new Point(493, 186);
+            BtnReset.Location = new Point(348, 186);
             BtnReset.Name = "BtnReset";
             BtnReset.Size = new Size(79, 30);
             BtnReset.TabIndex = 39;
@@ -322,11 +296,50 @@
             BtnReloadKey.UseVisualStyleBackColor = true;
             BtnReloadKey.Click += BtnReloadKey_Click;
             // 
+            // KeyIndex
+            // 
+            KeyIndex.HeaderText = "Key下标";
+            KeyIndex.Name = "KeyIndex";
+            KeyIndex.ReadOnly = true;
+            KeyIndex.Width = 80;
+            // 
+            // KeyName
+            // 
+            KeyName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            KeyName.HeaderText = "Key名字";
+            KeyName.Name = "KeyName";
+            KeyName.ReadOnly = true;
+            // 
+            // CheckColum
+            // 
+            CheckColum.HeaderText = "已设置筛选";
+            CheckColum.Name = "CheckColum";
+            CheckColum.ReadOnly = true;
+            CheckColum.Width = 80;
+            // 
+            // EditFilterBtnColum
+            // 
+            EditFilterBtnColum.HeaderText = "设置过滤方法";
+            EditFilterBtnColum.Name = "EditFilterBtnColum";
+            EditFilterBtnColum.Text = "设置";
+            // 
+            // BtnShowHasSetFilter
+            // 
+            BtnShowHasSetFilter.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            BtnShowHasSetFilter.Location = new Point(433, 185);
+            BtnShowHasSetFilter.Name = "BtnShowHasSetFilter";
+            BtnShowHasSetFilter.Size = new Size(110, 30);
+            BtnShowHasSetFilter.TabIndex = 46;
+            BtnShowHasSetFilter.Text = "显示已筛选";
+            BtnShowHasSetFilter.UseVisualStyleBackColor = true;
+            BtnShowHasSetFilter.Click += BtnShowHasSetFilter_Click;
+            // 
             // ChooseFileConfigForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(796, 568);
+            Controls.Add(BtnShowHasSetFilter);
             Controls.Add(BtnReloadKey);
             Controls.Add(PanelForConfigs);
             Controls.Add(BtnReset);
@@ -370,14 +383,15 @@
         private TextBox TextBoxForSearch;
         private Button BtnSearch;
         private Button BtnReset;
-        private DataGridViewTextBoxColumn KeyIndex;
-        private DataGridViewTextBoxColumn KeyName;
-        private DataGridViewCheckBoxColumn CheckColum;
-        private DataGridViewButtonColumn EditFilterBtnColum;
         private TextBox TextBoxSplitSymbol;
         private Label LableForSplitSymbol;
         private Panel PanelForConfigs;
         private Button BtnReloadKey;
         private Label LabelForNotice;
+        private DataGridViewTextBoxColumn KeyIndex;
+        private DataGridViewTextBoxColumn KeyName;
+        private DataGridViewCheckBoxColumn CheckColum;
+        private DataGridViewButtonColumn EditFilterBtnColum;
+        private Button BtnShowHasSetFilter;
     }
 }

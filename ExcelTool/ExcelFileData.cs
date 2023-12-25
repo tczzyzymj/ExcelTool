@@ -26,14 +26,14 @@ namespace ExcelTool
             CloseFile();
         }
 
-        public override bool WriteData(List<List<CellValueData>> filteredInData)
+        public override bool WriteData(List<List<CellValueData>> filteredInData,int workSheetIndex)
         {
             if (!base.WriteData(filteredInData))
             {
                 return false;
             }
 
-            var _currentWorkSheet = GetCurrentWorkSheet() as ExcelSheetData;
+            var _currentWorkSheet = mWorkSheetList[workSheetIndex];
             if (_currentWorkSheet == null)
             {
                 MessageBox.Show("当前 WorkSheet 为空，请检查!");
@@ -89,11 +89,6 @@ namespace ExcelTool
                 mWorkSheetList.Add(_newSheetData);
             }
 
-            return true;
-        }
-
-        protected override bool InternalAnalysCellData()
-        {
             return true;
         }
 

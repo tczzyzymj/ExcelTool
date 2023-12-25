@@ -55,19 +55,6 @@ namespace ExcelTool
 
             mWorkSheetList.Add(_newSheetData);
 
-            mCurrentWorkSheet = _newSheetData;
-
-            return true;
-        }
-
-        protected override bool InternalAnalysCellData()
-        {
-            if (mCurrentWorkSheet == null || mAllDataArray == null)
-            {
-                MessageBox.Show("无法加载数据，读取文件没成功，请检查！", "错误");
-                return false;
-            }
-
             return true;
         }
     }

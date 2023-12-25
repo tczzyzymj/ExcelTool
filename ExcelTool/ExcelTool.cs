@@ -3,28 +3,14 @@ using Newtonsoft.Json;
 using OfficeOpenXml;
 using System;
 using System.Collections;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace ExcelTool
 {
     public partial class ExcelTool : Form
     {
-        /// <summary>
-        /// 配置数据按钮
-        /// </summary>
-        private const int mColumIndexForConfigDataSource = 3;
-
-        /// <summary>
-        /// 是否忽略
-        /// </summary>
-        private const int mColumIndexForSetIgnore = 4;
-
-        /// <summary>
-        /// 是否为主KEY
-        /// </summary>
-        private const int mColumIndexForIsMainKey = 5;
-
-        private List<KeyData>? mKeyList = null;
+        private List<KeyData> mKeyList = new List<KeyData>();
 
         public ExcelTool()
         {
@@ -127,10 +113,23 @@ namespace ExcelTool
                     CommonUtil.GetZM(_keyList[i].GetKeyIndexForShow()),
                     _keyList[i].KeyName,
                     "",
+                    false,
                     "配置数据",
                     _keyList[i].IsIgnore,
                     _keyList[i].IsMainKey
                 );
+            }
+            InternalRefreshForHasConfigKey();
+        }
+
+        private void InternalRefreshForHasConfigKey()
+        {
+            var _rows = DataViewConfigForExportFile.Rows;
+            var _actionMap = TableDataManager.Ins().ExportKeyActionMap;
+            for (int i = 0; i < _rows.Count; ++i)
+            {
+                _actionMap.TryGetValue(mKeyList[i], out var sourceAction);
+                _rows[i].Cells[mColumIndexForHasConfigKey].Value = sourceAction != null && sourceAction.ActionList.Count > 0;
             }
         }
 
@@ -258,6 +257,24 @@ namespace ExcelTool
             TableDataManager.Ins().ExportConfigDealWayType = (MainTypeDefine.ExportConflictDealWayType)_selectValue.RealValue;
         }
 
+        /// <summary>
+        /// 是否已经配置key
+        /// </summary>
+        private const int mColumIndexForHasConfigKey = 3;
+        /// <summary>
+        /// 配置数据按钮
+        /// </summary>
+        private const int mColumIndexForConfigDataSource = 4;
+        /// <summary>
+        /// 是否忽略
+        /// </summary>
+        private const int mColumIndexForSetIgnore = 5;
+
+        /// <summary>
+        /// 是否为主KEY
+        /// </summary>
+        private const int mColumIndexForIsMainKey = 6;
+
         private void DataViewConfigForExportFile_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0)
@@ -300,6 +317,8 @@ namespace ExcelTool
                         //    _targetKey.ClearNextConnectKey();
                         //    return;
                         //}
+
+                        InternalRefreshForHasConfigKey();
                     }
 
                     break;

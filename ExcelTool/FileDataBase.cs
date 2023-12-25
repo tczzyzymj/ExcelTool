@@ -34,8 +34,6 @@ namespace ExcelTool
 
         protected List<CommonWorkSheetData> mWorkSheetList = new List<CommonWorkSheetData>();
 
-        protected CommonWorkSheetData? mCurrentWorkSheet = null; // 当前选中的目标 WorkSheet
-
         protected int mChooseSheetIndex = 0;
 
         protected string mChooseSheetName = string.Empty;
@@ -73,12 +71,15 @@ namespace ExcelTool
             return true;
         }
 
-        public virtual bool WriteData(List<List<CellValueData>> inRowDataList)
+        public virtual bool WriteData(List<List<CellValueData>> inRowDataList, int workSheetIndex)
         {
             if (inRowDataList == null || inRowDataList.Count < 1)
             {
-                MessageBox.Show("WriteData 数据无效，请检查", "错误");
-                return false;
+                throw new Exception($"{WriteData} 数据无效，请检查");
+            }
+            if (workSheetIndex < 0 || workSheetIndex >= mWorkSheetList.Count)
+            {
+                throw new Exception($"{WriteData}下标无效");
             }
 
             var _keyActionMap = TableDataManager.Ins().ExportKeyActionMap;
@@ -87,7 +88,7 @@ namespace ExcelTool
                 throw new Exception($"{WriteData} 出错，未配置 ExportKeyActionMap，请检查");
             }
 
-            var _currentKeyList = GetCurrentWorkSheet()?.GetKeyListData();
+            var _currentKeyList = mWorkSheetList[workSheetIndex].GetKeyListData();
             if (_currentKeyList == null)
             {
                 throw new Exception($"{WriteData} 出错，无法获取当前数据表格的 KeyList，请检查!");
@@ -152,55 +153,6 @@ namespace ExcelTool
             return mWorkSheetList[index];
         }
 
-        public CommonWorkSheetData? GetCurrentWorkSheet()
-        {
-            return mCurrentWorkSheet;
-        }
-
-        public bool TryChooseSheet(CommonWorkSheetData targetData)
-        {
-            if (targetData == null)
-            {
-                MessageBox.Show("尝试选中需要处理的 Sheet 表，但传入的内容为空，请检查!");
-                return false;
-            }
-
-            var _targetIndex = mWorkSheetList.IndexOf(targetData);
-            if (_targetIndex < 0)
-            {
-                MessageBox.Show($"尝试选中需要处理的 Sheet 表，但是没有已加载的数据中找到，Sheet 名字是:{targetData.DisplayName}，请检查!", "错误");
-                return false;
-            }
-
-            var _keyListData = targetData.GetKeyListData();
-            if (_keyListData == null || _keyListData.Count < 1)
-            {
-                MessageBox.Show("选中的 Sheet 没有 key 数据，请检查！", "错误");
-                return false;
-            }
-
-            mChooseWorkSheetIndexInList = targetData.IndexInListForShow;
-            mCurrentWorkSheet = targetData;
-
-            return true;
-        }
-
-        public bool IsCurrentSheetValid()
-        {
-            if (mCurrentWorkSheet == null)
-            {
-                return false;
-            }
-
-            var _keyList = mCurrentWorkSheet.GetKeyListData();
-            if (_keyList == null || _keyList.Count < 1)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         public List<CommonWorkSheetData> GetWorkSheetList()
         {
             return mWorkSheetList;
@@ -217,25 +169,6 @@ namespace ExcelTool
                 return Path.GetFileName(mExcelAbsolutePath);
             }
         }
-
-        public void ReloadKey()
-        {
-            var _currentSheet = GetCurrentWorkSheet();
-            if (_currentSheet == null)
-            {
-                MessageBox.Show("ReloadKey 但是当前的 Sheet 为空，请检查!", "错误");
-                return;
-            }
-
-            _currentSheet.ReloadKey();
-        }
-
-        public bool AnalysCellData()
-        {
-            return InternalAnalysCellData();
-        }
-
-        protected abstract bool InternalAnalysCellData(); // 解析内容数据
 
         public int GetKeyStartRowIndex()
         {

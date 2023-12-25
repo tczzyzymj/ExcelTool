@@ -27,8 +27,10 @@ namespace ExcelTool
         private static List<FileDataBase> mDataList = new List<FileDataBase>();
 
         private FileDataBase? mExportTargetFile = null; // 导出目标文件，其关联在里面设置
+        private CommonWorkSheetData? mExportSheet = null;
 
         private FileDataBase? mSourceFile = null; // 数据源文件
+        private CommonWorkSheetData? mSourceSheet = null;
 
         public Dictionary<KeyData, SourceAction> ExportKeyActionMap = new Dictionary<KeyData, SourceAction>();
 
@@ -249,6 +251,27 @@ namespace ExcelTool
         {
             return mSourceFile;
         }
+
+        public CommonWorkSheetData? GetExportSheet()
+        {
+            return mExportSheet;
+        }
+
+        public void SetExportSheet(CommonWorkSheetData targetSheet)
+        {
+            mExportSheet = targetSheet;
+        }
+
+        public CommonWorkSheetData? GetSourceSheet()
+        {
+            return mSourceSheet;
+        }
+
+        public void SetSourceSheet(CommonWorkSheetData targetSheet)
+        {
+            mSourceSheet = targetSheet;
+        }
+
 
         private FileDataBase? InternalLoadFile(string absoluteFilePath, bool checkExist, LoadFileType fileType)
         {
