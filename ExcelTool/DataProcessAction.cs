@@ -36,6 +36,11 @@ namespace ExcelTool
 
         public override string TryProcessData(List<CellValueData> rowValue)
         {
+            if (ActionList == null || ActionList.Count < 1)
+            {
+                return string.Empty;
+            }
+
             List<string> _resultList = new List<string>();
 
             for (int i = 0; i < ActionList.Count; ++i)
@@ -126,25 +131,37 @@ namespace ExcelTool
             {
                 throw new Exception($"{TryProcessData} 出错，查找表格的列没有数据，请检查");
             }
+            if (SearchTargetSheet == null)
+            {
+                throw new Exception($"{TryProcessData} 出错，SearchTargetSheet 为空");
+            }
 
-            List<CellValueData> _searchInCellList = new List<CellValueData>();
+            SearchTargetSheet.LoadAllCellData();
+
+            List<string> _searchInCellList = new List<string>();
 
             for (int i = 0; i < MatchKeyList.Count; ++i)
             {
-                _searchInCellList.Add(inRowData[MatchKeyList[i].GetKeyColumIndexInList()]);
+                _searchInCellList.Add(inRowData[MatchKeyList[i].GetKeyColumIndexInList()].GetCellValue());
             }
 
             List<string> _resultList = new List<string>();
 
-            var _rowData = SearchTargetSheet.GetRowDataByTargetKeysAndValus(MatchKeyList, _searchInCellList);
-            if (_rowData == null)
+            List<int> _mathKeyIndexInListData = new List<int>();
+            foreach(var _tempKey in MatchKeyList)
+            {
+                _mathKeyIndexInListData.Add(_tempKey.GetKeyColumIndexInList());
+            }
+
+            var searchMatchRowData = SearchTargetSheet.GetRowDataByTargetKeysAndValus(_mathKeyIndexInListData, _searchInCellList);
+            if (searchMatchRowData == null)
             {
                 return string.Empty;
             }
 
             for (int i = 0; i < ActionListAfterFindValues.Count; ++i)
             {
-                var _tempValue = ActionListAfterFindValues[i].TryProcessData(_rowData);
+                var _tempValue = ActionListAfterFindValues[i].TryProcessData(searchMatchRowData);
 
                 _resultList.Add(_tempValue);
             }

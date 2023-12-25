@@ -327,7 +327,6 @@
             // 
             BindKeyList.HeaderText = "绑定Key";
             BindKeyList.Name = "BindKeyList";
-            BindKeyList.ReadOnly = true;
             BindKeyList.Width = 180;
             // 
             // dataGridViewButtonColumn1

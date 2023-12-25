@@ -1,6 +1,8 @@
-﻿using System;
+﻿using CsvHelper;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,17 +11,17 @@ namespace ExcelTool
 {
     internal class CSVSheetData : CommonWorkSheetData
     {
-        private string[]? mSheetData = null;
+        private List<string[]> mAllSheetData;
 
         public override void ReloadKey()
         {
             base.ReloadKey();
-            InternalInitWithKey(mSheetData, true);
+            InternalInitWithKey(mAllSheetData, true);
         }
 
-        public override bool WriteData(List<List<CellValueData>> filteredInData)
+        public override bool WriteOneData(int rowIndexInSheet, Dictionary<KeyData, string> valueMap, bool isNewData)
         {
-            if (!base.WriteData(filteredInData))
+            if (!base.WriteOneData(rowIndexInSheet, valueMap, isNewData))
             {
                 return false;
             }
@@ -32,6 +34,13 @@ namespace ExcelTool
                 return false;
             }
 
+            if (isNewData)
+            {
+            }
+            else
+            {
+            }
+
             return true;
         }
 
@@ -42,13 +51,15 @@ namespace ExcelTool
                 return true;
             }
 
-            mSheetData = sheetData as string[];
+            var _keyArray = sheetData as string[];
 
-            if (mSheetData == null)
+            if (_keyArray == null)
             {
                 MessageBox.Show("传入的数据为空，请检查!", "错误");
                 return false;
             }
+
+            mAllSheetData.Add(_keyArray);
 
             var _ownerTable = GetOwnerTable() as CSVFileData;
             if (_ownerTable == null)
@@ -59,13 +70,15 @@ namespace ExcelTool
 
             // 这里是 key，初始化的时候只初始化一下 key，内容放到后面的解析去做
             {
-                var _splitArray = mSheetData[_ownerTable.GetKeyStartRowIndex()].Split(_ownerTable.SplitSymbol);
+                var _keyLine = mAllSheetData[0];
 
-                for (int _i = _ownerTable.GetKeyStartColmIndex(); _i < _splitArray.Length; ++_i)
+                for (int _i = _ownerTable.GetKeyStartColmIndex(); _i < _keyLine.Length; ++_i)
                 {
-                    AddNewKeyData(_i - _ownerTable.GetKeyStartColmIndex(), _i, _splitArray[_i]);
+                    AddNewKeyData(_i - _ownerTable.GetKeyStartColmIndex(), _i, _keyLine[_i]);
                 }
             }
+
+            InternalLoadAllCellData();
 
             mHasInitKey = true;
 
@@ -79,6 +92,21 @@ namespace ExcelTool
                 return true;
             }
 
+            var _filePath = GetOwnerTable().GetFileAbsulotePath();
+
+            using (StreamReader sr = new StreamReader(_filePath))
+            {
+                using (CsvReader _csvReader = new CsvReader(sr, CultureInfo.InvariantCulture))
+                {
+                    if (_csvReader.Read())
+                    {
+                        var _allArray = _csvReader.GetRecords<string>().ToArray();
+
+                        int a = 0;
+                    }
+                }
+            }
+
             var _ownerTable = GetOwnerTable() as CSVFileData;
             if (_ownerTable == null)
             {
@@ -86,7 +114,7 @@ namespace ExcelTool
                 return false;
             }
 
-            if (mSheetData == null)
+            if (mAllSheetData == null)
             {
                 MessageBox.Show("InternalLoadAllCellData 无法获取 SheetData，请检查！", "错误");
                 return false;
@@ -94,22 +122,19 @@ namespace ExcelTool
 
             var _contentStartRow = _ownerTable.GetContentStartRowIndex();
             var _keyStartColum = _ownerTable.GetKeyStartColmIndex();
-            var _splitSymbol = _ownerTable.SplitSymbol;
-
-            StringBuilder _errorMsgBuilder = new StringBuilder();
 
             mCellData2DList?.Clear();
 
-            mCellData2DList = new List<List<CellValueData>>(mSheetData.Length - 4);
+            mCellData2DList = new List<List<CellValueData>>(mAllSheetData.Count - _contentStartRow);
 
-            for (int _row = _contentStartRow; _row < mSheetData.Length; ++_row)
+            for (int _row = _contentStartRow; _row < mAllSheetData.Count; ++_row)
             {
                 var _newList = new List<CellValueData>();
                 mCellData2DList.Add(_newList);
 
-                var _rowArray = mSheetData[_row].Split(_splitSymbol);
+                var _rowArray = mAllSheetData[_row];
 
-                for (int _colum = _keyStartColum; _colum <= _rowArray.Length; ++_colum)
+                for (int _colum = _keyStartColum; _colum < _rowArray.Length; ++_colum)
                 {
                     var _newCellData = new CellValueData();
                     _newList.Add(_newCellData);

@@ -26,25 +26,6 @@ namespace ExcelTool
             CloseFile();
         }
 
-        public override bool WriteData(List<List<CellValueData>> filteredInData,int workSheetIndex)
-        {
-            if (!base.WriteData(filteredInData))
-            {
-                return false;
-            }
-
-            var _currentWorkSheet = mWorkSheetList[workSheetIndex];
-            if (_currentWorkSheet == null)
-            {
-                MessageBox.Show("当前 WorkSheet 为空，请检查!");
-                return false;
-            }
-
-            _currentWorkSheet.WriteData(filteredInData);
-
-            return true;
-        }
-
         public override void SaveFile()
         {
             mExcelPackage?.Save();

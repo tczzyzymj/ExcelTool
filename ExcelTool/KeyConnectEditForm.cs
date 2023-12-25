@@ -425,7 +425,7 @@ namespace ExcelTool
             this.DataViewForAction.Rows.Clear();
             for (int i = 0; i < mTargetActionList.Count; ++i)
             {
-                this.DataViewForAction.Rows.Add(
+                var _index = this.DataViewForAction.Rows.Add(
                     mTargetActionList[i].GetType().GetCustomAttribute<ProcessActionAttribute>().DisplayName,
                     null,
                     mTargetActionList[i] is DataProcessActionForFindRowDataInOtherSheet ? "设置" : "无功能",
@@ -436,16 +436,19 @@ namespace ExcelTool
                     "↓"
                 );
 
-                var _row = DataViewForAction.Rows[i];
+                var _row = DataViewForAction.Rows[_index];
 
                 {
                     // 处理绑定 KEY
                     var _cell = _row.Cells[mBindKeyColumIndex] as DataGridViewComboBoxCell;
                     if (_cell != null)
                     {
-                        _cell.DataSource = mTargetActionList[i].MatchKeyList;
-                        _cell.DisplayMember = "KeyNameWithIndex";
-                        _cell.ValueMember = "KeyIndexInList";
+                        foreach (var _key in mTargetActionList[i].MatchKeyList)
+                        {
+                            _cell.Items.Add(_key.KeyNameWithIndex);
+                        }
+
+                        _cell.Value = mTargetActionList[i].MatchKeyList[0].KeyNameWithIndex;
                     }
                 }
             }

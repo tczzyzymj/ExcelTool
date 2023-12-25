@@ -63,7 +63,7 @@ namespace ExcelTool
                 var _loadedFile = JsonConvert.DeserializeObject<FileDataBase>(_openfileDialog.FileName);
                 if (_loadedFile != null)
                 {
-                    TableDataManager.Ins().TrySetExportTargetFile(_loadedFile);
+
                 }
             }
         }
@@ -89,7 +89,7 @@ namespace ExcelTool
                 return;
             }
 
-            var _workSheet = _exportFile.GetCurrentWorkSheet();
+            var _workSheet = TableDataManager.Ins().GetExportSheet();
             if (_workSheet == null)
             {
                 MessageBox.Show("当前未选中需要导出的目标文件 Sheet", "错误");
@@ -214,25 +214,7 @@ namespace ExcelTool
                 return;
             }
 
-            int _startRowIndex = 0;
-
-            switch (TableDataManager.Ins().ExportWriteWayType)
-            {
-                case MainTypeDefine.ExportWriteWayType.OverWriteAll:
-                {
-                    _startRowIndex = _exportFile.GetContentStartRowIndex();
-                    break;
-                }
-                case MainTypeDefine.ExportWriteWayType.Append:
-                {
-                    break;
-                }
-                default:
-                {
-                    MessageBox.Show($"导出写入中，存在未处理的类型：{TableDataManager.Ins().ExportWriteWayType}，请检查");
-                    break;
-                }
-            }
+            TableDataManager.Ins().StartExportData();
         }
 
         private void ComboBoxForExportWriteWay_SelectedIndexChanged(object sender, EventArgs e)

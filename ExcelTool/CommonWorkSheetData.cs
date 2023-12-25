@@ -43,7 +43,7 @@ namespace ExcelTool
         /// <param name="matchValueList"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public virtual List<CellValueData>? GetRowDataByTargetKeysAndValus(List<KeyData> matchKeyList, List<CellValueData> matchValueList)
+        public virtual List<CellValueData>? GetRowDataByTargetKeysAndValus(List<int> matchKeyList, List<string> matchValueList)
         {
             if (mCellData2DList == null || mCellData2DList.Count < 1)
             {
@@ -76,10 +76,7 @@ namespace ExcelTool
                 {
                     for (int j = 0; j < matchValueList.Count; ++j)
                     {
-                        if (!string.Equals(
-                                _rowData[_matchKey.GetKeyColumIndexInList()].GetCellValue(),
-                                matchValueList[j].GetCellValue())
-                            )
+                        if (!string.Equals(_rowData[_matchKey].GetCellValue(), matchValueList[j]))
                         {
                             _isMatch = false;
                             break;
@@ -159,17 +156,12 @@ namespace ExcelTool
             return _result;
         }
 
-        public virtual bool WriteData(List<List<CellValueData>> filteredInDataList)
+        public virtual bool WriteOneData(int rowIndexInSheet, Dictionary<KeyData, string> valueMap, bool newData)
         {
-            var _keyListData = GetKeyListData();
-            if (_keyListData == null)
+            if (mCellData2DList == null)
             {
-                MessageBox.Show("WriteData ，但是 KeyList 为空，请检查", "错误");
-
-                return false;
+                throw new Exception($"{WriteOneData} 出错，mCellData2DList 为空");
             }
-
-            // 这里检查一下，看是否至少有一个是设置关联了的
 
             return true;
         }
@@ -210,12 +202,19 @@ namespace ExcelTool
 
         public bool LoadAllCellData()
         {
-            if (!mHasLoadAllCellData)
+            if (mHasLoadAllCellData)
             {
                 return false;
             }
 
-            return InternalLoadAllCellData();
+            if (InternalLoadAllCellData())
+            {
+                mHasLoadAllCellData = true;
+
+                return true;
+            }
+
+            return false;
         }
 
         protected abstract bool InternalLoadAllCellData();

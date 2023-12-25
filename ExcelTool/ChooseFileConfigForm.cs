@@ -54,7 +54,7 @@ namespace ExcelTool
                 }
                 case LoadFileType.SourceFile:
                 {
-                    mChooseFile = TableDataManager.Ins().TryLoadExportFile(absolutePath);
+                    mChooseFile = TableDataManager.Ins().TryLoadSourceFile(absolutePath);
                     return mChooseFile;
                 }
                 case LoadFileType.NormalFile:
@@ -120,7 +120,8 @@ namespace ExcelTool
                 {
                     return;
                 }
-                LastChooseFileAbsolutePath = mChooseFile.GetFilePath();
+
+                LastChooseFileAbsolutePath = mChooseFile.GetFileAbsulotePath();
                 InternalChangeNotice();
 
                 TextForFilePath.Text = _openfileDialog.FileName;
@@ -235,6 +236,25 @@ namespace ExcelTool
                 MessageBox.Show("当前的 Sheet 数据为空，请检查文件", "错误 ");
                 return;
             }
+
+            switch (this.mFileType)
+            {
+                case LoadFileType.NormalFile:
+                {
+                    break;
+                }
+                case LoadFileType.SourceFile:
+                {
+                    TableDataManager.Ins().SetSourceSheet(mChooseSheet);
+                    break;
+                }
+                case LoadFileType.ExportFile:
+                {
+                    TableDataManager.Ins().SetExportSheet(mChooseSheet);
+                    break;
+                }
+            }
+
             mKeyDataList = _currentSheet.GetKeyListData();
 
             DataGridViewForKeyFilter.Rows.Clear();
@@ -335,7 +355,7 @@ namespace ExcelTool
                     TextBoxSplitSymbol.Visible = false;
                 }
 
-                TextForFilePath.Text = _targetFile.GetFilePath();
+                TextForFilePath.Text = _targetFile.GetFileAbsulotePath();
 
                 InternalInitForSheetComboBox(_targetFile);
             }
@@ -354,7 +374,7 @@ namespace ExcelTool
             }
 
             // 这里导出 key 供选择
-            var _currentSheet = _targetFile.GetCurrentWorkSheet();
+            var _currentSheet = mChooseSheet;
             if (_currentSheet == null)
             {
                 MessageBox.Show("没有 workSheet 数据，请检查", "错误");

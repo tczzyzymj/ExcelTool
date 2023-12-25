@@ -43,10 +43,10 @@ namespace ExcelTool
         {
             get;
             set;
-        }
+        } = true; // TODO，记得删除，测试用，默认是不忽略的
 
         /// <summary>
-        /// 是否为主KEY，如果是主KEY，并且没有指定关联数据，那么ID会以最大ID为基准+1
+        /// 是否为主KEY，如果是主KEY，并且没有指定关联数据，那么ID会以最大ID为基准+1，并且会作为判断是否冲突的
         /// </summary>
         public bool IsMainKey
         {

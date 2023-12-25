@@ -1,6 +1,9 @@
-﻿using System;
+﻿using CsvHelper;
+using Microsoft.VisualBasic.FileIO;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,17 +19,15 @@ namespace ExcelTool
             mContentStartRowIndex = 3; // 内容选中的行下标，从2开始，认为1是KEY不能小于2
         }
 
-        private string[]? mAllDataArray = null;
-
         public string SplitSymbol
         {
             get;
             set;
         } = ",";
 
-        public override bool WriteData(List<List<CellValueData>> filteredInData)
+        public override bool WriteData(List<List<CellValueData>> filteredInData, int workSheetIndex)
         {
-            if (!base.WriteData(filteredInData))
+            if (!base.WriteData(filteredInData, workSheetIndex))
             {
                 return false;
             }
@@ -40,15 +41,27 @@ namespace ExcelTool
 
         public override bool InternalLoadFile(string absolutePath)
         {
-            mAllDataArray = File.ReadAllLines(absolutePath);
-            if (mAllDataArray == null || mAllDataArray.Length < 1)
+            string[] _keyArray = null;
+            using (StreamReader sr = new StreamReader(absolutePath))
+            {
+                using (CsvReader _csvReader = new CsvReader(sr, CultureInfo.InvariantCulture))
+                {
+                    _csvReader.ReadHeader();
+                    if (_csvReader.HeaderRecord != null)
+                    {
+                        _keyArray = _csvReader.HeaderRecord;
+                    }
+                }
+            }
+
+            if (_keyArray == null || _keyArray.Length < 1)
             {
                 MessageBox.Show($"文件：{absolutePath} ，内容不正确，请检查");
                 return false;
             }
 
             var _newSheetData = new CSVSheetData();
-            if (!_newSheetData.Init(new WeakReference<FileDataBase>(this), mAllDataArray, 0, 0, "Sheet"))
+            if (!_newSheetData.Init(new WeakReference<FileDataBase>(this), _keyArray, 0, 0, "Sheet"))
             {
                 return false;
             }

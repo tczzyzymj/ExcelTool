@@ -18,9 +18,9 @@ namespace ExcelTool
             InternalInitWithKey(mOriginSheetData, true);
         }
 
-        public override bool WriteData(List<List<CellValueData>> sourceFilteredDataList)
+        public override bool WriteOneData(int rowIndexInSheet, Dictionary<KeyData, string> valueMap, bool isNewData)
         {
-            if (!base.WriteData(sourceFilteredDataList))
+            if (!base.WriteOneData(rowIndexInSheet, valueMap, isNewData))
             {
                 return false;
             }
@@ -31,48 +31,31 @@ namespace ExcelTool
                 return false;
             }
 
-            var _keyListData = GetKeyListData();
-            if (_keyListData == null)
+            var _keyList = GetKeyListData();
+            if (_keyList == null || _keyList.Count < 1)
             {
-                MessageBox.Show("ExcelSheetData.WriteData ，但是 KeyList 为空，请检查", "错误");
-
-                return false;
+                throw new Exception($"{typeof(ExcelSheetData).Name} : {WriteOneData} 出错，_keyList 无效");
             }
 
-            var _ownerTable = GetOwnerTable();
-            if (_ownerTable == null)
+            var _targetRowIndex = rowIndexInSheet;
+            if (isNewData)
             {
-                MessageBox.Show("ExcelSheetData.WriteData 时，GetOwnerTable 为空，请检查", "错误");
-                return false;
+                _targetRowIndex = mOriginSheetData.Dimension.Rows + 1;
+
             }
-
-            int _contentStartRow = _ownerTable.GetContentStartRowIndex();
-
-            var _writeType = TableDataManager.Ins().ExportWriteWayType;
-            switch (_writeType)
+            else
             {
-                case MainTypeDefine.ExportWriteWayType.Append:
+                // 这里去检测一下看下标是否对
+                if (rowIndexInSheet < 1 || rowIndexInSheet > mOriginSheetData.Dimension.Rows)
                 {
-                    _contentStartRow = mOriginSheetData.Dimension.Rows + 1;
-                    break;
-                }
-                case MainTypeDefine.ExportWriteWayType.OverWriteAll:
-                {
-                    break;
-                }
-                default:
-                {
-                    MessageBox.Show($"WriteData 时，选择了 ExportWriteWayType 未实现的类型：{_writeType}", "错误");
-                    return false;
+                    throw new Exception($"{typeof(ExcelSheetData).Name} : {WriteOneData} 出错，rowIndexInSheet :{rowIndexInSheet} 无效");
                 }
             }
 
-            for (int i = 0; i < sourceFilteredDataList.Count; ++i)
+            for (int i = 0; i < _keyList.Count; ++i)
             {
-                for (int j = 0; j < _keyListData.Count; ++j)
-                {
-
-                }
+                valueMap.TryGetValue(_keyList[i], out var _tempContent);
+                mOriginSheetData.Cells[_targetRowIndex, _keyList[i].GetKeyIndexInSheetData()].Value = _tempContent;
             }
 
             return true;

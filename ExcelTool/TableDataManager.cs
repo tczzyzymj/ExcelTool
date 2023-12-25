@@ -112,7 +112,7 @@ namespace ExcelTool
 
         public FileDataBase? IsFileExist(string absoluteFilePath)
         {
-            var _exitItem = mDataList.Find(x => x.GetFilePath() == absoluteFilePath);
+            var _exitItem = mDataList.Find(x => x.GetFileAbsulotePath() == absoluteFilePath);
             if (_exitItem != null)
             {
                 return _exitItem;
@@ -137,14 +137,38 @@ namespace ExcelTool
                 return;
             }
 
-            var _inRowDataList = _sourceFile.GetFilteredDataList(SourceDataFilterMap);
+            var _sourceSheet = TableDataManager.Ins().GetSourceSheet();
+            if (_sourceSheet == null)
+            {
+                throw new Exception("_sourceSheet 为空");
+            }
+            _sourceSheet.LoadAllCellData();
+            var _sourceSheetIndex = _sourceFile.GetWorkSheetList().IndexOf(_sourceSheet);
+            if (_sourceSheetIndex < 0)
+            {
+                throw new Exception("_sourceSheetIndex < 0 ，请检查");
+            }
+
+            var _inRowDataList = _sourceFile.GetFilteredDataList(SourceDataFilterMap, _sourceSheetIndex);
             if (_inRowDataList == null || _inRowDataList.Count < 1)
             {
                 MessageBox.Show("过滤后的源数据为空，没有写入的必要，请检查一下", "提示");
                 return;
             }
 
-            if (!_exportFile.WriteData(_inRowDataList))
+            var _exportSheet = TableDataManager.Ins().GetExportSheet();
+            if (_exportSheet == null)
+            {
+                throw new Exception($"_exportSheet 为空");
+            }
+            _exportSheet.LoadAllCellData();
+            var _exportSheetIndex = _exportFile.GetWorkSheetList().IndexOf(_exportSheet);
+            if (_exportSheetIndex < 0)
+            {
+                throw new Exception("_exportSheetIndex 无效");
+            }
+
+            if (!_exportFile.WriteData(_inRowDataList, _sourceSheetIndex))
             {
                 MessageBox.Show("数据写入出错，请检查", "错误");
                 return;
@@ -155,46 +179,40 @@ namespace ExcelTool
             MessageBox.Show("数据导出完成", "提示");
         }
 
-        public void TrySetExportTargetFile(FileDataBase targetData)
-        {
-            mExportTargetFile = targetData;
-        }
-
-        public void TrySetSourceTargetFile(FileDataBase targetData)
-        {
-            mSourceFile = targetData;
-        }
-
         public FileDataBase? TryLoadExportFile(string absoluteFilePath)
         {
             if (mExportTargetFile != null)
             {
-                if (mExportTargetFile.GetFilePath().Equals(absoluteFilePath))
+                if (mExportTargetFile.GetFileAbsulotePath().Equals(absoluteFilePath))
                 {
                     return mExportTargetFile;
                 }
             }
 
             mExportTargetFile = InternalLoadFile(absoluteFilePath, true, LoadFileType.ExportFile);
+            if (mExportTargetFile != null)
+            {
+                this.SetExportSheet(mExportTargetFile.GetWorkSheetList()[0]);
+            }
 
             return mExportTargetFile;
         }
 
         public FileDataBase? TryGetTableByPath(string absolutePath)
         {
-            return mDataList.Find(x => x.GetFilePath().Equals(absolutePath));
+            return mDataList.Find(x => x.GetFileAbsulotePath().Equals(absolutePath));
         }
 
         public int TryGetTableIndexByPath(string absolutePath)
         {
-            return mDataList.FindIndex(x => x.GetFilePath().Equals(absolutePath));
+            return mDataList.FindIndex(x => x.GetFileAbsulotePath().Equals(absolutePath));
         }
 
         public FileDataBase? TryLoadNormalFile(string absoluteFilePath)
         {
             if (mExportTargetFile != null)
             {
-                if (mExportTargetFile.GetFilePath().Equals(absoluteFilePath))
+                if (mExportTargetFile.GetFileAbsulotePath().Equals(absoluteFilePath))
                 {
                     MessageBox.Show("导出目标文件已经加载，不要重复加载", "提示");
                     return null;
@@ -208,12 +226,11 @@ namespace ExcelTool
 
         public FileDataBase? TryLoadSourceFile(string absoluteFilePath)
         {
-            if (mExportTargetFile != null)
+            if (mSourceFile != null)
             {
-                if (mExportTargetFile.GetFilePath().Equals(absoluteFilePath))
+                if (mSourceFile.GetFileAbsulotePath().Equals(absoluteFilePath))
                 {
-                    MessageBox.Show("导出目标文件已经加载，不要重复加载", "提示");
-                    return null;
+                    return mSourceFile;
                 }
             }
 
@@ -223,21 +240,8 @@ namespace ExcelTool
                 return null;
             }
 
-            // 这里是确保 SourceFile 一定在第一个
-            if (mSourceFile != null)
-            {
-                // 如果原来已经有了
-                mDataList.Remove(_tempFile);
-                List<FileDataBase> _tempList = new List<FileDataBase>()
-                {
-                    _tempFile
-                };
-
-                _tempList.AddRange(mDataList);
-                mDataList = _tempList;
-            }
-
             mSourceFile = _tempFile;
+            this.SetSourceSheet(mSourceFile.GetWorkSheetList()[0]);
 
             return mSourceFile;
         }
@@ -271,7 +275,6 @@ namespace ExcelTool
         {
             mSourceSheet = targetSheet;
         }
-
 
         private FileDataBase? InternalLoadFile(string absoluteFilePath, bool checkExist, LoadFileType fileType)
         {
