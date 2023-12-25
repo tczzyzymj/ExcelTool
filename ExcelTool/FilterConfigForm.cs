@@ -123,6 +123,11 @@ namespace ExcelTool
 
         private void DataGridViewForFilterFunc_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)// 什么傻逼玩意，-1也发消息
+            {
+                return;
+            }
+
             if (e.ColumnIndex == 2)
             {
                 // 点击移除按钮

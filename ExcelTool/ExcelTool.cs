@@ -129,7 +129,13 @@ namespace ExcelTool
             for (int i = 0; i < _rows.Count; ++i)
             {
                 _actionMap.TryGetValue(mKeyList[i], out var sourceAction);
-                _rows[i].Cells[mColumIndexForHasConfigKey].Value = sourceAction != null && sourceAction.ActionList.Count > 0;
+                bool _hasConfig = sourceAction != null && sourceAction.ActionList.Count > 0;
+                _rows[i].Cells[mColumIndexForHasConfigKey].Value = _hasConfig;
+                _rows[i].Cells[mColumIndexForSetIgnore].Value = !_hasConfig;
+                if (_hasConfig)
+                {
+                    mKeyList[i].IsIgnore = false;
+                }
             }
         }
 
@@ -226,7 +232,7 @@ namespace ExcelTool
 
         private void ComboBoxForExportWriteWay_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var _selectValue = this.ComboBoxForExportWriteWay.SelectedValue as CommonDataForComboBox;
+            var _selectValue = this.ComboBoxForExportWriteWay.SelectedItem as CommonDataForComboBox;
             if (_selectValue == null)
             {
                 return;
@@ -235,9 +241,9 @@ namespace ExcelTool
             TableDataManager.Ins().ExportWriteWayType = (MainTypeDefine.ExportWriteWayType)_selectValue.RealValue;
         }
 
-        private void ComboBoxForExportConfigDealWay_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBoxForExportConflictDealWay_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var _selectValue = this.ComboBoxForExportWriteWay.SelectedValue as CommonDataForComboBox;
+            var _selectValue = this.ComboBoxForExportConflictDealWay.SelectedItem as CommonDataForComboBox;
             if (_selectValue == null)
             {
                 return;
@@ -266,7 +272,7 @@ namespace ExcelTool
 
         private void DataViewConfigForExportFile_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0 || e.ColumnIndex < 0)
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)// 什么傻逼玩意，-1也发消息
             {
                 return;
             }

@@ -61,6 +61,7 @@ namespace ExcelTool
         {
             mFromFileType = LoadFileType.SetSearchKey;
             mFromAction = targetAction;
+            mFromSheet = targetAction.SearchTargetSheet;
         }
 
         private FileDataBase? InternalLoadFile(string absolutePath)
@@ -131,19 +132,16 @@ namespace ExcelTool
                     MessageBox.Show($"加载目标文件：{_openfileDialog.FileName} 出错，请检查!", "错误");
                     return;
                 }
-                InternalChooseFile(_tempFile);
+
+                InternalChooseFile(_tempFile, true);
+
                 if (mChooseFile == null)
                 {
                     MessageBox.Show($"加载目标文件：{_openfileDialog.FileName} 出错，请检查!", "错误");
                     return;
                 }
-                TextForFilePath.Text = _openfileDialog.FileName;
-                var _workSheetList = mChooseFile.GetWorkSheetList();
-                if (_workSheetList == null || _workSheetList.Count < 1)
-                {
-                    return;
-                }
 
+                TextForFilePath.Text = _openfileDialog.FileName;
                 InternalChangeNotice();
 
                 TextForFilePath.Text = _openfileDialog.FileName;
@@ -162,17 +160,10 @@ namespace ExcelTool
 
                     TextBoxSplitSymbol.Text = ",";
                 }
-
-                InternalInitForSheetComboBox();
-
-                if (mFromFileType == LoadFileType.SetSearchKey)
-                {
-                    InternalRefreshForLoadFiles();
-                }
             }
         }
 
-        private void InternalChooseFile(FileDataBase targetFile)
+        private void InternalChooseFile(FileDataBase targetFile, bool refreshFileComboBox)
         {
             if (targetFile == null)
             {
@@ -187,6 +178,14 @@ namespace ExcelTool
 
             mChooseFile = targetFile;
             InternalInitForSheetComboBox();
+
+            if (refreshFileComboBox)
+            {
+                if (mFromFileType != LoadFileType.ExportFile || mFromFileType != LoadFileType.SourceFile)
+                {
+                    InternalRefreshForLoadFiles();
+                }
+            }
         }
 
         private void InternalInitForSheetComboBox()
@@ -198,10 +197,24 @@ namespace ExcelTool
                 if (_workSheetList != null && _workSheetList.Count > 0)
                 {
                     ComboBoxForSelectSheet.BeginUpdate();
+                    ComboBoxForSelectSheet.DataSource = null;
+                    ComboBoxForSelectSheet.Items.Clear();
                     ComboBoxForSelectSheet.DataSource = _workSheetList;
                     ComboBoxForSelectSheet.ValueMember = "IndexInListForShow";
                     ComboBoxForSelectSheet.DisplayMember = "DisplayName";
-                    ComboBoxForSelectSheet.SelectedIndex = 0;
+                    if (mFromSheet != null)
+                    {
+                        var _index = _targetFile.GetWorkSheetList().IndexOf(mFromSheet);
+                        if (_index >= 0 && _workSheetList != null && _workSheetList.Count > 0)
+                        {
+                            ComboBoxForSelectSheet.SelectedIndex = _index;
+                        }
+                    }
+                    else
+                    {
+                        ComboBoxForSelectSheet.SelectedIndex = 0;
+                    }
+
                     ComboBoxForSelectSheet.EndUpdate();
 
                     return;
@@ -257,20 +270,19 @@ namespace ExcelTool
 
         private void ComboBoxForSelectSheet_SelectedIndexChanged(object sender, EventArgs e)
         {
+            var _selectItem = ComboBoxForSelectSheet.SelectedItem as CommonWorkSheetData;
+            if (_selectItem == null)
+            {
+                return;
+            }
+
+            mChooseSheet = _selectItem;
+
             InternalRefreshDataViewForSheetKey();
         }
 
         private void InternalRefreshDataViewForSheetKey()
         {
-            var _targetFile = mChooseFile;
-            var _selectItem = ComboBoxForSelectSheet.SelectedItem as CommonWorkSheetData;
-            if (_selectItem == null || _targetFile == null)
-            {
-                MessageBox.Show("当前的 LoadFile 为空，请检查", "错误");
-                return;
-            }
-
-            mChooseSheet = _selectItem;
             // 这里重置一下数据
             // 这里导出 key 供选择
             var _currentSheet = mChooseSheet;
@@ -325,12 +337,17 @@ namespace ExcelTool
         }
 
         private const int mInexForHasSetFilter = 2;
-        private const int IndexForSelectSearchKey = 4;
+        private const int IndexForSelectSearchKey = 4; // 查找KEY用的，目前只有 设置跨表查找的时候用到
         private const int mIndexForSetButton = 3;
 
 
         private void DataGridViewForKeyFilter_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)// 什么傻逼玩意，-1也发消息
+            {
+                return;
+            }
+
             var _targetFile = mChooseFile;
             if (_targetFile == null)
             {
@@ -342,6 +359,23 @@ namespace ExcelTool
             {
                 case mInexForHasSetFilter:
                 {
+                    break;
+                }
+                case IndexForSelectSearchKey:
+                {
+                    bool _isSelect = (bool)this.DataGridViewForKeyFilter.Rows[e.RowIndex].Cells[e.ColumnIndex].EditedFormattedValue;
+
+                    var _targetKey = mKeyDataList[e.RowIndex];
+
+                    if (_isSelect)
+                    {
+                        mSelectKeyList.Add(_targetKey);
+                    }
+                    else
+                    {
+                        mSelectKeyList.Remove(_targetKey);
+                    }
+
                     break;
                 }
                 case mIndexForSetButton:
@@ -366,6 +400,8 @@ namespace ExcelTool
         private void InternalRefreshForLoadFiles()
         {
             // 这里为 file combobox 的已加载文件做显示
+            var _choosedFile = mChooseFile;
+
             {
                 ComboBoxForLoadedFile.DataSource = null;
                 ComboBoxForLoadedFile.Items.Clear();
@@ -375,7 +411,7 @@ namespace ExcelTool
                 ComboBoxForLoadedFile.DataSource = _dataList;
                 ComboBoxForLoadedFile.ValueMember = "DisplayIndex";
                 ComboBoxForLoadedFile.DisplayMember = "DisplayName";
-                var _fileIndex = _dataList.FindIndex(x => x.GetFileAbsulotePath() == mChooseFile?.GetFileAbsulotePath());
+                var _fileIndex = _dataList.FindIndex(x => x.GetFileAbsulotePath() == _choosedFile?.GetFileAbsulotePath());
                 if (_dataList != null && _dataList.Count > 0 && _fileIndex >= 0)
                 {
                     ComboBoxForLoadedFile.SelectedIndex = _fileIndex;
@@ -388,7 +424,7 @@ namespace ExcelTool
         private void ChooseFileConfigForm_Load(object sender, EventArgs e)
         {
             FileDataBase? _targetFile = null;
-            CommonWorkSheetData? _targetSheet = null;
+
             switch (mFromFileType)
             {
                 case LoadFileType.ExportFile:
@@ -416,8 +452,13 @@ namespace ExcelTool
                 }
                 case LoadFileType.NormalFile:
                 {
-                    LabelLoadedFiles.Visible = false;
-                    ComboBoxForLoadedFile.Visible = false;
+                    if (mFromSheet != null)
+                    {
+                        _targetFile = mFromSheet.GetOwnerTable();
+                    }
+                    InternalRefreshForLoadFiles();
+                    LabelLoadedFiles.Visible = true;
+                    ComboBoxForLoadedFile.Visible = true;
                     BtnShowHasSetFilter.Visible = false;
                     DataGridViewForKeyFilter.Columns[mInexForHasSetFilter].Visible = false;
                     DataGridViewForKeyFilter.Columns[mIndexForSetButton].Visible = false;
@@ -427,20 +468,26 @@ namespace ExcelTool
                 }
                 case LoadFileType.SetSearchKey:
                 {
+                    if (mFromSheet != null)
+                    {
+                        _targetFile = mFromSheet.GetOwnerTable();
+                    }
+                    InternalRefreshForLoadFiles();
                     LabelLoadedFiles.Visible = true;
                     ComboBoxForLoadedFile.Visible = true;
                     BtnShowHasSetFilter.Visible = false;
                     DataGridViewForKeyFilter.Columns[mInexForHasSetFilter].Visible = false;
                     DataGridViewForKeyFilter.Columns[mIndexForSetButton].Visible = false;
                     DataGridViewForKeyFilter.Columns[IndexForSelectSearchKey].Visible = true;
-                    InternalRefreshForLoadFiles();
+
                     break;
                 }
             }
 
             if (_targetFile != null)
             {
-                InternalChooseFile(_targetFile);
+                InternalChooseFile(_targetFile, true);
+
                 InternalChangeNotice();
 
                 PanelForConfigs.Enabled = true;
@@ -463,6 +510,8 @@ namespace ExcelTool
             {
                 PanelForConfigs.Enabled = false;
             }
+
+            mFromSheet = null;
         }
 
         private void BtnSearch_Click(object sender, EventArgs e)
@@ -527,13 +576,12 @@ namespace ExcelTool
 
         private void BtnReloadKey_Click(object sender, EventArgs e)
         {
-            var _targetFile = mChooseFile;
-            if (_targetFile == null)
+            if (mChooseSheet == null)
             {
-                MessageBox.Show("当前未加载文件，请检查！", "错误");
+                MessageBox.Show("BtnReloadKey_Click 出错，mChooseSheet为空，请检查!");
                 return;
             }
-
+            mChooseSheet.ReloadKey();
             InternalRefreshDataViewForSheetKey();
         }
 
@@ -563,13 +611,14 @@ namespace ExcelTool
                 MessageBox.Show("加载文件数量错误");
                 return;
             }
+
             var _index = ComboBoxForLoadedFile.SelectedIndex;
             if (_index < 0)
             {
-                _index = 0;
+                return;
             }
-            InternalChooseFile(_dataList[_index]);
-            InternalInitForSheetComboBox();
+
+            InternalChooseFile(_dataList[_index], false);
         }
     }
 }

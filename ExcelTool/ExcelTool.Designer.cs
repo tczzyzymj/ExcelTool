@@ -147,7 +147,7 @@
             ComboBoxForExportConflictDealWay.Name = "ComboBoxForExportConflictDealWay";
             ComboBoxForExportConflictDealWay.Size = new Size(121, 29);
             ComboBoxForExportConflictDealWay.TabIndex = 18;
-            ComboBoxForExportConflictDealWay.SelectedIndexChanged += ComboBoxForExportConfigDealWay_SelectedIndexChanged;
+            ComboBoxForExportConflictDealWay.SelectedIndexChanged += ComboBoxForExportConflictDealWay_SelectedIndexChanged;
             // 
             // label1
             // 

@@ -81,20 +81,14 @@ namespace ExcelTool
             {
                 var _rowData = mCellData2DList[_rowIndex];
 
-                bool _isMatch = true;
-                foreach (var _matchKey in matchKeyList)
-                {
-                    for (int j = 0; j < matchValueList.Count; ++j)
-                    {
-                        if (!string.Equals(_rowData[_matchKey].GetCellValue(), matchValueList[j]))
-                        {
-                            _isMatch = false;
-                            break;
-                        }
-                    }
+                bool _isMatch = false;
 
-                    if (!_isMatch)
+                for (int i = 0; i < matchKeyList.Count; ++i)
+                {
+                    var _matchKeyIndex = matchKeyList[i];
+                    if (string.Equals(_rowData[_matchKeyIndex].GetCellValue(), matchValueList[i]))
                     {
+                        _isMatch = true;
                         break;
                     }
                 }
@@ -244,14 +238,14 @@ namespace ExcelTool
             return mKeyDataList;
         }
 
-        public bool LoadAllCellData()
+        public bool LoadAllCellData(bool forceLoad)
         {
-            if (mHasLoadAllCellData)
+            if (mHasLoadAllCellData && !forceLoad)
             {
                 return false;
             }
 
-            if (InternalLoadAllCellData())
+            if (InternalLoadAllCellData(forceLoad))
             {
                 mHasLoadAllCellData = true;
 
@@ -261,7 +255,7 @@ namespace ExcelTool
             return false;
         }
 
-        protected abstract bool InternalLoadAllCellData();
+        protected abstract bool InternalLoadAllCellData(bool forceLoad);
 
         protected virtual bool AddNewKeyData(int indexInList, int indexInSheetData, string nameValue)
         {

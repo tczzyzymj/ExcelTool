@@ -78,7 +78,7 @@ namespace ExcelTool
                 throw new Exception($"{WriteData} 出错，无法获取当前数据表格的 KeyList，请检查!");
             }
 
-            _currentSheet.LoadAllCellData();
+            _currentSheet.LoadAllCellData(false);
 
             List<string> _theKeyCompareValue = new List<string>();
             List<KeyData> _theKeyList = new List<KeyData>();

@@ -136,7 +136,7 @@ namespace ExcelTool
                 throw new Exception($"{TryProcessData} 出错，SearchTargetSheet 为空");
             }
 
-            SearchTargetSheet.LoadAllCellData();
+            SearchTargetSheet.LoadAllCellData(false);
 
             List<string> _searchInCellList = new List<string>();
 
@@ -147,13 +147,13 @@ namespace ExcelTool
 
             List<string> _resultList = new List<string>();
 
-            List<int> _mathKeyIndexInListData = new List<int>();
-            foreach(var _tempKey in MatchKeyList)
+            List<int> _searchKeyIndexList = new List<int>();
+            foreach (var _tempKey in SearchKeyList)
             {
-                _mathKeyIndexInListData.Add(_tempKey.GetKeyColumIndexInList());
+                _searchKeyIndexList.Add(_tempKey.GetKeyColumIndexInList());
             }
 
-            var searchMatchRowData = SearchTargetSheet.GetRowDataByTargetKeysAndValus(_mathKeyIndexInListData, _searchInCellList);
+            var searchMatchRowData = SearchTargetSheet.GetRowDataByTargetKeysAndValus(_searchKeyIndexList, _searchInCellList);
             if (searchMatchRowData == null)
             {
                 return string.Empty;

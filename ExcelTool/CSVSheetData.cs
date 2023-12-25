@@ -66,8 +66,6 @@ namespace ExcelTool
                 return false;
             }
 
-            mAllSheetData.Add(_keyArray);
-
             var _ownerTable = GetOwnerTable() as CSVFileData;
             if (_ownerTable == null)
             {
@@ -77,7 +75,7 @@ namespace ExcelTool
 
             // 这里是 key，初始化的时候只初始化一下 key，内容放到后面的解析去做
             {
-                var _keyLine = mAllSheetData[0];
+                var _keyLine = _keyArray;
 
                 for (int _i = GetKeyStartColmIndex(); _i < _keyLine.Length; ++_i)
                 {
@@ -85,16 +83,16 @@ namespace ExcelTool
                 }
             }
 
-            InternalLoadAllCellData();
+            InternalLoadAllCellData(true);
 
             mHasInitKey = true;
 
             return true;
         }
 
-        protected override bool InternalLoadAllCellData()
+        protected override bool InternalLoadAllCellData(bool forceLoad)
         {
-            if (mHasLoadAllCellData)
+            if (mHasLoadAllCellData && !forceLoad)
             {
                 return true;
             }
@@ -135,17 +133,10 @@ namespace ExcelTool
                 MessageBox.Show("InternalLoadAllCellData 无法获取 SheetData，请检查！", "错误");
                 return false;
             }
-            var _capacity = mAllSheetData.Count - _contentStartRow;
-            if (_capacity > 3)
-            {
-                mCellData2DList = new List<List<CellValueData>>(_capacity);
-            }
-            else
-            {
-                mCellData2DList = new List<List<CellValueData>>();
-            }
 
-            for (int _row = _contentStartRow; _row < mAllSheetData.Count; ++_row)
+            mCellData2DList = new List<List<CellValueData>>(mAllSheetData.Count);
+
+            for (int _row = 0; _row < mAllSheetData.Count; ++_row)
             {
                 var _newList = new List<CellValueData>();
                 mCellData2DList.Add(_newList);

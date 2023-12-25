@@ -142,7 +142,7 @@ namespace ExcelTool
             {
                 throw new Exception("_sourceSheet 为空");
             }
-            _sourceSheet.LoadAllCellData();
+            _sourceSheet.LoadAllCellData(true);
             var _sourceSheetIndex = _sourceFile.GetWorkSheetList().IndexOf(_sourceSheet);
             if (_sourceSheetIndex < 0)
             {
@@ -161,7 +161,7 @@ namespace ExcelTool
             {
                 throw new Exception($"_exportSheet 为空");
             }
-            _exportSheet.LoadAllCellData();
+            _exportSheet.LoadAllCellData(true);
             var _exportSheetIndex = _exportFile.GetWorkSheetList().IndexOf(_exportSheet);
             if (_exportSheetIndex < 0)
             {

@@ -148,9 +148,9 @@ namespace ExcelTool
             return true;
         }
 
-        protected override bool InternalLoadAllCellData()
+        protected override bool InternalLoadAllCellData(bool forceLoad)
         {
-            if (mHasLoadAllCellData)
+            if (mHasLoadAllCellData && !forceLoad)
             {
                 return true;
             }

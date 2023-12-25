@@ -125,6 +125,11 @@ namespace ExcelTool
         private const int mColumIndexForSelect = 2;
         private void DataViewForKeyConfig_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)// 什么傻逼玩意，-1也发消息
+            {
+                return;
+            }
+
             switch (e.ColumnIndex)
             {
                 case mColumIndexForSelect:
@@ -164,7 +169,7 @@ namespace ExcelTool
         private void BtnLoadNewFile_Click(object sender, EventArgs e)
         {
             ChooseFileConfigForm _form = new ChooseFileConfigForm();
-            _form.SetInitData(LoadFileType.NormalFile, null);
+            _form.SetInitData(LoadFileType.NormalFile, mSelectSheet);
             if (_form.ShowDialog() == DialogResult.OK)
             {
                 mTargetFile = _form.GetChooseFile();
@@ -294,9 +299,15 @@ namespace ExcelTool
 
         private void DataViewForAction_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)// 什么傻逼玩意，-1也发消息
+            {
+                return;
+            }
+
             if (mFromAction == null)
             {
-                throw new Exception($"DataViewForAction_CellContentClick 出错， mFromAction 为空，请检查");
+                MessageBox.Show($"DataViewForAction_CellContentClick 出错， mFromAction 为空，请检查", "错误");
+                return;
             }
 
             switch (e.ColumnIndex)
@@ -336,8 +347,19 @@ namespace ExcelTool
                         _newForm.SetFindAction(_findAction);
                         if (_newForm.ShowDialog() == DialogResult.OK)
                         {
-                            _findAction.SearchKeyList = _newForm.GetSelectKeyList();
+                            var _keyList = _newForm.GetSelectKeyList();
+
+                            if (_keyList.Count <= 0)
+                            {
+                                MessageBox.Show("为什么没有配置任何 Key？", "错误");
+                                return;
+                            }
+
+                            _findAction.SearchKeyList = _keyList;
+
                             _findAction.SearchTargetSheet = _newForm.GetChooseSheet();
+
+                            InternalRefreshForActionDataView();
                         }
                     }
 
