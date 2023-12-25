@@ -13,7 +13,7 @@ namespace ExcelTool
 {
     public partial class ChooseFileConfigForm : Form
     {
-        private LoadFileType mFileType = 0;
+        private LoadFileType mFromFileType = 0;
 
         public ChooseFileConfigForm()
         {
@@ -23,44 +23,63 @@ namespace ExcelTool
 
         private FileDataBase? mChooseFile = null;
 
-        private CommonWorkSheetData mChooseSheet = null;
+        private CommonWorkSheetData? mChooseSheet = null;
 
         private List<KeyData> mKeyDataList = new List<KeyData>();
 
-        public string LastChooseFileAbsolutePath
+        private List<KeyData> mSelectKeyList = new List<KeyData>(); // 跨文件查找用到
+        private DataProcessActionForFindRowDataInOtherSheet mFromAction = null;// 跨文件查找用到
+
+        public FileDataBase? GetChooseFile()
         {
-            get;
-            private set;
+            return mChooseFile;
         }
+
+        public CommonWorkSheetData GetChooseSheet()
+        {
+            return mChooseSheet;
+        }
+
+        public List<KeyData> GetSelectKeyList()
+        {
+            return mSelectKeyList;
+        }
+
+        private CommonWorkSheetData? mFromSheet = null;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="fileType">1表示读取的是exportfile , 2 表示读取的是 sourcefile，3表示普通文件加载</param>
-        public void SetInitData(LoadFileType fileType)
+        public void SetInitData(LoadFileType fileType, CommonWorkSheetData? fromSheet)
         {
-            mFileType = fileType;
+            mFromFileType = fileType;
+            mFromSheet = fromSheet;
+        }
+
+        public void SetFindAction(DataProcessActionForFindRowDataInOtherSheet targetAction)
+        {
+            mFromFileType = LoadFileType.SetSearchKey;
+            mFromAction = targetAction;
         }
 
         private FileDataBase? InternalLoadFile(string absolutePath)
         {
-            switch (mFileType)
+            switch (mFromFileType)
             {
                 case LoadFileType.ExportFile:
                 {
-                    mChooseFile = TableDataManager.Ins().TryLoadExportFile(absolutePath);
-                    return mChooseFile;
+                    return TableDataManager.Ins().TryLoadExportFile(absolutePath);
+
                 }
                 case LoadFileType.SourceFile:
                 {
-                    mChooseFile = TableDataManager.Ins().TryLoadSourceFile(absolutePath);
-                    return mChooseFile;
+                    return TableDataManager.Ins().TryLoadSourceFile(absolutePath);
                 }
+                case LoadFileType.SetSearchKey:
                 case LoadFileType.NormalFile:
                 {
-
-                    mChooseFile = TableDataManager.Ins().TryLoadNormalFile(absolutePath);
-                    return mChooseFile;
+                    return TableDataManager.Ins().TryLoadNormalFile(absolutePath);
                 }
             }
 
@@ -69,7 +88,7 @@ namespace ExcelTool
 
         private string InternalGetFileFilterStr()
         {
-            switch (mFileType)
+            switch (mFromFileType)
             {
                 case LoadFileType.ExportFile:
                 {
@@ -106,13 +125,18 @@ namespace ExcelTool
             _openfileDialog.Multiselect = false;
             if (_openfileDialog.ShowDialog() == DialogResult.OK)
             {
-                InternalLoadFile(_openfileDialog.FileName);
+                var _tempFile = InternalLoadFile(_openfileDialog.FileName);
+                if (_tempFile == null)
+                {
+                    MessageBox.Show($"加载目标文件：{_openfileDialog.FileName} 出错，请检查!", "错误");
+                    return;
+                }
+                InternalChooseFile(_tempFile);
                 if (mChooseFile == null)
                 {
                     MessageBox.Show($"加载目标文件：{_openfileDialog.FileName} 出错，请检查!", "错误");
                     return;
                 }
-
                 TextForFilePath.Text = _openfileDialog.FileName;
                 var _workSheetList = mChooseFile.GetWorkSheetList();
                 if (_workSheetList == null || _workSheetList.Count < 1)
@@ -120,7 +144,6 @@ namespace ExcelTool
                     return;
                 }
 
-                LastChooseFileAbsolutePath = mChooseFile.GetFileAbsulotePath();
                 InternalChangeNotice();
 
                 TextForFilePath.Text = _openfileDialog.FileName;
@@ -140,29 +163,54 @@ namespace ExcelTool
                     TextBoxSplitSymbol.Text = ",";
                 }
 
-                InternalInitForSheetComboBox(mChooseFile);
+                InternalInitForSheetComboBox();
+
+                if (mFromFileType == LoadFileType.SetSearchKey)
+                {
+                    InternalRefreshForLoadFiles();
+                }
             }
         }
 
-        private void InternalInitForSheetComboBox(FileDataBase targetFile)
+        private void InternalChooseFile(FileDataBase targetFile)
         {
-            var _targetFile = targetFile;
-            if (_targetFile == null)
+            if (targetFile == null)
+            {
+                MessageBox.Show("InternalChooseFile， targetFile 为空", "错误");
+                return;
+            }
+
+            if (mChooseFile != null && mChooseFile == targetFile)
             {
                 return;
             }
 
-            var _workSheetList = _targetFile.GetWorkSheetList();
-            if (_workSheetList == null || _workSheetList.Count < 1)
+            mChooseFile = targetFile;
+            InternalInitForSheetComboBox();
+        }
+
+        private void InternalInitForSheetComboBox()
+        {
+            var _targetFile = mChooseFile;
+            if (_targetFile != null)
             {
-                return;
+                var _workSheetList = _targetFile.GetWorkSheetList();
+                if (_workSheetList != null && _workSheetList.Count > 0)
+                {
+                    ComboBoxForSelectSheet.BeginUpdate();
+                    ComboBoxForSelectSheet.DataSource = _workSheetList;
+                    ComboBoxForSelectSheet.ValueMember = "IndexInListForShow";
+                    ComboBoxForSelectSheet.DisplayMember = "DisplayName";
+                    ComboBoxForSelectSheet.SelectedIndex = 0;
+                    ComboBoxForSelectSheet.EndUpdate();
+
+                    return;
+                }
             }
 
             ComboBoxForSelectSheet.BeginUpdate();
-            ComboBoxForSelectSheet.DataSource = _workSheetList;
-            ComboBoxForSelectSheet.ValueMember = "IndexInListForShow";
-            ComboBoxForSelectSheet.DisplayMember = "DisplayName";
-            ComboBoxForSelectSheet.SelectedIndex = 0;
+            ComboBoxForSelectSheet.DataSource = null;
+            ComboBoxForSelectSheet.Items?.Clear();
             ComboBoxForSelectSheet.EndUpdate();
         }
 
@@ -236,7 +284,7 @@ namespace ExcelTool
             TextBoxForKeyStartColm.Text = mChooseSheet.GetKeyStartColmIndex().ToString();
             TextBoxForContentStartRow.Text = mChooseSheet.GetContentStartRowIndex().ToString();
 
-            switch (this.mFileType)
+            switch (this.mFromFileType)
             {
                 case LoadFileType.NormalFile:
                 {
@@ -261,18 +309,26 @@ namespace ExcelTool
             for (int i = 0; i < mKeyDataList.Count; i++)
             {
                 var _filter = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mKeyDataList[i]);
+                bool _showSelect = false;
+                if (mFromAction != null)
+                {
+                    _showSelect = mFromAction.SearchKeyList.Contains(mKeyDataList[i]);
+                }
                 DataGridViewForKeyFilter.Rows.Add(
                     CommonUtil.GetZM(mKeyDataList[i].GetKeyIndexForShow()),
                     mKeyDataList[i].KeyName,
                     _filter != null && _filter.Count > 0,
-                    "设置"
+                    "设置",
+                    _showSelect
                 );
             }
         }
 
         private const int mInexForHasSetFilter = 2;
-
+        private const int IndexForSelectSearchKey = 4;
         private const int mIndexForSetButton = 3;
+
+
         private void DataGridViewForKeyFilter_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             var _targetFile = mChooseFile;
@@ -307,40 +363,89 @@ namespace ExcelTool
             }
         }
 
+        private void InternalRefreshForLoadFiles()
+        {
+            // 这里为 file combobox 的已加载文件做显示
+            {
+                ComboBoxForLoadedFile.DataSource = null;
+                ComboBoxForLoadedFile.Items.Clear();
+                ComboBoxForLoadedFile.BeginUpdate();
+                var _dataList = TableDataManager.Ins().GetLoadedFileList();
+
+                ComboBoxForLoadedFile.DataSource = _dataList;
+                ComboBoxForLoadedFile.ValueMember = "DisplayIndex";
+                ComboBoxForLoadedFile.DisplayMember = "DisplayName";
+                var _fileIndex = _dataList.FindIndex(x => x.GetFileAbsulotePath() == mChooseFile?.GetFileAbsulotePath());
+                if (_dataList != null && _dataList.Count > 0 && _fileIndex >= 0)
+                {
+                    ComboBoxForLoadedFile.SelectedIndex = _fileIndex;
+                }
+
+                ComboBoxForLoadedFile.EndUpdate();
+            }
+        }
+
         private void ChooseFileConfigForm_Load(object sender, EventArgs e)
         {
-            switch (mFileType)
+            FileDataBase? _targetFile = null;
+            CommonWorkSheetData? _targetSheet = null;
+            switch (mFromFileType)
             {
                 case LoadFileType.ExportFile:
                 {
-                    mChooseFile = TableDataManager.Ins().GetExportFileData();
+                    _targetFile = TableDataManager.Ins().GetExportFileData();
 
-                    this.DataGridViewForKeyFilter.Columns[mInexForHasSetFilter].Visible = false;
-                    this.DataGridViewForKeyFilter.Columns[mIndexForSetButton].Visible = false;
+                    DataGridViewForKeyFilter.Columns[mInexForHasSetFilter].Visible = false;
+                    DataGridViewForKeyFilter.Columns[mIndexForSetButton].Visible = false;
+                    DataGridViewForKeyFilter.Columns[IndexForSelectSearchKey].Visible = false;
+                    LabelLoadedFiles.Visible = false;
+                    ComboBoxForLoadedFile.Visible = false;
+
+                    BtnShowHasSetFilter.Visible = false;
+
                     break;
                 }
                 case LoadFileType.SourceFile:
                 {
-                    mChooseFile = TableDataManager.Ins().GetSourceFileData();
-
+                    LabelLoadedFiles.Visible = false;
+                    ComboBoxForLoadedFile.Visible = false;
+                    BtnShowHasSetFilter.Visible = true;
+                    _targetFile = TableDataManager.Ins().GetSourceFileData();
+                    DataGridViewForKeyFilter.Columns[IndexForSelectSearchKey].Visible = false;
                     break;
                 }
                 case LoadFileType.NormalFile:
                 {
-                    this.DataGridViewForKeyFilter.Columns[mInexForHasSetFilter].Visible = false;
-                    this.DataGridViewForKeyFilter.Columns[mIndexForSetButton].Visible = false;
+                    LabelLoadedFiles.Visible = false;
+                    ComboBoxForLoadedFile.Visible = false;
+                    BtnShowHasSetFilter.Visible = false;
+                    DataGridViewForKeyFilter.Columns[mInexForHasSetFilter].Visible = false;
+                    DataGridViewForKeyFilter.Columns[mIndexForSetButton].Visible = false;
+                    DataGridViewForKeyFilter.Columns[IndexForSelectSearchKey].Visible = false;
+
+                    break;
+                }
+                case LoadFileType.SetSearchKey:
+                {
+                    LabelLoadedFiles.Visible = true;
+                    ComboBoxForLoadedFile.Visible = true;
+                    BtnShowHasSetFilter.Visible = false;
+                    DataGridViewForKeyFilter.Columns[mInexForHasSetFilter].Visible = false;
+                    DataGridViewForKeyFilter.Columns[mIndexForSetButton].Visible = false;
+                    DataGridViewForKeyFilter.Columns[IndexForSelectSearchKey].Visible = true;
+                    InternalRefreshForLoadFiles();
                     break;
                 }
             }
 
-            var _targetFile = mChooseFile;
             if (_targetFile != null)
             {
+                InternalChooseFile(_targetFile);
                 InternalChangeNotice();
 
                 PanelForConfigs.Enabled = true;
 
-                if (_targetFile is CSVFileData _csvFile)
+                if (mChooseFile is CSVFileData _csvFile)
                 {
                     LableForSplitSymbol.Visible = true;
                     TextBoxSplitSymbol.Visible = true;
@@ -352,9 +457,7 @@ namespace ExcelTool
                     TextBoxSplitSymbol.Visible = false;
                 }
 
-                TextForFilePath.Text = _targetFile.GetFileAbsulotePath();
-
-                InternalInitForSheetComboBox(_targetFile);
+                TextForFilePath.Text = mChooseFile.GetFileAbsulotePath();
             }
             else
             {
@@ -364,12 +467,6 @@ namespace ExcelTool
 
         private void BtnSearch_Click(object sender, EventArgs e)
         {
-            var _targetFile = mChooseFile;
-            if (_targetFile == null)
-            {
-                return;
-            }
-
             // 这里导出 key 供选择
             var _currentSheet = mChooseSheet;
             if (_currentSheet == null)
@@ -410,6 +507,12 @@ namespace ExcelTool
 
         private void BtnFinishConfig_Click(object sender, EventArgs e)
         {
+            if (mChooseSheet == null)
+            {
+                MessageBox.Show("未选中 Sheet，请检查");
+                return;
+            }
+
             this.DialogResult = DialogResult.OK;
         }
 
@@ -438,7 +541,9 @@ namespace ExcelTool
         {
             for (int i = 0; i < this.DataGridViewForKeyFilter.Rows.Count; ++i)
             {
-                bool _show = false;
+                var _key = mKeyDataList[i];
+                var _filterFunc = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(_key);
+                bool _show = _filterFunc != null && _filterFunc.Count > 0;
                 if (_show)
                 {
                     DataGridViewForKeyFilter.Rows[i].Visible = true;
@@ -448,6 +553,23 @@ namespace ExcelTool
                     DataGridViewForKeyFilter.Rows[i].Visible = false;
                 }
             }
+        }
+
+        private void ComboBoxForLoadedFile_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var _dataList = TableDataManager.Ins().GetLoadedFileList();
+            if (_dataList == null || _dataList.Count < 1)
+            {
+                MessageBox.Show("加载文件数量错误");
+                return;
+            }
+            var _index = ComboBoxForLoadedFile.SelectedIndex;
+            if (_index < 0)
+            {
+                _index = 0;
+            }
+            InternalChooseFile(_dataList[_index]);
+            InternalInitForSheetComboBox();
         }
     }
 }

@@ -42,6 +42,11 @@
             ComboBoxForSelectSheet = new ComboBox();
             label4 = new Label();
             DataGridViewForKeyFilter = new DataGridView();
+            KeyIndex = new DataGridViewTextBoxColumn();
+            KeyName = new DataGridViewTextBoxColumn();
+            CheckColum = new DataGridViewCheckBoxColumn();
+            EditFilterBtnColum = new DataGridViewButtonColumn();
+            ChooseSearchKey = new DataGridViewCheckBoxColumn();
             TextBoxForSearch = new TextBox();
             BtnSearch = new Button();
             BtnReset = new Button();
@@ -50,11 +55,9 @@
             PanelForConfigs = new Panel();
             LabelForNotice = new Label();
             BtnReloadKey = new Button();
-            KeyIndex = new DataGridViewTextBoxColumn();
-            KeyName = new DataGridViewTextBoxColumn();
-            CheckColum = new DataGridViewCheckBoxColumn();
-            EditFilterBtnColum = new DataGridViewButtonColumn();
             BtnShowHasSetFilter = new Button();
+            LabelLoadedFiles = new Label();
+            ComboBoxForLoadedFile = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)DataGridViewForKeyFilter).BeginInit();
             PanelForConfigs.SuspendLayout();
             SuspendLayout();
@@ -139,11 +142,11 @@
             // BtnChooseFile
             // 
             BtnChooseFile.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            BtnChooseFile.Location = new Point(653, 20);
+            BtnChooseFile.Location = new Point(653, 21);
             BtnChooseFile.Name = "BtnChooseFile";
             BtnChooseFile.Size = new Size(130, 30);
             BtnChooseFile.TabIndex = 26;
-            BtnChooseFile.Text = "选择文件";
+            BtnChooseFile.Text = "加载文件";
             BtnChooseFile.UseVisualStyleBackColor = true;
             BtnChooseFile.Click += BtnChooseFile_Click;
             // 
@@ -200,13 +203,48 @@
             // DataGridViewForKeyFilter
             // 
             DataGridViewForKeyFilter.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            DataGridViewForKeyFilter.Columns.AddRange(new DataGridViewColumn[] { KeyIndex, KeyName, CheckColum, EditFilterBtnColum });
+            DataGridViewForKeyFilter.Columns.AddRange(new DataGridViewColumn[] { KeyIndex, KeyName, CheckColum, EditFilterBtnColum, ChooseSearchKey });
             DataGridViewForKeyFilter.Location = new Point(15, 225);
             DataGridViewForKeyFilter.Name = "DataGridViewForKeyFilter";
             DataGridViewForKeyFilter.RowTemplate.Height = 25;
             DataGridViewForKeyFilter.Size = new Size(768, 283);
             DataGridViewForKeyFilter.TabIndex = 36;
             DataGridViewForKeyFilter.CellContentClick += DataGridViewForKeyFilter_CellContentClick;
+            // 
+            // KeyIndex
+            // 
+            KeyIndex.HeaderText = "Key下标";
+            KeyIndex.Name = "KeyIndex";
+            KeyIndex.ReadOnly = true;
+            KeyIndex.Width = 80;
+            // 
+            // KeyName
+            // 
+            KeyName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            KeyName.HeaderText = "Key名字";
+            KeyName.Name = "KeyName";
+            KeyName.ReadOnly = true;
+            // 
+            // CheckColum
+            // 
+            CheckColum.HeaderText = "已设置筛选";
+            CheckColum.Name = "CheckColum";
+            CheckColum.ReadOnly = true;
+            CheckColum.Width = 80;
+            // 
+            // EditFilterBtnColum
+            // 
+            EditFilterBtnColum.HeaderText = "设置过滤方法";
+            EditFilterBtnColum.Name = "EditFilterBtnColum";
+            EditFilterBtnColum.Text = "设置";
+            // 
+            // ChooseSearchKey
+            // 
+            ChooseSearchKey.HeaderText = "选择";
+            ChooseSearchKey.Name = "ChooseSearchKey";
+            ChooseSearchKey.Resizable = DataGridViewTriState.True;
+            ChooseSearchKey.SortMode = DataGridViewColumnSortMode.Automatic;
+            ChooseSearchKey.Width = 60;
             // 
             // TextBoxForSearch
             // 
@@ -296,37 +334,10 @@
             BtnReloadKey.UseVisualStyleBackColor = true;
             BtnReloadKey.Click += BtnReloadKey_Click;
             // 
-            // KeyIndex
-            // 
-            KeyIndex.HeaderText = "Key下标";
-            KeyIndex.Name = "KeyIndex";
-            KeyIndex.ReadOnly = true;
-            KeyIndex.Width = 80;
-            // 
-            // KeyName
-            // 
-            KeyName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            KeyName.HeaderText = "Key名字";
-            KeyName.Name = "KeyName";
-            KeyName.ReadOnly = true;
-            // 
-            // CheckColum
-            // 
-            CheckColum.HeaderText = "已设置筛选";
-            CheckColum.Name = "CheckColum";
-            CheckColum.ReadOnly = true;
-            CheckColum.Width = 80;
-            // 
-            // EditFilterBtnColum
-            // 
-            EditFilterBtnColum.HeaderText = "设置过滤方法";
-            EditFilterBtnColum.Name = "EditFilterBtnColum";
-            EditFilterBtnColum.Text = "设置";
-            // 
             // BtnShowHasSetFilter
             // 
             BtnShowHasSetFilter.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            BtnShowHasSetFilter.Location = new Point(433, 185);
+            BtnShowHasSetFilter.Location = new Point(433, 186);
             BtnShowHasSetFilter.Name = "BtnShowHasSetFilter";
             BtnShowHasSetFilter.Size = new Size(110, 30);
             BtnShowHasSetFilter.TabIndex = 46;
@@ -334,11 +345,34 @@
             BtnShowHasSetFilter.UseVisualStyleBackColor = true;
             BtnShowHasSetFilter.Click += BtnShowHasSetFilter_Click;
             // 
+            // LabelLoadedFiles
+            // 
+            LabelLoadedFiles.AutoSize = true;
+            LabelLoadedFiles.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            LabelLoadedFiles.Location = new Point(252, 65);
+            LabelLoadedFiles.Name = "LabelLoadedFiles";
+            LabelLoadedFiles.Size = new Size(90, 21);
+            LabelLoadedFiles.TabIndex = 48;
+            LabelLoadedFiles.Text = "已加载文件";
+            // 
+            // ComboBoxForLoadedFile
+            // 
+            ComboBoxForLoadedFile.DropDownStyle = ComboBoxStyle.DropDownList;
+            ComboBoxForLoadedFile.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            ComboBoxForLoadedFile.FormattingEnabled = true;
+            ComboBoxForLoadedFile.Location = new Point(353, 60);
+            ComboBoxForLoadedFile.Name = "ComboBoxForLoadedFile";
+            ComboBoxForLoadedFile.Size = new Size(130, 29);
+            ComboBoxForLoadedFile.TabIndex = 47;
+            ComboBoxForLoadedFile.SelectedIndexChanged += ComboBoxForLoadedFile_SelectedIndexChanged;
+            // 
             // ChooseFileConfigForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(796, 568);
+            Controls.Add(LabelLoadedFiles);
+            Controls.Add(ComboBoxForLoadedFile);
             Controls.Add(BtnShowHasSetFilter);
             Controls.Add(BtnReloadKey);
             Controls.Add(PanelForConfigs);
@@ -388,10 +422,13 @@
         private Panel PanelForConfigs;
         private Button BtnReloadKey;
         private Label LabelForNotice;
+        private Button BtnShowHasSetFilter;
+        private Label LabelLoadedFiles;
+        private ComboBox ComboBoxForLoadedFile;
         private DataGridViewTextBoxColumn KeyIndex;
         private DataGridViewTextBoxColumn KeyName;
         private DataGridViewCheckBoxColumn CheckColum;
         private DataGridViewButtonColumn EditFilterBtnColum;
-        private Button BtnShowHasSetFilter;
+        private DataGridViewCheckBoxColumn ChooseSearchKey;
     }
 }

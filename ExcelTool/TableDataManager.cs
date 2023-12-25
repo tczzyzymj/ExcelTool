@@ -105,7 +105,7 @@ namespace ExcelTool
             }
         }
 
-        public List<FileDataBase> GetTableDataList()
+        public List<FileDataBase> GetLoadedFileList()
         {
             return mDataList;
         }
@@ -201,6 +201,16 @@ namespace ExcelTool
         public FileDataBase? TryGetTableByPath(string absolutePath)
         {
             return mDataList.Find(x => x.GetFileAbsulotePath().Equals(absolutePath));
+        }
+
+        public int TryGetTableIndex(FileDataBase? targetFile)
+        {
+            if (targetFile == null)
+            {
+                return -1;
+            }
+
+            return mDataList.IndexOf(targetFile);
         }
 
         public int TryGetTableIndexByPath(string absolutePath)

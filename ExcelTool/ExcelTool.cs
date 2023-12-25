@@ -71,7 +71,7 @@ namespace ExcelTool
         private void BntChooseExportFile_Click(object sender, EventArgs e)
         {
             ChooseFileConfigForm _exportConfigForm = new ChooseFileConfigForm();
-            _exportConfigForm.SetInitData(LoadFileType.ExportFile);
+            _exportConfigForm.SetInitData(LoadFileType.ExportFile, TableDataManager.Ins().GetExportSheet());
             if (_exportConfigForm.ShowDialog(this) == DialogResult.OK)
             {
                 InternalAnalysisKey();
@@ -193,7 +193,7 @@ namespace ExcelTool
         private void BtnChooseSourceFile_Click(object sender, EventArgs e)
         {
             ChooseFileConfigForm _form = new ChooseFileConfigForm();
-            _form.SetInitData(LoadFileType.SourceFile);
+            _form.SetInitData(LoadFileType.SourceFile, TableDataManager.Ins().GetSourceSheet());
             if (_form.ShowDialog(this) == DialogResult.OK)
             {
             }
@@ -291,13 +291,20 @@ namespace ExcelTool
                         return;
                     }
 
+                    var _sourceSheet = TableDataManager.Ins().GetSourceSheet();
+                    if (_sourceSheet == null)
+                    {
+                        MessageBox.Show("请先选择源文件 Sheet", "错误");
+                        return;
+                    }
+
                     KeyConnectEditForm _form = new KeyConnectEditForm();
                     if (!TableDataManager.Ins().ExportKeyActionMap.TryGetValue(_fromKey, out var _action))
                     {
                         _action = new SourceAction();
                         TableDataManager.Ins().ExportKeyActionMap.Add(_fromKey, _action);
                     }
-                    _form.InitData(_action);
+                    _form.InitData(_action, true, _sourceSheet);
                     if (_form.ShowDialog() == DialogResult.OK)
                     {
                         // TODO 这里去检测一下，看是否有循环引用

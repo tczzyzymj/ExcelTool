@@ -47,6 +47,9 @@ namespace ExcelTool
 
         // 数据源文件
         SourceFile,
+
+        // 设置查找KEY
+        SetSearchKey,
     }
 
     public class CommonDataForComboBox

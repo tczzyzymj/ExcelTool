@@ -14,7 +14,8 @@ namespace ExcelTool
     public partial class KeyConnectEditForm : Form
     {
         private DataProcessActionBase mFromAction = null;
-        private FileDataBase? mSelectTargetTable = null;
+        private FileDataBase? mTargetFile = null;
+        private CommonWorkSheetData? mFromSheet = null;
         private CommonWorkSheetData? mSelectSheet = null;
         private const int mColumIndexForConnectInfo = 2;
         private const int mColumIndexForEditConnect = 3;
@@ -26,6 +27,8 @@ namespace ExcelTool
 
         private CommonDataForClass mChooseActionType = null;
 
+        private bool mCanLoadNewFile = true;
+
         public KeyConnectEditForm()
         {
             InitializeComponent();
@@ -33,7 +36,7 @@ namespace ExcelTool
             DataViewForAction.AllowUserToAddRows = false;
         }
 
-        public bool InitData(DataProcessActionBase targetAction)
+        public bool InitData(DataProcessActionBase targetAction, bool canLoadNewFile, CommonWorkSheetData fromSheet)
         {
             if (targetAction == null)
             {
@@ -41,7 +44,8 @@ namespace ExcelTool
                 this.Close();
                 return false;
             }
-
+            mFromSheet = fromSheet;
+            mCanLoadNewFile = canLoadNewFile;
             mFromAction = targetAction;
             return true;
         }
@@ -53,45 +57,66 @@ namespace ExcelTool
                 throw new Exception($"KeyConnectEditForm_Load 错误，mFromAction为空");
             }
 
+            BtnLoadNewFile.Visible = mCanLoadNewFile;
+            LabelLoadedFile.Visible = mCanLoadNewFile;
+            ComboBoxForLoadedFile.Visible = mCanLoadNewFile;
+            LabelSelectSheet.Visible = mCanLoadNewFile;
+            ComboBoxForWorkSheet.Visible = mCanLoadNewFile;
+
+            if (!mCanLoadNewFile && mFromAction is DataProcessActionForFindRowDataInOtherSheet _findAction)
+            {
+                LabelForFromTable.Text = _findAction.SearchTargetSheet.GetOwnerTable()?.DisplayName + "->" + _findAction.SearchTargetSheet.DisplayName;
+                mSelectSheet = _findAction.SearchTargetSheet;
+                mTargetFile = mSelectSheet?.GetOwnerTable();
+            }
+
             mDataClassList = CommonUtil.CreateComboBoxDataForType<DataProcessActionBase>();
             ComboBoxForActionTypeList.DataSource = null;
             ComboBoxForActionTypeList.Items.Clear();
             ComboBoxForActionTypeList.DataSource = mDataClassList;
             ComboBoxForActionTypeList.ValueMember = "Index";
             ComboBoxForActionTypeList.DisplayMember = "Name";
+            MultiDataSplitSymbol.Text = mFromAction.MultiValueSplitSymbol;
 
-            //LabelForFromTable.Text = $"关联：{mFromAction.SearchTargetSheet.DisplayName}--Key:{mFromAction.GetKeyName()}";
-
-            // 这里先默认选择一下加载的源数据文件
-            mSelectTargetTable = TableDataManager.Ins().GetSourceFileData();
             InternalRefreshForActionDataView();
-            InternalRefreshForLoadFiles();
-
-            this.MultiDataSplitSymbol.Text = mFromAction.MultiValueSplitSymbol;
-
-            this.InternalRefreshSheetComboBox();
-
+            InternalRefreshAfterLoadFile();
+            InternalRefreshSheetComboBox();
             InternalRefreshComboBoxForSelectKey();
+            mFromSheet = null;
         }
 
-        private void InternalRefreshForLoadFiles()
+        private void InternalRefreshAfterLoadFile()
         {
-            // 这里为 file combobox 的已加载文件做显示
+            if (!mCanLoadNewFile)
             {
-                ComboBoxForLoadedFile.DataSource = null;
-                ComboBoxForLoadedFile.Items.Clear();
-                ComboBoxForLoadedFile.BeginUpdate();
-                var _dataList = TableDataManager.Ins().GetTableDataList();
+                return;
+            }
 
-                ComboBoxForLoadedFile.DataSource = _dataList;
-                ComboBoxForLoadedFile.ValueMember = "DisplayIndex";
-                ComboBoxForLoadedFile.DisplayMember = "DisplayName";
-                if (_dataList != null && _dataList.Count > 0)
+            // 这里为 file combobox 的已加载文件做显示
+            ComboBoxForLoadedFile.BeginUpdate();
+            ComboBoxForLoadedFile.DataSource = null;
+            ComboBoxForLoadedFile.Items.Clear();
+            var _dataList = TableDataManager.Ins().GetLoadedFileList();
+            ComboBoxForLoadedFile.DataSource = _dataList;
+            ComboBoxForLoadedFile.ValueMember = "DisplayIndex";
+            ComboBoxForLoadedFile.DisplayMember = "DisplayName";
+            ComboBoxForLoadedFile.EndUpdate();
+
+            if (mFromSheet != null)
+            {
+                var _index = TableDataManager.Ins().TryGetTableIndex(mFromSheet.GetOwnerTable());
+                if (_index >= 0 && _dataList != null && _dataList.Count > 0)
                 {
-                    ComboBoxForLoadedFile.SelectedIndex = 0;
+                    ComboBoxForLoadedFile.SelectedIndex = _index;
                 }
-
-                ComboBoxForLoadedFile.EndUpdate();
+            }
+            else if (mTargetFile != null)
+            {
+                var _index = TableDataManager.Ins().TryGetTableIndex(mTargetFile);
+                if (_index >= 0 && _dataList != null && _dataList.Count > 0)
+                {
+                    ComboBoxForLoadedFile.SelectedIndex = _index;
+                }
             }
         }
 
@@ -139,26 +164,32 @@ namespace ExcelTool
         private void BtnLoadNewFile_Click(object sender, EventArgs e)
         {
             ChooseFileConfigForm _form = new ChooseFileConfigForm();
-            _form.SetInitData(LoadFileType.NormalFile);
-            _form.ShowDialog();
-            InternalRefreshForLoadFiles();
-            var _index = TableDataManager.Ins().TryGetTableIndexByPath(_form.LastChooseFileAbsolutePath);
-            ComboBoxForLoadedFile.SelectedIndex = _index;
-            this.ComboBoxForLoadedFile.Update();
+            _form.SetInitData(LoadFileType.NormalFile, null);
+            if (_form.ShowDialog() == DialogResult.OK)
+            {
+                mTargetFile = _form.GetChooseFile();
+                InternalRefreshAfterLoadFile();
+            }
         }
 
         private void ComboBoxForLoadedFile_SelectedIndexChanged(object sender, EventArgs e)
         {
-            InternalRefreshSheetComboBox();
+            var _index = this.ComboBoxForLoadedFile.SelectedIndex;
+            if (_index >= 0)
+            {
+                mTargetFile = TableDataManager.Ins().GetLoadedFileList()[_index];
+                InternalRefreshSheetComboBox();
+            }
         }
 
         private void InternalRefreshSheetComboBox()
         {
-            if (mSelectTargetTable == null)
+            if (mTargetFile == null)
             {
                 return;
             }
-            var _sheetList = mSelectTargetTable.GetWorkSheetList();
+
+            var _sheetList = mTargetFile.GetWorkSheetList();
             if (_sheetList.Count > 0)
             {
                 ComboBoxForWorkSheet.DataSource = null;
@@ -167,14 +198,27 @@ namespace ExcelTool
                 ComboBoxForWorkSheet.DataSource = _sheetList;
                 ComboBoxForWorkSheet.ValueMember = "IndexInListForShow";
                 ComboBoxForWorkSheet.DisplayMember = "DisplayName";
-                ComboBoxForWorkSheet.SelectedIndex = 0;
+                if (mFromSheet != null)
+                {
+                    var _tempIndex = _sheetList.IndexOf(mFromSheet);
+                    if (_tempIndex >= 0 && _sheetList != null && _sheetList.Count > 0)
+                    {
+                        ComboBoxForWorkSheet.SelectedIndex = _tempIndex;
+                    }
+                }
+
                 ComboBoxForWorkSheet.EndUpdate();
             }
         }
 
         private void ComboBoxForWorkSheet_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mSelectSheet = mSelectTargetTable?.GetWorkSheetByIndex(this.ComboBoxForWorkSheet.SelectedIndex);
+            if (this.ComboBoxForWorkSheet.SelectedIndex < 0)
+            {
+                return;
+            }
+
+            mSelectSheet = mTargetFile?.GetWorkSheetByIndex(this.ComboBoxForWorkSheet.SelectedIndex);
             InternalRefreshForKey();
         }
 
@@ -242,8 +286,8 @@ namespace ExcelTool
         }
 
         private const int mRemoveColumIndex = 5;// 移除按钮
-        private const int mConnectActionBtnColumIndex = 3; // 关联其他表的行为按钮
-        private const int mConnectKeyBtnColumIndex = 2; // 关联其他表的KEY按钮
+        private const int mConnectActionBtnColumIndex = 3; // 设置找到后Action
+        private const int mConnectKeyBtnColumIndex = 2; // 设置查找其他表KEY
         private const int mMoveUpColum = 6; // 上移按钮
         private const int mMoveDownColum = 7; // 下移按钮
         private const int mBindKeyColumIndex = 1; // 绑定的 key
@@ -260,11 +304,19 @@ namespace ExcelTool
                 case mConnectActionBtnColumIndex:
                 {
                     var _action = this.mTargetActionList[e.RowIndex];
-                    if (_action is DataProcessActionForFindRowDataInOtherSheet)
+                    if (_action is DataProcessActionForFindRowDataInOtherSheet _findAction)
                     {
+                        if (_findAction.SearchTargetSheet == null)
+                        {
+                            MessageBox.Show("请先设置查找表 Key");
+                            return;
+                        }
                         KeyConnectEditForm _newForm = new KeyConnectEditForm();
-                        _newForm.InitData(_action);
-                        _newForm.ShowDialog();
+                        _newForm.InitData(_action, false, _findAction.SearchTargetSheet);
+                        if (_newForm.ShowDialog() == DialogResult.OK)
+                        {
+                            InternalRefreshForActionDataView();
+                        }
                     }
 
                     break;
@@ -280,12 +332,12 @@ namespace ExcelTool
                     var _action = this.mTargetActionList[e.RowIndex];
                     if (_action is DataProcessActionForFindRowDataInOtherSheet _findAction)
                     {
-                        SearchOtherSheetKeyConnect _newForm = new SearchOtherSheetKeyConnect();
-                        _newForm.InitData(_findAction);
+                        ChooseFileConfigForm _newForm = new ChooseFileConfigForm();
+                        _newForm.SetFindAction(_findAction);
                         if (_newForm.ShowDialog() == DialogResult.OK)
                         {
-                            _findAction.SearchKeyList = _newForm.SelectKeyList;
-                            _findAction.SearchTargetSheet = _newForm.SelectSheet;
+                            _findAction.SearchKeyList = _newForm.GetSelectKeyList();
+                            _findAction.SearchTargetSheet = _newForm.GetChooseSheet();
                         }
                     }
 
@@ -425,11 +477,34 @@ namespace ExcelTool
             this.DataViewForAction.Rows.Clear();
             for (int i = 0; i < mTargetActionList.Count; ++i)
             {
+                string _contentForSetSearchKey = "无功能";
+                string _contentForSetActionAfterSearch = "无功能";
+                StringBuilder _connectInfo = new StringBuilder();
+                if (mTargetActionList[i] is DataProcessActionForFindRowDataInOtherSheet _findAction)
+                {
+                    if (_findAction.SearchTargetSheet != null)
+                    {
+                        var _tempInfo = string.Format("{0}->{1}",
+                            _findAction.SearchTargetSheet.GetOwnerTable()?.DisplayName,
+                            _findAction.SearchTargetSheet.DisplayName
+                        );
+                        _connectInfo.Append(_tempInfo);
+                        _connectInfo.Append("->");
+                    }
+
+                    _contentForSetSearchKey = _findAction.SearchKeyList.Count > 0 ? "已设置" : "设置";
+                    _contentForSetActionAfterSearch = _findAction.ActionListAfterFindValues.Count > 0 ? "已设置" : "设置";
+                    foreach (var _tempKey in _findAction.SearchKeyList)
+                    {
+                        _connectInfo.Append(_tempKey.KeyName);
+                        _connectInfo.Append(";");
+                    }
+                }
                 var _index = this.DataViewForAction.Rows.Add(
                     mTargetActionList[i].GetType().GetCustomAttribute<ProcessActionAttribute>().DisplayName,
                     null,
-                    mTargetActionList[i] is DataProcessActionForFindRowDataInOtherSheet ? "设置" : "无功能",
-                    mTargetActionList[i] is DataProcessActionForFindRowDataInOtherSheet ? "设置" : "无功能",
+                    _contentForSetSearchKey,
+                    _contentForSetActionAfterSearch,
                     string.Empty,
                     "移除",
                     "↑",

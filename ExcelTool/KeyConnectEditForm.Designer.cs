@@ -29,17 +29,17 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             BtnLoadNewFile = new Button();
             ComboBoxForLoadedFile = new ComboBox();
-            label1 = new Label();
+            LabelLoadedFile = new Label();
             DataViewForKeyList = new DataGridView();
             Key = new DataGridViewTextBoxColumn();
             KeyName = new DataGridViewTextBoxColumn();
             IsDataSource = new DataGridViewCheckBoxColumn();
             LabelForFromTable = new Label();
             BtnFinishConfig = new Button();
-            label3 = new Label();
+            LabelSelectSheet = new Label();
             ComboBoxForWorkSheet = new ComboBox();
             BtnReset = new Button();
             BtnSearch = new Button();
@@ -47,14 +47,6 @@
             label5 = new Label();
             label2 = new Label();
             DataViewForAction = new DataGridView();
-            BtnAddAction = new Button();
-            label4 = new Label();
-            label6 = new Label();
-            ComboBoxForActionTypeList = new ComboBox();
-            MultiDataSplitSymbol = new TextBox();
-            label7 = new Label();
-            contextMenuStrip1 = new ContextMenuStrip(components);
-            ComboBoxForSelectKey = new ComboBox();
             ActionName = new DataGridViewTextBoxColumn();
             BindKeyList = new DataGridViewComboBoxColumn();
             dataGridViewButtonColumn1 = new DataGridViewButtonColumn();
@@ -63,6 +55,14 @@
             RemoveBtnColum = new DataGridViewButtonColumn();
             MoveUpColum = new DataGridViewButtonColumn();
             MoveDownColum = new DataGridViewButtonColumn();
+            BtnAddAction = new Button();
+            label4 = new Label();
+            label6 = new Label();
+            ComboBoxForActionTypeList = new ComboBox();
+            MultiDataSplitSymbol = new TextBox();
+            label7 = new Label();
+            contextMenuStrip1 = new ContextMenuStrip(components);
+            ComboBoxForSelectKey = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)DataViewForKeyList).BeginInit();
             ((System.ComponentModel.ISupportInitialize)DataViewForAction).BeginInit();
             SuspendLayout();
@@ -70,7 +70,7 @@
             // BtnLoadNewFile
             // 
             BtnLoadNewFile.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            BtnLoadNewFile.Location = new Point(878, 17);
+            BtnLoadNewFile.Location = new Point(878, 18);
             BtnLoadNewFile.Name = "BtnLoadNewFile";
             BtnLoadNewFile.Size = new Size(130, 30);
             BtnLoadNewFile.TabIndex = 17;
@@ -89,15 +89,15 @@
             ComboBoxForLoadedFile.TabIndex = 18;
             ComboBoxForLoadedFile.SelectedIndexChanged += ComboBoxForLoadedFile_SelectedIndexChanged;
             // 
-            // label1
+            // LabelLoadedFile
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label1.Location = new Point(368, 22);
-            label1.Name = "label1";
-            label1.Size = new Size(90, 21);
-            label1.TabIndex = 19;
-            label1.Text = "已加载表格";
+            LabelLoadedFile.AutoSize = true;
+            LabelLoadedFile.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            LabelLoadedFile.Location = new Point(368, 22);
+            LabelLoadedFile.Name = "LabelLoadedFile";
+            LabelLoadedFile.Size = new Size(90, 21);
+            LabelLoadedFile.TabIndex = 19;
+            LabelLoadedFile.Text = "已加载数据";
             // 
             // DataViewForKeyList
             // 
@@ -120,8 +120,8 @@
             // KeyName
             // 
             KeyName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            KeyName.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            KeyName.DefaultCellStyle = dataGridViewCellStyle2;
             KeyName.FillWeight = 160F;
             KeyName.HeaderText = "Key名字";
             KeyName.Name = "KeyName";
@@ -153,15 +153,15 @@
             BtnFinishConfig.UseVisualStyleBackColor = true;
             BtnFinishConfig.Click += BtnFinishConfig_Click;
             // 
-            // label3
+            // LabelSelectSheet
             // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label3.Location = new Point(638, 22);
-            label3.Name = "label3";
-            label3.Size = new Size(85, 21);
-            label3.TabIndex = 25;
-            label3.Text = "选择Sheet";
+            LabelSelectSheet.AutoSize = true;
+            LabelSelectSheet.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            LabelSelectSheet.Location = new Point(638, 22);
+            LabelSelectSheet.Name = "LabelSelectSheet";
+            LabelSelectSheet.Size = new Size(85, 21);
+            LabelSelectSheet.TabIndex = 25;
+            LabelSelectSheet.Text = "选择Sheet";
             // 
             // ComboBoxForWorkSheet
             // 
@@ -235,6 +235,62 @@
             DataViewForAction.Size = new Size(995, 263);
             DataViewForAction.TabIndex = 45;
             DataViewForAction.CellContentClick += DataViewForAction_CellContentClick;
+            // 
+            // ActionName
+            // 
+            ActionName.HeaderText = "行为名字";
+            ActionName.Name = "ActionName";
+            ActionName.ReadOnly = true;
+            ActionName.Width = 120;
+            // 
+            // BindKeyList
+            // 
+            BindKeyList.HeaderText = "绑定Key";
+            BindKeyList.Name = "BindKeyList";
+            BindKeyList.Width = 180;
+            // 
+            // dataGridViewButtonColumn1
+            // 
+            dataGridViewButtonColumn1.FillWeight = 160F;
+            dataGridViewButtonColumn1.HeaderText = "设置查找表Key";
+            dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
+            dataGridViewButtonColumn1.Text = "设置查找表Key";
+            dataGridViewButtonColumn1.ToolTipText = "设置查找表Key";
+            // 
+            // ConnectKeyActionsColum
+            // 
+            ConnectKeyActionsColum.HeaderText = "设置找到后行为";
+            ConnectKeyActionsColum.Name = "ConnectKeyActionsColum";
+            ConnectKeyActionsColum.Text = "设置找到后行为";
+            // 
+            // ConnectInfoColum
+            // 
+            ConnectInfoColum.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            ConnectInfoColum.HeaderText = "关联信息";
+            ConnectInfoColum.Name = "ConnectInfoColum";
+            ConnectInfoColum.ReadOnly = true;
+            // 
+            // RemoveBtnColum
+            // 
+            RemoveBtnColum.HeaderText = "移除";
+            RemoveBtnColum.Name = "RemoveBtnColum";
+            RemoveBtnColum.Width = 60;
+            // 
+            // MoveUpColum
+            // 
+            MoveUpColum.HeaderText = "上移";
+            MoveUpColum.Name = "MoveUpColum";
+            MoveUpColum.Text = "上移";
+            MoveUpColum.ToolTipText = "上移";
+            MoveUpColum.Width = 40;
+            // 
+            // MoveDownColum
+            // 
+            MoveDownColum.HeaderText = "下移";
+            MoveDownColum.Name = "MoveDownColum";
+            MoveDownColum.Text = "下移";
+            MoveDownColum.ToolTipText = "下移";
+            MoveDownColum.Width = 40;
             // 
             // BtnAddAction
             // 
@@ -316,62 +372,6 @@
             ComboBoxForSelectKey.TabIndex = 53;
             ComboBoxForSelectKey.SelectedIndexChanged += ComboBoxForSelectKey_SelectedIndexChanged;
             // 
-            // ActionName
-            // 
-            ActionName.HeaderText = "行为名字";
-            ActionName.Name = "ActionName";
-            ActionName.ReadOnly = true;
-            ActionName.Width = 120;
-            // 
-            // BindKeyList
-            // 
-            BindKeyList.HeaderText = "绑定Key";
-            BindKeyList.Name = "BindKeyList";
-            BindKeyList.Width = 180;
-            // 
-            // dataGridViewButtonColumn1
-            // 
-            dataGridViewButtonColumn1.FillWeight = 160F;
-            dataGridViewButtonColumn1.HeaderText = "关联其他表Key";
-            dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
-            dataGridViewButtonColumn1.Text = "关联其他表Key";
-            dataGridViewButtonColumn1.ToolTipText = "关联其他表Key";
-            // 
-            // ConnectKeyActionsColum
-            // 
-            ConnectKeyActionsColum.HeaderText = "关联其他表行为";
-            ConnectKeyActionsColum.Name = "ConnectKeyActionsColum";
-            ConnectKeyActionsColum.Text = "关联其他表行为";
-            // 
-            // ConnectInfoColum
-            // 
-            ConnectInfoColum.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            ConnectInfoColum.HeaderText = "关联信息";
-            ConnectInfoColum.Name = "ConnectInfoColum";
-            ConnectInfoColum.ReadOnly = true;
-            // 
-            // RemoveBtnColum
-            // 
-            RemoveBtnColum.HeaderText = "移除";
-            RemoveBtnColum.Name = "RemoveBtnColum";
-            RemoveBtnColum.Width = 60;
-            // 
-            // MoveUpColum
-            // 
-            MoveUpColum.HeaderText = "上移";
-            MoveUpColum.Name = "MoveUpColum";
-            MoveUpColum.Text = "上移";
-            MoveUpColum.ToolTipText = "上移";
-            MoveUpColum.Width = 40;
-            // 
-            // MoveDownColum
-            // 
-            MoveDownColum.HeaderText = "下移";
-            MoveDownColum.Name = "MoveDownColum";
-            MoveDownColum.Text = "下移";
-            MoveDownColum.ToolTipText = "下移";
-            MoveDownColum.Width = 40;
-            // 
             // KeyConnectEditForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
@@ -390,12 +390,12 @@
             Controls.Add(BtnSearch);
             Controls.Add(TextBoxForSearch);
             Controls.Add(label5);
-            Controls.Add(label3);
+            Controls.Add(LabelSelectSheet);
             Controls.Add(ComboBoxForWorkSheet);
             Controls.Add(BtnFinishConfig);
             Controls.Add(LabelForFromTable);
             Controls.Add(DataViewForKeyList);
-            Controls.Add(label1);
+            Controls.Add(LabelLoadedFile);
             Controls.Add(ComboBoxForLoadedFile);
             Controls.Add(BtnLoadNewFile);
             Name = "KeyConnectEditForm";
@@ -410,11 +410,11 @@
         #endregion
         private Button BtnLoadNewFile;
         private ComboBox ComboBoxForLoadedFile;
-        private Label label1;
+        private Label LabelLoadedFile;
         private DataGridView DataViewForKeyList;
         private Label LabelForFromTable;
         private Button BtnFinishConfig;
-        private Label label3;
+        private Label LabelSelectSheet;
         private ComboBox ComboBoxForWorkSheet;
         private Button BtnReset;
         private Button BtnSearch;
