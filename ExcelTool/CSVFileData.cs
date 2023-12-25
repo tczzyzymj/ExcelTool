@@ -14,9 +14,7 @@ namespace ExcelTool
     {
         public CSVFileData()
         {
-            mKeyStartRowIndex = 0; // Key 的概念认为是数据列的名字，其开始的行下标，从1开始，不是0
-            mKeyStartColmIndex = 0; // Key 的概念认为是数据列的名字，其开始的列下标，从1开始，不是0
-            mContentStartRowIndex = 3; // 内容选中的行下标，从2开始，认为1是KEY不能小于2
+
         }
 
         public string SplitSymbol

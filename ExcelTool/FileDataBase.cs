@@ -14,18 +14,6 @@ namespace ExcelTool
         [JsonProperty]
         protected string mExcelAbsolutePath = string.Empty;
 
-        [JsonProperty]
-        protected int mKeyStartRowIndex = 2; // Key 的概念认为是数据列的名字，其开始的行下标，从1开始，不是0
-
-        [JsonProperty]
-        protected int mKeyStartColmIndex = 1; // Key 的概念认为是数据列的名字，其开始的列下标，从1开始，不是0
-
-        [JsonProperty]
-        protected int mContentStartRowIndex = 4; // 内容选中的行下标，从2开始，认为1是KEY不能小于2
-
-        [JsonProperty]
-        private int mChooseWorkSheetIndexInList = 0; // 选中的workSheet需要处理的 workdsheet
-
         protected List<CommonWorkSheetData> mWorkSheetList = new List<CommonWorkSheetData>();
 
         protected int mChooseSheetIndex = 0;
@@ -280,36 +268,6 @@ namespace ExcelTool
             {
                 return Path.GetFileName(mExcelAbsolutePath);
             }
-        }
-
-        public int GetKeyStartRowIndex()
-        {
-            return mKeyStartRowIndex;
-        }
-
-        public void SetKeyStartRowIndex(int targetValue)
-        {
-            mKeyStartRowIndex = targetValue;
-        }
-
-        public int GetKeyStartColmIndex()
-        {
-            return mKeyStartColmIndex;
-        }
-
-        public void SetKeyStartColmIndex(int targetValue)
-        {
-            mKeyStartColmIndex = targetValue;
-        }
-
-        public int GetContentStartRowIndex()
-        {
-            return mContentStartRowIndex;
-        }
-
-        public void SetContentStartRowIndex(int targetValue)
-        {
-            mContentStartRowIndex = targetValue;
         }
 
         public abstract bool InternalLoadFile(string absolutePath);

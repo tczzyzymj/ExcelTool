@@ -10,12 +10,37 @@ namespace ExcelTool
 {
     internal class ExcelSheetData : CommonWorkSheetData
     {
+        public ExcelSheetData()
+        {
+            mKeyStartRowIndex = 2; // Key 的概念认为是数据列的名字，其开始的行下标，从1开始，不是0
+            mKeyStartColmIndex = 1; // Key 的概念认为是数据列的名字，其开始的列下标，从1开始，不是0
+            mContentStartRowIndex = 4; // 内容选中的行下标，从2开始，认为1是KEY不能小于2
+        }
+
         protected ExcelWorksheet? mOriginSheetData = null; // 原始数据
 
         public override void ReloadKey()
         {
             base.ReloadKey();
             InternalInitWithKey(mOriginSheetData, true);
+        }
+
+        public override void CleanAllContent()
+        {
+            base.CleanAllContent();
+            if (mOriginSheetData == null)
+            {
+                throw new Exception($"{CleanAllContent} 出错，mOriginSheetData 为空");
+            }
+            var _ownerTable = GetOwnerTable();
+            if (_ownerTable == null)
+            {
+                throw new Exception($"{CleanAllContent} 出错，_ownerTable 为空");
+            }
+
+            var _contentStartIndex = GetContentStartRowIndex();
+
+            mOriginSheetData.DeleteRow(_contentStartIndex, mOriginSheetData.Dimension.Rows);
         }
 
         public override bool WriteOneData(int rowIndexInSheet, Dictionary<KeyData, string> valueMap, bool isNewData)
@@ -98,9 +123,9 @@ namespace ExcelTool
                 return false;
             }
 
-            var _rowIndex = _ownerExcel.GetKeyStartRowIndex();
+            var _rowIndex = GetKeyStartRowIndex();
 
-            for (int _colm = _ownerExcel.GetKeyStartColmIndex(); _colm <= mOriginSheetData.Dimension.Columns; ++_colm)
+            for (int _colm = GetKeyStartColmIndex(); _colm <= mOriginSheetData.Dimension.Columns; ++_colm)
             {
                 var _tempValue = mOriginSheetData.Cells[_rowIndex, _colm].Value;
                 if (_tempValue == null)
@@ -115,7 +140,7 @@ namespace ExcelTool
                     return false;
                 }
 
-                AddNewKeyData(_colm - _ownerExcel.GetKeyStartColmIndex(), _colm, _finalStr);
+                AddNewKeyData(_colm - GetKeyStartColmIndex(), _colm, _finalStr);
             }
 
             mHasInitKey = true;
@@ -144,8 +169,8 @@ namespace ExcelTool
 
             mCellData2DList?.Clear();
 
-            var _contentStartRow = _ownerTable.GetContentStartRowIndex();
-            var _keyStartColum = _ownerTable.GetKeyStartColmIndex();
+            var _contentStartRow = GetContentStartRowIndex();
+            var _keyStartColum = GetKeyStartColmIndex();
             var _capcity = mOriginSheetData.Dimension.Rows - 4;
             if (_capcity > 3)
             {

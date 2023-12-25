@@ -11,6 +11,13 @@ namespace ExcelTool
 {
     internal class CSVSheetData : CommonWorkSheetData
     {
+        public CSVSheetData()
+        {
+            mKeyStartRowIndex = 0; // Key 的概念认为是数据列的名字，其开始的行下标，从1开始，不是0
+            mKeyStartColmIndex = 0; // Key 的概念认为是数据列的名字，其开始的列下标，从1开始，不是0
+            mContentStartRowIndex = 3; // 内容选中的行下标，从2开始，认为1是KEY不能小于2
+        }
+
         private List<string[]> mAllSheetData = new List<string[]>();
 
         public override void ReloadKey()
@@ -72,9 +79,9 @@ namespace ExcelTool
             {
                 var _keyLine = mAllSheetData[0];
 
-                for (int _i = _ownerTable.GetKeyStartColmIndex(); _i < _keyLine.Length; ++_i)
+                for (int _i = GetKeyStartColmIndex(); _i < _keyLine.Length; ++_i)
                 {
-                    AddNewKeyData(_i - _ownerTable.GetKeyStartColmIndex(), _i, _keyLine[_i]);
+                    AddNewKeyData(_i - GetKeyStartColmIndex(), _i, _keyLine[_i]);
                 }
             }
 
@@ -99,8 +106,8 @@ namespace ExcelTool
                 return false;
             }
 
-            var _contentStartRow = _ownerTable.GetContentStartRowIndex();
-            var _keyStartColum = _ownerTable.GetKeyStartColmIndex();
+            var _contentStartRow = GetContentStartRowIndex();
+            var _keyStartColum = GetKeyStartColmIndex();
 
             var _filePath = _ownerTable.GetFileAbsulotePath();
 

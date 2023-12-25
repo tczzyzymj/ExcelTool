@@ -1,4 +1,5 @@
-﻿using OfficeOpenXml;
+﻿using Newtonsoft.Json;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,6 +11,15 @@ namespace ExcelTool
 {
     public abstract class CommonWorkSheetData
     {
+        [JsonProperty]
+        protected int mKeyStartRowIndex = 2; // Key 的概念认为是数据列的名字，其开始的行下标，从1开始，不是0
+
+        [JsonProperty]
+        protected int mKeyStartColmIndex = 1; // Key 的概念认为是数据列的名字，其开始的列下标，从1开始，不是0
+
+        [JsonProperty]
+        protected int mContentStartRowIndex = 4; // 内容选中的行下标，从2开始，认为1是KEY不能小于2
+
         protected bool mHasLoadAllCellData = false;
 
         protected bool mHasInitKey = false;
@@ -45,7 +55,7 @@ namespace ExcelTool
         /// <exception cref="Exception"></exception>
         public virtual List<CellValueData>? GetRowDataByTargetKeysAndValus(List<int> matchKeyList, List<string> matchValueList)
         {
-            if (mCellData2DList == null || mCellData2DList.Count < 1)
+            if (mCellData2DList == null)
             {
                 throw new Exception("GetListCellDataBySpecificKeysAndValues, mCellData2DList 为空");
             }
@@ -104,6 +114,36 @@ namespace ExcelTool
             return mIndexInFileData;
         }
 
+        public int GetKeyStartRowIndex()
+        {
+            return mKeyStartRowIndex;
+        }
+
+        public void SetKeyStartRowIndex(int targetValue)
+        {
+            mKeyStartRowIndex = targetValue;
+        }
+
+        public int GetKeyStartColmIndex()
+        {
+            return mKeyStartColmIndex;
+        }
+
+        public void SetKeyStartColmIndex(int targetValue)
+        {
+            mKeyStartColmIndex = targetValue;
+        }
+
+        public int GetContentStartRowIndex()
+        {
+            return mContentStartRowIndex;
+        }
+
+        public void SetContentStartRowIndex(int targetValue)
+        {
+            mContentStartRowIndex = targetValue;
+        }
+
         public List<List<CellValueData>>? GetFilteredDataList(Dictionary<KeyData, List<FilterFuncBase>> filterDataMap)
         {
             if (mCellData2DList == null)
@@ -154,6 +194,10 @@ namespace ExcelTool
             }
 
             return _result;
+        }
+
+        public virtual void CleanAllContent()
+        {
         }
 
         public virtual bool WriteOneData(int rowIndexInSheet, Dictionary<KeyData, string> valueMap, bool newData)

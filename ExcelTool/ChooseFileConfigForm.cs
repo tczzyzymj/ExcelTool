@@ -27,7 +27,6 @@ namespace ExcelTool
 
         private List<KeyData> mKeyDataList = new List<KeyData>();
 
-
         public string LastChooseFileAbsolutePath
         {
             get;
@@ -128,10 +127,6 @@ namespace ExcelTool
 
                 PanelForConfigs.Enabled = true;
 
-                TextBoxForKeyStartRow.Text = mChooseFile.GetKeyStartRowIndex().ToString();
-                TextBoxForKeyStartColm.Text = mChooseFile.GetKeyStartColmIndex().ToString();
-                TextBoxForContentStartRow.Text = mChooseFile.GetContentStartRowIndex().ToString();
-
                 if (mChooseFile is ExcelFileData)
                 {
                     LableForSplitSymbol.Visible = false;
@@ -181,43 +176,43 @@ namespace ExcelTool
 
         private void TextBoxForKeyStartRow_TextChanged(object sender, EventArgs e)
         {
-            var _targetFile = mChooseFile;
-            if (_targetFile == null)
+            var _targetSheet = mChooseSheet;
+            if (_targetSheet == null)
             {
                 return;
             }
             int.TryParse(TextBoxForKeyStartRow.Text, out var _value);
-            _targetFile.SetKeyStartRowIndex(_value);
+            _targetSheet.SetKeyStartRowIndex(_value);
         }
 
         private void TextBoxForKeyStartColm_TextChanged(object sender, EventArgs e)
         {
-            var _targetFile = mChooseFile;
-            if (_targetFile == null)
+            var _targetSheet = mChooseSheet;
+            if (_targetSheet == null)
             {
                 return;
             }
             int.TryParse(TextBoxForKeyStartColm.Text, out var _value);
-            _targetFile.SetKeyStartColmIndex(_value);
+            _targetSheet.SetKeyStartColmIndex(_value);
         }
 
         private void TextBoxForContentStartRow_TextChanged(object sender, EventArgs e)
         {
-            var _targetFile = mChooseFile;
-            if (_targetFile == null)
+            var _targetSheet = mChooseSheet;
+            if (_targetSheet == null)
             {
                 return;
             }
             int.TryParse(TextBoxForContentStartRow.Text, out var _value);
-            _targetFile.SetContentStartRowIndex(_value);
+            _targetSheet.SetContentStartRowIndex(_value);
         }
 
         private void ComboBoxForSelectSheet_SelectedIndexChanged(object sender, EventArgs e)
         {
-            InternalRefreshDataView();
+            InternalRefreshDataViewForSheetKey();
         }
 
-        private void InternalRefreshDataView()
+        private void InternalRefreshDataViewForSheetKey()
         {
             var _targetFile = mChooseFile;
             var _selectItem = ComboBoxForSelectSheet.SelectedItem as CommonWorkSheetData;
@@ -236,6 +231,10 @@ namespace ExcelTool
                 MessageBox.Show("当前的 Sheet 数据为空，请检查文件", "错误 ");
                 return;
             }
+
+            TextBoxForKeyStartRow.Text = mChooseSheet.GetKeyStartRowIndex().ToString();
+            TextBoxForKeyStartColm.Text = mChooseSheet.GetKeyStartColmIndex().ToString();
+            TextBoxForContentStartRow.Text = mChooseSheet.GetContentStartRowIndex().ToString();
 
             switch (this.mFileType)
             {
@@ -315,6 +314,7 @@ namespace ExcelTool
                 case LoadFileType.ExportFile:
                 {
                     mChooseFile = TableDataManager.Ins().GetExportFileData();
+
                     this.DataGridViewForKeyFilter.Columns[mInexForHasSetFilter].Visible = false;
                     this.DataGridViewForKeyFilter.Columns[mIndexForSetButton].Visible = false;
                     break;
@@ -322,6 +322,7 @@ namespace ExcelTool
                 case LoadFileType.SourceFile:
                 {
                     mChooseFile = TableDataManager.Ins().GetSourceFileData();
+
                     break;
                 }
                 case LoadFileType.NormalFile:
@@ -338,10 +339,6 @@ namespace ExcelTool
                 InternalChangeNotice();
 
                 PanelForConfigs.Enabled = true;
-
-                TextBoxForKeyStartRow.Text = _targetFile.GetKeyStartRowIndex().ToString();
-                TextBoxForKeyStartColm.Text = _targetFile.GetKeyStartColmIndex().ToString();
-                TextBoxForContentStartRow.Text = _targetFile.GetContentStartRowIndex().ToString();
 
                 if (_targetFile is CSVFileData _csvFile)
                 {
@@ -434,7 +431,7 @@ namespace ExcelTool
                 return;
             }
 
-            InternalRefreshDataView();
+            InternalRefreshDataViewForSheetKey();
         }
 
         private void BtnShowHasSetFilter_Click(object sender, EventArgs e)
