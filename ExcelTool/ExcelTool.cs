@@ -168,16 +168,24 @@ namespace ExcelTool
                 {
                     CommonDataForComboBox _tempone = new CommonDataForComboBox();
                     _tempone.RealValue = 0;
-                    _tempone.DisplayName = "使用旧数据";
+                    _tempone.DisplayName = "用旧数据";
                     _dataForExportWay.Add(_tempone);
                 }
 
                 {
                     CommonDataForComboBox _tempone = new CommonDataForComboBox();
                     _tempone.RealValue = 1;
-                    _tempone.DisplayName = "使用新数据";
+                    _tempone.DisplayName = "用新数据(空数据跳过)";
                     _dataForExportWay.Add(_tempone);
                 }
+
+                {
+                    CommonDataForComboBox _tempone = new CommonDataForComboBox();
+                    _tempone.RealValue = 2;
+                    _tempone.DisplayName = "用新数据(空数据覆盖)";
+                    _dataForExportWay.Add(_tempone);
+                }
+
                 ComboBoxForExportConflictDealWay.BeginUpdate();
                 ComboBoxForExportConflictDealWay.DataSource = _dataForExportWay;
                 ComboBoxForExportConflictDealWay.ValueMember = "RealValue";

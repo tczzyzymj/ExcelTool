@@ -43,9 +43,9 @@ namespace ExcelTool
             mOriginSheetData.DeleteRow(_contentStartIndex, mOriginSheetData.Dimension.Rows);
         }
 
-        public override bool WriteOneData(int rowIndexInSheet, Dictionary<KeyData, string> valueMap, bool isNewData)
+        public override bool WriteOneData(int rowIndexInSheet, Dictionary<KeyData, string> valueMap, bool isNewData, bool skipEmptyData)
         {
-            if (!base.WriteOneData(rowIndexInSheet, valueMap, isNewData))
+            if (!base.WriteOneData(rowIndexInSheet, valueMap, isNewData, skipEmptyData))
             {
                 return false;
             }
@@ -80,7 +80,17 @@ namespace ExcelTool
             for (int i = 0; i < _keyList.Count; ++i)
             {
                 valueMap.TryGetValue(_keyList[i], out var _tempContent);
-                mOriginSheetData.Cells[_targetRowIndex, _keyList[i].GetKeyIndexInSheetData()].Value = _tempContent;
+                if (skipEmptyData)
+                {
+                    if (!string.IsNullOrEmpty(_tempContent))
+                    {
+                        mOriginSheetData.Cells[_targetRowIndex, _keyList[i].GetKeyIndexInSheetData()].Value = _tempContent;
+                    }
+                }
+                else
+                {
+                    mOriginSheetData.Cells[_targetRowIndex, _keyList[i].GetKeyIndexInSheetData()].Value = _tempContent;
+                }
             }
 
             return true;
@@ -130,14 +140,12 @@ namespace ExcelTool
                 var _tempValue = mOriginSheetData.Cells[_rowIndex, _colm].Value;
                 if (_tempValue == null)
                 {
-                    MessageBox.Show($"表格的 key 有空列，请检查，文件：{_ownerExcel.GetFileName(true)}, sheet:{mOriginSheetData.Name}，行：{_rowIndex}, 列：{_colm}", "错误");
-                    return false;
+                    continue;
                 }
                 string? _finalStr = _tempValue as string;
                 if (string.IsNullOrEmpty(_finalStr))
                 {
-                    MessageBox.Show($"表格的 key 有空列，请检查，文件：{_ownerExcel.GetFileName(true)}, sheet:{mOriginSheetData.Name}", "错误");
-                    return false;
+                    continue;
                 }
 
                 AddNewKeyData(_colm - GetKeyStartColmIndex(), _colm, _finalStr);

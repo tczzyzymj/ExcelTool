@@ -100,7 +100,7 @@ namespace ExcelTool
                 {
                     switch (TableDataManager.Ins().ExportConfigDealWayType)
                     {
-                        case MainTypeDefine.ExportConflictDealWayType.UseNewData:
+                        case MainTypeDefine.ExportConflictDealWayType.UseNewDataSkipEmptyData:
                         {
                             foreach (var _singleRow in inRowDataList)
                             {
@@ -143,12 +143,68 @@ namespace ExcelTool
                                         if (_rowData != null && _rowData.Count > 0)
                                         {
                                             // 有冲突
-                                            _currentSheet.WriteOneData(_rowData[0].GetCellRowIndexInSheet(), _writeDataMap, false);
+                                            _currentSheet.WriteOneData(_rowData[0].GetCellRowIndexInSheet(), _writeDataMap, false, true);
                                         }
                                         else
                                         {
                                             // 没有冲突
-                                            _currentSheet.WriteOneData(-1, _writeDataMap, true);
+                                            _currentSheet.WriteOneData(-1, _writeDataMap, true, true);
+                                        }
+                                    }
+                                }
+                            }
+
+                            break;
+                        }
+                        case MainTypeDefine.ExportConflictDealWayType.UseNewDataOverwriteAll:
+                        {
+                            foreach (var _singleRow in inRowDataList)
+                            {
+                                _writeDataMap.Clear();
+                                _theKeyCompareValue.Clear();
+                                _theKeyInListIndexList.Clear();
+
+                                foreach (var _singleKey in _currentKeyList)
+                                {
+                                    if (_singleKey.IsIgnore)
+                                    {
+                                        _writeDataMap.Add(_singleKey, string.Empty);
+                                        continue;
+                                    }
+
+                                    if (!_keyActionMap.TryGetValue(_singleKey, out var _action))
+                                    {
+                                        throw new Exception($" Key : [{_singleKey.KeyName}] 没有忽略，并且也没有指定数据请检查");
+                                    }
+
+                                    var _dataAfterAction = _action.TryProcessData(_singleRow);
+
+                                    _writeDataMap.Add(_singleKey, _dataAfterAction);
+                                }
+
+                                // 检测冲突
+                                {
+                                    foreach (var _theKey in _theKeyList)
+                                    {
+                                        _theKeyInListIndexList.Add(_theKey.GetKeyColumIndexInList());
+                                        if (_writeDataMap.TryGetValue(_theKey, out var _tempValue))
+                                        {
+                                            _theKeyCompareValue.Add(_tempValue);
+                                        }
+                                    }
+
+                                    if (_theKeyCompareValue.Count > 0)
+                                    {
+                                        var _rowData = _currentSheet.GetRowDataByTargetKeysAndValus(_theKeyInListIndexList, _theKeyCompareValue);
+                                        if (_rowData != null && _rowData.Count > 0)
+                                        {
+                                            // 有冲突
+                                            _currentSheet.WriteOneData(_rowData[0].GetCellRowIndexInSheet(), _writeDataMap, false, false);
+                                        }
+                                        else
+                                        {
+                                            // 没有冲突
+                                            _currentSheet.WriteOneData(-1, _writeDataMap, true, false);
                                         }
                                     }
                                 }
@@ -199,7 +255,7 @@ namespace ExcelTool
                                         if (_rowData == null)
                                         {
                                             // 没有冲突
-                                            _currentSheet.WriteOneData(-1, _writeDataMap, true);
+                                            _currentSheet.WriteOneData(-1, _writeDataMap, true, false);
                                         }
                                     }
                                 }
@@ -238,7 +294,7 @@ namespace ExcelTool
                             _writeDataMap.Add(_singleKey, _dataAfterAction);
                         }
 
-                        _currentSheet.WriteOneData(-1, _writeDataMap, true);
+                        _currentSheet.WriteOneData(-1, _writeDataMap, true, false);
                     }
 
                     break;

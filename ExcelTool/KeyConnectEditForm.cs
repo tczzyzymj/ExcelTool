@@ -290,13 +290,11 @@ namespace ExcelTool
             }
         }
 
-        private const int mRemoveColumIndex = 5;// 移除按钮
-        private const int mConnectActionBtnColumIndex = 3; // 设置找到后Action
-        private const int mConnectKeyBtnColumIndex = 2; // 设置查找其他表KEY
-        private const int mMoveUpColum = 6; // 上移按钮
-        private const int mMoveDownColum = 7; // 下移按钮
         private const int mBindKeyColumIndex = 1; // 绑定的 key
-
+        private const int mDetailConfigIndex = 2; // 设置查找其他表KEY
+        private const int mRemoveColumIndex = 4;// 移除按钮
+        private const int mMoveUpColum = 5; // 上移按钮
+        private const int mMoveDownColum = 6; // 下移按钮
         private void DataViewForAction_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0)// 什么傻逼玩意，-1也发消息
@@ -312,56 +310,61 @@ namespace ExcelTool
 
             switch (e.ColumnIndex)
             {
-                case mConnectActionBtnColumIndex:
-                {
-                    var _action = this.mTargetActionList[e.RowIndex];
-                    if (_action is DataProcessActionForFindRowDataInOtherSheet _findAction)
-                    {
-                        if (_findAction.SearchTargetSheet == null)
-                        {
-                            MessageBox.Show("请先设置查找表 Key");
-                            return;
-                        }
-                        KeyConnectEditForm _newForm = new KeyConnectEditForm();
-                        _newForm.InitData(_action, false, _findAction.SearchTargetSheet);
-                        if (_newForm.ShowDialog() == DialogResult.OK)
-                        {
-                            InternalRefreshForActionDataView();
-                        }
-                    }
+                //case mConnectActionBtnColumIndex:
+                //{
+                //    var _action = this.mTargetActionList[e.RowIndex];
+                //    if (_action is DataProcessActionForFindRowDataInOtherSheet _findAction)
+                //    {
+                //        if (_findAction.SearchTargetSheet == null)
+                //        {
+                //            MessageBox.Show("请先设置查找表 Key");
+                //            return;
+                //        }
+                //        KeyConnectEditForm _newForm = new KeyConnectEditForm();
+                //        _newForm.InitData(_action, false, _findAction.SearchTargetSheet);
+                //        if (_newForm.ShowDialog() == DialogResult.OK)
+                //        {
+                //            InternalRefreshForActionDataView();
+                //        }
+                //    }
 
-                    break;
-                }
+                //    break;
+                //}
                 case mRemoveColumIndex:
                 {
                     mTargetActionList.RemoveAt(e.RowIndex);
                     InternalRefreshForActionDataView();
                     break;
                 }
-                case mConnectKeyBtnColumIndex:
+                case mDetailConfigIndex:
                 {
+                    // 根据不同的行为，打开不同的编辑界面
                     var _action = this.mTargetActionList[e.RowIndex];
                     if (_action is DataProcessActionForFindRowDataInOtherSheet _findAction)
                     {
-                        ChooseFileConfigForm _newForm = new ChooseFileConfigForm();
-                        _newForm.SetFindAction(_findAction);
-                        if (_newForm.ShowDialog() == DialogResult.OK)
-                        {
-                            var _keyList = _newForm.GetSelectKeyList();
-
-                            if (_keyList.Count <= 0)
-                            {
-                                MessageBox.Show("为什么没有配置任何 Key？", "错误");
-                                return;
-                            }
-
-                            _findAction.SearchKeyList = _keyList;
-
-                            _findAction.SearchTargetSheet = _newForm.GetChooseSheet();
-
-                            InternalRefreshForActionDataView();
-                        }
                     }
+
+                    //if (_action is DataProcessActionForFindRowDataInOtherSheet _findAction)
+                    //{
+                    //    ChooseFileConfigForm _newForm = new ChooseFileConfigForm();
+                    //    _newForm.SetFindAction(_findAction);
+                    //    if (_newForm.ShowDialog() == DialogResult.OK)
+                    //    {
+                    //        var _keyList = _newForm.GetSelectKeyList();
+
+                    //        if (_keyList.Count <= 0)
+                    //        {
+                    //            MessageBox.Show("为什么没有配置任何 Key？", "错误");
+                    //            return;
+                    //        }
+
+                    //        _findAction.SearchKeyList = _keyList;
+
+                    //        _findAction.SearchTargetSheet = _newForm.GetChooseSheet();
+
+                    //        InternalRefreshForActionDataView();
+                    //    }
+                    //}
 
                     break;
                 }

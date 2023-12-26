@@ -194,7 +194,7 @@ namespace ExcelTool
         {
         }
 
-        public virtual bool WriteOneData(int rowIndexInSheet, Dictionary<KeyData, string> valueMap, bool newData)
+        public virtual bool WriteOneData(int rowIndexInSheet, Dictionary<KeyData, string> valueMap, bool newData, bool skipEmptyData)
         {
             if (mCellData2DList == null)
             {

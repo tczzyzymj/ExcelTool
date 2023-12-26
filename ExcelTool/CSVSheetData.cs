@@ -26,9 +26,9 @@ namespace ExcelTool
             InternalInitWithKey(mAllSheetData, true);
         }
 
-        public override bool WriteOneData(int rowIndexInSheet, Dictionary<KeyData, string> valueMap, bool isNewData)
+        public override bool WriteOneData(int rowIndexInSheet, Dictionary<KeyData, string> valueMap, bool isNewData, bool skipEmptyData)
         {
-            if (!base.WriteOneData(rowIndexInSheet, valueMap, isNewData))
+            if (!base.WriteOneData(rowIndexInSheet, valueMap, isNewData, skipEmptyData))
             {
                 return false;
             }
