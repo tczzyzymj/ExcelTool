@@ -53,7 +53,7 @@ namespace ExcelTool
         /// <param name="matchValueList"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public virtual List<CellValueData>? GetRowDataByTargetKeysAndValus(List<int> matchKeyList, List<string> matchValueList)
+        public virtual List<CellValueData>? GetRowCellDataByTargetKeysAndValus(List<int> matchKeyList, List<string> matchValueList)
         {
             if (mCellData2DList == null)
             {
@@ -97,6 +97,29 @@ namespace ExcelTool
                 {
                     _result = _rowData;
                     break;
+                }
+            }
+
+            return _result;
+        }
+
+        /// <summary>
+        /// 通过对比指定的列的值
+        /// </summary>
+        /// <param name="matchKeyList"></param>
+        /// <param name="matchValueList"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public virtual List<string> GetRowStringDataByTargetKeysAndValus(List<int> matchKeyList, List<string> matchValueList)
+        {
+            List<string> _result = new List<string>();
+
+            var _rowData = GetRowCellDataByTargetKeysAndValus(matchKeyList, matchValueList);
+            if (_rowData != null)
+            {
+                foreach (var _singleData in _rowData)
+                {
+                    _result.Add(_singleData.GetCellValue());
                 }
             }
 
@@ -172,7 +195,7 @@ namespace ExcelTool
                 {
                     foreach (var _filterFunc in _pair.Value)
                     {
-                        if (!_filterFunc.IsMatchFilter(_rowData[_pair.Key.GetKeyColumIndexInList()].GetCellValue()))
+                        if (!_filterFunc.IsMatchFilter(_rowData[_pair.Key.GetKeyIndexInDataList()].GetCellValue()))
                         {
                             _match = false;
 
@@ -259,7 +282,7 @@ namespace ExcelTool
 
         protected virtual bool AddNewKeyData(int indexInList, int indexInSheetData, string nameValue)
         {
-            var _existData = mKeyDataList.Find((x) => x.GetKeyColumIndexInList() == indexInList);
+            var _existData = mKeyDataList.Find((x) => x.GetKeyIndexInDataList() == indexInList);
             if (_existData != null)
             {
                 MessageBox.Show($"已经存在相同的 indexInList : {indexInList}, 内容分别是：{_existData.KeyName} {nameValue}");

@@ -129,7 +129,7 @@ namespace ExcelTool
             for (int i = 0; i < _rows.Count; ++i)
             {
                 _actionMap.TryGetValue(mKeyList[i], out var sourceAction);
-                bool _hasConfig = sourceAction != null && sourceAction.ActionList.Count > 0;
+                bool _hasConfig = sourceAction != null && sourceAction.FindAction.FollowActionList.Count > 0;
                 _rows[i].Cells[mColumIndexForHasConfigKey].Value = _hasConfig;
                 _rows[i].Cells[mColumIndexForSetIgnore].Value = !_hasConfig;
                 if (_hasConfig)

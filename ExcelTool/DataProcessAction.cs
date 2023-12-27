@@ -23,314 +23,203 @@ namespace ExcelTool
 
     public abstract class DataProcessActionBase
     {
-        public List<KeyData> MatchKeyList = new List<KeyData>();
+        public virtual List<string>? TryProcessData(List<string> inRowData)
+        {
+            if (inRowData == null || inRowData.Count < 1)
+            {
+                return null;
+            }
 
-        public abstract List<string>? TryProcessData(List<string> inRowData);
+            var _resultList = InternalProcessData(inRowData);
+            if (_resultList == null)
+            {
+                return null;
+            }
+
+            switch (ResultReturnType)
+            {
+                case MultiResultReturnType.SingleString:
+                {
+                    StringBuilder _builder = new StringBuilder();
+
+                    for (int i = 0; i < _resultList.Count; ++i)
+                    {
+                        _builder.Append(_resultList[i]);
+                        if (i < _resultList.Count - 1)
+                        {
+                            _builder.Append(MultiValueSplitSymbol);
+                        }
+                    }
+
+                    return new List<string>() { _builder.ToString() };
+                }
+                case MultiResultReturnType.StringList:
+                {
+                    return _resultList;
+                }
+                default:
+                {
+                    throw new Exception($"未处理的枚举:{ResultReturnType}");
+                }
+            }
+        }
 
         public string MultiValueSplitSymbol = ",";
+
+        public MultiResultReturnType ResultReturnType = MultiResultReturnType.SingleString;
+
+        public List<int> MatchKeyIndexList = new List<int>(); // 对于源行为来说，需要在在配置源文件的时候，去指定 ID key 是哪个
+
+        protected abstract List<string>? InternalProcessData(List<string> inRowData);
     }
 
     /// <summary>
-    /// 有后续操作的行为
+    /// 作为导出表的 key 映射的第一个行为
     /// </summary>
-    public abstract class ActionWithFollowActions : DataProcessActionBase
+    [ProcessAction("输入源数据")]
+    public class SourceAction : DataProcessActionBase
     {
+        public ActionForFindValue FindAction = new ActionForFindValue();
+
+        protected override List<string>? InternalProcessData(List<string> inRowData)
+        {
+            return FindAction.TryProcessData(inRowData);
+        }
+    }
+
+    /// <summary>
+    /// 只管找数据，找到数据以后返回交给后续处理
+    /// </summary>
+    [ProcessAction("跨表查找")]
+    public class ActionForFindValue : DataProcessActionBase
+    {
+        public CommonWorkSheetData? SearchTargetSheet = null; // 去哪个 sheet 查找
+
+        public List<int> SearchKeyIndexList = new List<int>(); // 去 sheet 的那个位置找，注意 index 是 index in row ， 不是 index in sheet
+
         /// <summary>
-        /// 后续操作行为列表
+        /// 找到数值后操作行为序列
         /// </summary>
         public List<DataProcessActionBase> FollowActionList = new List<DataProcessActionBase>();
 
-        public override List<string> TryProcessData(List<string> inRowData)
+        protected override List<string>? InternalProcessData(List<string> inData)
         {
-            var _resultList = OnProcessSelfAction(inRowData);
-            if (FollowActionList.Count > 0)
+            if (SearchTargetSheet == null)
             {
-                return OnProcessFollowActions(_resultList);
+                throw new Exception($" ActionForFindValue 出错，TryProcessData ， SearchTargetSheet 为空");
             }
 
-            return _resultList;
-        }
-
-        protected abstract List<string> OnProcessSelfAction(List<string> inRowData);
-
-        protected abstract List<string> OnProcessFollowActions(List<string> inRowData);
-    }
-
-    /// <summary>
-    /// 后续无操作的行为
-    /// </summary>
-    public abstract class ActionNoFollowActions : DataProcessActionBase
-    {
-
-    }
-
-    [ProcessAction("源行为")]
-    public class SourceAction : DataProcessActionBase
-    {
-        public List<DataProcessActionBase> ActionList = new List<DataProcessActionBase>();
-
-        public override string TryProcessData(List<CellValueData> rowValue)
-        {
-            if (ActionList == null || ActionList.Count < 1)
+            if (MatchKeyIndexList == null || MatchKeyIndexList.Count < 1)
             {
-                return string.Empty;
+                throw new Exception($" ActionForFindValue 出错，TryProcessData ， MatchKeyIndexList 为空");
+            }
+
+            if (inData == null || inData.Count < 1)
+            {
+                throw new Exception($" ActionForFindValue 出错，TryProcessData ， inData 为空");
+            }
+
+            List<string> _matchValue = new List<string>();
+            foreach (var _index in MatchKeyIndexList)
+            {
+                _matchValue.Add(inData[_index]);
+            }
+
+            var _findRowData = SearchTargetSheet.GetRowStringDataByTargetKeysAndValus(SearchKeyIndexList, _matchValue);
+            if (_findRowData == null)
+            {
+                return null;
             }
 
             List<string> _resultList = new List<string>();
 
-            for (int i = 0; i < ActionList.Count; ++i)
+            for (int i = 0; i < FollowActionList.Count; ++i)
             {
-                _resultList.Add(ActionList[i].TryProcessData(rowValue));
-            }
-
-            if (_resultList.Count > 1)
-            {
-                StringBuilder _builder = new StringBuilder();
-
-                for (int i = 0; i < _resultList.Count; ++i)
+                var _result = FollowActionList[i].TryProcessData(_findRowData);
+                if (_result == null || _result.Count == 0)
                 {
-                    _builder.Append(_resultList[i]);
-                    if (i < _resultList.Count - 1)
-                    {
-                        _builder.Append(MultiValueSplitSymbol);
-                    }
+                    return null;
                 }
+                else
+                {
+                    _resultList.AddRange(_result);
+                }
+            }
 
-                return _builder.ToString();
-            }
-            else
-            {
-                return _resultList[0];
-            }
+            return null;
         }
     }
 
     /// <summary>
     /// 直接返回值
     /// </summary>
-    [ProcessAction("返回单string")]
-    public class ActionDirectReturn : ActionNoFollowActions
+    [ProcessAction("直接返回")]
+    public class ActionDirectReturn : DataProcessActionBase
     {
-        public override string TryProcessData(DataProcessActionBase preAction, List<string> rowData)
+        protected override List<string>? InternalProcessData(List<string> inRowData)
         {
             List<string> _resultList = new List<string>();
-            for (int i = 0; i < MatchKeyList.Count; ++i)
+            for (int i = 0; i < MatchKeyIndexList.Count; ++i)
             {
-                var _cell = rowData[MatchKeyList[i].GetKeyColumIndexInList()];
+                var _cell = inRowData[MatchKeyIndexList[i]];
                 _resultList.Add(_cell);
             }
 
-            if (_resultList.Count > 1)
-            {
-                StringBuilder _builder = new StringBuilder();
-
-                for (int i = 0; i < _resultList.Count; ++i)
-                {
-                    _builder.Append(_resultList[i]);
-                    if (i < _resultList.Count - 1)
-                    {
-                        _builder.Append(MultiValueSplitSymbol);
-                    }
-                }
-
-                return _builder.ToString();
-            }
-            else
-            {
-                return _resultList[0];
-            }
+            return _resultList;
         }
     }
 
-    [ProcessAction("跨表查找")]
-    public class ActionFindRowDataInOtherSheet : ActionWithFollowActions
-    {
-        public CommonWorkSheetData? SearchTargetSheet = null;
-
-        public List<KeyData> SearchKeyList = new List<KeyData>();
-
-        protected override string OnProcessFollowActions()
-        {
-            
-        }
-
-        protected override string OnProcessSelfAction(List<CellValueData> inRowData)
-        {
-            
-        }
-
-
-        public override List<string> TryProcessData(List<CellValueData> inRowData)
-        {
-            if (FollowActionList.Count < 1)
-            {
-                throw new Exception($"{TryProcessData} 出错， ActionListAfterFindValues 数量小于1");
-            }
-
-            if (MatchKeyList.Count < 1)
-            {
-                throw new Exception($"{TryProcessData} 出错， MatchKeyList 数量小于1");
-            }
-            if (SearchKeyList.Count < 1)
-            {
-                throw new Exception($"{TryProcessData} 出错，查找表格的列没有数据，请检查");
-            }
-            if (SearchTargetSheet == null)
-            {
-                throw new Exception($"{TryProcessData} 出错，SearchTargetSheet 为空");
-            }
-
-            SearchTargetSheet.LoadAllCellData(false);
-
-            List<string> _searchInCellList = new List<string>();
-
-            for (int i = 0; i < MatchKeyList.Count; ++i)
-            {
-                _searchInCellList.Add(inRowData[MatchKeyList[i].GetKeyColumIndexInList()].GetCellValue());
-            }
-
-            List<string> _resultList = new List<string>();
-
-            List<int> _searchKeyIndexList = new List<int>();
-            foreach (var _tempKey in SearchKeyList)
-            {
-                _searchKeyIndexList.Add(_tempKey.GetKeyColumIndexInList());
-            }
-
-            var searchMatchRowData = SearchTargetSheet.GetRowDataByTargetKeysAndValus(_searchKeyIndexList, _searchInCellList);
-            if (searchMatchRowData == null)
-            {
-                return null;
-            }
-
-            for (int i = 0; i < FollowActionList.Count; ++i)
-            {
-                var _tempValue = FollowActionList[i].TryProcessData(searchMatchRowData);
-
-                _resultList.Add(_tempValue);
-            }
-
-            if (_resultList.Count > 1)
-            {
-                StringBuilder _builder = new StringBuilder();
-
-                for (int i = 0; i < _resultList.Count; ++i)
-                {
-                    _builder.Append(_resultList[i]);
-                    if (i < _resultList.Count - 1)
-                    {
-                        _builder.Append(MultiValueSplitSymbol);
-                    }
-                }
-
-                return _builder.ToString();
-            }
-            else
-            {
-                return _resultList[0];
-            }
-        }
-    }
 
     [ProcessAction("返回为UEPos")]
-    public class ActionReturnAsUEPos : ActionNoFollowActions
+    public class ActionReturnAsUEPos : DataProcessActionBase
     {
-        public override string TryProcessData(List<CellValueData> rowData)
+        protected override List<string>? InternalProcessData(List<string> rowData)
         {
             List<string> _resultList = new List<string>();
-            for (int i = 0; i < MatchKeyList.Count; ++i)
+            for (int i = 0; i < MatchKeyIndexList.Count; ++i)
             {
-                var _cell = rowData[MatchKeyList[i].GetKeyColumIndexInList()];
-                var _tempCellValue = _cell.GetCellValue();
-                float.TryParse(_tempCellValue, out var _floatValue);
+                var _cellValue = rowData[MatchKeyIndexList[i]];
+                float.TryParse(_cellValue, out var _floatValue);
                 var _finalStr = ((int)(_floatValue * 100)).ToString();
                 _resultList.Add(_finalStr);
             }
-
-            if (_resultList.Count > 1)
-            {
-                StringBuilder _builder = new StringBuilder();
-
-                for (int i = 0; i < _resultList.Count; ++i)
-                {
-                    _builder.Append(_resultList[i]);
-                    if (i < _resultList.Count - 1)
-                    {
-                        _builder.Append(MultiValueSplitSymbol);
-                    }
-                }
-
-                return _builder.ToString();
-            }
-            else
-            {
-                return _resultList[0];
-            }
+            return _resultList;
         }
     }
 
     [ProcessAction("返回为UE旋转")]
-    public class ActionReturnAsUERotateY : ActionNoFollowActions
+    public class ActionReturnAsUERotateY : DataProcessActionBase
     {
-        public override string TryProcessData(List<CellValueData> rowData)
+        protected override List<string>? InternalProcessData(List<string> rowData)
         {
             List<string> _resultList = new List<string>();
-            for (int i = 0; i < MatchKeyList.Count; ++i)
+            for (int i = 0; i < MatchKeyIndexList.Count; ++i)
             {
-                var _cell = rowData[MatchKeyList[i].GetKeyColumIndexInList()];
-                var _tempCellValue = _cell.GetCellValue();
+                var _tempCellValue = rowData[MatchKeyIndexList[i]];
                 float.TryParse(_tempCellValue, out var _floatValue);
                 var _finalStr = ((int)(180 / 3.1415926 * _floatValue)).ToString();
                 _resultList.Add(_finalStr);
             }
 
-            if (_resultList.Count > 1)
-            {
-                StringBuilder _builder = new StringBuilder();
-
-                for (int i = 0; i < _resultList.Count; ++i)
-                {
-                    _builder.Append(_resultList[i]);
-                    if (i < _resultList.Count - 1)
-                    {
-                        _builder.Append(MultiValueSplitSymbol);
-                    }
-                }
-
-                return _builder.ToString();
-            }
-            else
-            {
-                return _resultList[0];
-            }
+            return _resultList;
         }
     }
 
     [ProcessAction("格式化后返回")]
-    public class ActionReturnAfterFormat : ActionNoFollowActions
+    public class ActionReturnAfterFormat : DataProcessActionBase
     {
         public string FormatStr = string.Empty;
 
-        public override string TryProcessData(List<CellValueData> inRowData)
+        protected override List<string>? InternalProcessData(List<string> rowData)
         {
-            if (inRowData == null || inRowData.Count < 1)
-            {
-                return string.Empty;
-            }
+            List<string> _result = new List<string>();
 
-            StringBuilder _builder = new StringBuilder();
-
-            for (int i = 0; i < inRowData.Count; ++i)
+            for (int i = 0; i < rowData.Count; ++i)
             {
                 bool _success = true;
                 try
                 {
-                    _builder.Append(string.Format(FormatStr, inRowData[i].GetCellValue()));
-
-                    if (i < inRowData.Count - 1)
-                    {
-                        _builder.Append(MultiValueSplitSymbol);
-                    }
+                    _result.Add(string.Format(FormatStr, rowData[i]));
                 }
                 catch (Exception ex)
                 {
@@ -339,12 +228,12 @@ namespace ExcelTool
 
                 if (!_success)
                 {
-                    _builder.Clear();
-                    for (int j = 0; j < inRowData.Count; ++j)
+                    var _builder = new StringBuilder();
+                    for (int j = 0; j < rowData.Count; ++j)
                     {
-                        _builder.Append(inRowData[j].GetCellValue());
+                        _builder.Append(rowData[j]);
 
-                        if (j < inRowData.Count - 1)
+                        if (j < rowData.Count - 1)
                         {
                             _builder.Append(" , ");
                         }
@@ -360,7 +249,7 @@ namespace ExcelTool
                 }
             }
 
-            return _builder.ToString();
+            return _result;
         }
     }
 }

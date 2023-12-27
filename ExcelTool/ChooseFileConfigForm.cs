@@ -28,7 +28,7 @@ namespace ExcelTool
         private List<KeyData> mKeyDataList = new List<KeyData>();
 
         private List<KeyData> mSelectKeyList = new List<KeyData>(); // 跨文件查找用到
-        private ActionFindRowDataInOtherSheet mFromAction = null;// 跨文件查找用到
+        private ActionForFindValue mFromAction = null;// 跨文件查找用到
 
         public FileDataBase? GetChooseFile()
         {
@@ -57,7 +57,7 @@ namespace ExcelTool
             mFromSheet = fromSheet;
         }
 
-        public void SetFindAction(ActionFindRowDataInOtherSheet targetAction)
+        public void SetFindAction(ActionForFindValue targetAction)
         {
             mFromFileType = LoadFileType.SetSearchKey;
             mFromAction = targetAction;
@@ -285,8 +285,7 @@ namespace ExcelTool
         {
             // 这里重置一下数据
             // 这里导出 key 供选择
-            var _currentSheet = mChooseSheet;
-            if (_currentSheet == null)
+            if (mChooseSheet == null)
             {
                 MessageBox.Show("当前的 Sheet 数据为空，请检查文件", "错误 ");
                 return;
@@ -314,7 +313,7 @@ namespace ExcelTool
                 }
             }
 
-            mKeyDataList = _currentSheet.GetKeyListData();
+            mKeyDataList = mChooseSheet.GetKeyListData();
 
             DataGridViewForKeyFilter.Rows.Clear();
 
@@ -324,7 +323,7 @@ namespace ExcelTool
                 bool _showSelect = false;
                 if (mFromAction != null)
                 {
-                    _showSelect = mFromAction.SearchKeyList.Contains(mKeyDataList[i]);
+                    _showSelect = mFromAction.SearchKeyIndexList.Contains(mKeyDataList[i].GetKeyIndexInDataList());
                 }
                 DataGridViewForKeyFilter.Rows.Add(
                     CommonUtil.GetZM(mKeyDataList[i].GetKeyIndexForShow()),

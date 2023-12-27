@@ -13,7 +13,7 @@ namespace ExcelTool
 {
     public partial class KeyConnectEditForm : Form
     {
-        private DataProcessActionBase mFromAction = null;
+        private ActionForFindValue mFromAction = null;
         private FileDataBase? mTargetFile = null;
         private CommonWorkSheetData? mFromSheet = null;
         private CommonWorkSheetData? mSelectSheet = null;
@@ -36,11 +36,11 @@ namespace ExcelTool
             DataViewForAction.AllowUserToAddRows = false;
         }
 
-        public bool InitData(DataProcessActionBase targetAction, bool canLoadNewFile, CommonWorkSheetData fromSheet)
+        public bool InitData(ActionForFindValue targetAction, bool canLoadNewFile, CommonWorkSheetData fromSheet)
         {
             if (targetAction == null)
             {
-                MessageBox.Show("传入的 KeyData 为空，请检查！", "错误");
+                CommonUtil.ShowError("传入的 KeyData 为空，请检查！");
                 this.Close();
                 return false;
             }
@@ -54,7 +54,8 @@ namespace ExcelTool
         {
             if (mFromAction == null)
             {
-                throw new Exception($"KeyConnectEditForm_Load 错误，mFromAction为空");
+                CommonUtil.ShowError($"KeyConnectEditForm_Load 错误，mFromAction为空");
+                return;
             }
 
             BtnLoadNewFile.Visible = mCanLoadNewFile;
@@ -63,8 +64,14 @@ namespace ExcelTool
             LabelSelectSheet.Visible = mCanLoadNewFile;
             ComboBoxForWorkSheet.Visible = mCanLoadNewFile;
 
-            if (!mCanLoadNewFile && mFromAction is ActionFindRowDataInOtherSheet _findAction)
+            if (!mCanLoadNewFile && mFromAction is ActionForFindValue _findAction)
             {
+                if (_findAction.SearchTargetSheet == null)
+                {
+                    CommonUtil.ShowError($"KeyConnectEditForm_Load 错误，_findAction.SearchTargetSheet 为空");
+                    return;
+                }
+
                 LabelForFromTable.Text = _findAction.SearchTargetSheet.GetOwnerTable()?.DisplayName + "->" + _findAction.SearchTargetSheet.DisplayName;
                 mSelectSheet = _findAction.SearchTargetSheet;
                 mTargetFile = mSelectSheet?.GetOwnerTable();
@@ -234,7 +241,8 @@ namespace ExcelTool
             var _keyList = mSelectSheet?.GetKeyListData();
             if (_keyList == null || _keyList.Count < 1)
             {
-                throw new Exception($"当前选择的sheet:[{_sheetIndex}] 无法获取 Key 数据，请检查！");
+                CommonUtil.ShowError($"当前选择的sheet:[{_sheetIndex}] 无法获取 Key 数据，请检查！");
+                return false;
             }
 
             if (mFromAction == null)
@@ -340,7 +348,7 @@ namespace ExcelTool
                 {
                     // 根据不同的行为，打开不同的编辑界面
                     var _action = this.mTargetActionList[e.RowIndex];
-                    if (_action is ActionFindRowDataInOtherSheet _findAction)
+                    if (_action is ActionForFindValue _findAction)
                     {
                     }
 
@@ -429,7 +437,7 @@ namespace ExcelTool
         {
             if (mFromAction == null)
             {
-                MessageBox.Show($"{BtnAddAction_Click} 错误，mFromAction 为空");
+                CommonUtil.ShowError($"{BtnAddAction_Click} 错误，mFromAction 为空");
                 return;
             }
 
@@ -440,26 +448,27 @@ namespace ExcelTool
 
             if (mChooseActionType == null)
             {
-                MessageBox.Show($"{BtnAddAction_Click} 错误，mChooseActionType为空，请检查");
+                CommonUtil.ShowError($"{BtnAddAction_Click} 错误，mChooseActionType为空，请检查");
                 return;
             }
 
             var _newClassIns = GetNewDataForChooseAction();
             if (_newClassIns == null)
             {
+                CommonUtil.ShowError($"{BtnAddAction_Click} 错误，GetNewDataForChooseAction 为空，请检查");
                 return;
             }
 
-            _newClassIns.MatchKeyList.AddRange(mSelectKeyList);
-
-            if (mFromAction is SourceAction _sourceAction)
+            var _keyIndexList = CommonUtil.ParsKeyDataToInexInDataList(mSelectKeyList);
+            if (_keyIndexList == null || _keyIndexList.Count < 1)
             {
-                _sourceAction.ActionList.Add(_newClassIns);
-                mSelectKeyList.Clear();
-                InternalClearAllKeySelect();
-                InternalRefreshForActionDataView();
+                CommonUtil.ShowError($"{BtnAddAction_Click} 错误，ParsKeyDataToInexInDataList 为空，请检查");
+                return;
             }
-            else if (mFromAction is ActionFindRowDataInOtherSheet _findAction)
+
+            _newClassIns.MatchKeyIndexList.AddRange(_keyIndexList);
+
+            if (mFromAction is ActionForFindValue _findAction)
             {
                 _findAction.FollowActionList.Add(_newClassIns);
                 mSelectKeyList.Clear();
@@ -468,7 +477,7 @@ namespace ExcelTool
             }
             else
             {
-                throw new Exception($"{BtnAddAction_Click} 错误，类型未处理：{mFromAction.GetType().FullName}");
+                CommonUtil.ShowError($"{BtnAddAction_Click} 错误，类型未处理：{mFromAction.GetType().FullName}");
             }
         }
 
@@ -489,14 +498,7 @@ namespace ExcelTool
         /// </summary>
         private void InternalRefreshForActionDataView()
         {
-            if (mFromAction is SourceAction _sourceAction)
-            {
-                mTargetActionList = _sourceAction.ActionList;
-            }
-            else if (mFromAction is ActionFindRowDataInOtherSheet _findAction)
-            {
-                mTargetActionList = _findAction.FollowActionList;
-            }
+            mTargetActionList = mFromAction.FollowActionList;
 
             this.DataViewForAction.DataSource = null;
             this.DataViewForAction.Rows.Clear();
@@ -505,26 +507,25 @@ namespace ExcelTool
                 string _contentForSetSearchKey = "无功能";
                 string _contentForSetActionAfterSearch = "无功能";
                 StringBuilder _connectInfo = new StringBuilder();
-                if (mTargetActionList[i] is ActionFindRowDataInOtherSheet _findAction)
-                {
-                    if (_findAction.SearchTargetSheet != null)
-                    {
-                        var _tempInfo = string.Format("{0}->{1}",
-                            _findAction.SearchTargetSheet.GetOwnerTable()?.DisplayName,
-                            _findAction.SearchTargetSheet.DisplayName
-                        );
-                        _connectInfo.Append(_tempInfo);
-                        _connectInfo.Append("->");
-                    }
 
-                    _contentForSetSearchKey = _findAction.SearchKeyList.Count > 0 ? "已设置" : "设置";
-                    _contentForSetActionAfterSearch = _findAction.FollowActionList.Count > 0 ? "已设置" : "设置";
-                    foreach (var _tempKey in _findAction.SearchKeyList)
-                    {
-                        _connectInfo.Append(_tempKey.KeyName);
-                        _connectInfo.Append(";");
-                    }
+                if (mFromAction.SearchTargetSheet != null)
+                {
+                    var _tempInfo = string.Format("{0}->{1}",
+                        mFromAction.SearchTargetSheet.GetOwnerTable()?.DisplayName,
+                        mFromAction.SearchTargetSheet.DisplayName
+                    );
+                    _connectInfo.Append(_tempInfo);
+                    _connectInfo.Append("->");
                 }
+
+                _contentForSetSearchKey = mFromAction.SearchKeyIndexList.Count > 0 ? "已设置" : "设置";
+                _contentForSetActionAfterSearch = mFromAction.FollowActionList.Count > 0 ? "已设置" : "设置";
+                foreach (var _tempKey in mFromAction.SearchKeyIndexList)
+                {
+                    _connectInfo.Append(_tempKey.KeyName);
+                    _connectInfo.Append(";");
+                }
+
                 var _index = this.DataViewForAction.Rows.Add(
                     mTargetActionList[i].GetType().GetCustomAttribute<ProcessActionAttribute>().DisplayName,
                     null,

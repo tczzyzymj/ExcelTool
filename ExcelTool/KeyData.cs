@@ -9,7 +9,7 @@ namespace ExcelTool
     public class KeyData
     {
         // 下标为0，在 worksheet 的 keydataList 里面的下标
-        private int mKeyColumIndexInList = 0;
+        private int mKeyIndexInDatList = 0;
 
         public string KeyName
         {
@@ -61,12 +61,12 @@ namespace ExcelTool
             WeakReference<CommonWorkSheetData> ownerSheet
         )
         {
-            mKeyColumIndexInList = indexInList;
+            mKeyIndexInDatList = indexInList;
             KeyName = nameValue;
             KeyIndexInList = indexInList;
 
             mKeyColumIndexInSheetData = indexInSheetData;
-            mKeyColumIndexForShow = mKeyColumIndexInList + 1;
+            mKeyColumIndexForShow = mKeyIndexInDatList + 1;
 
             KeyNameWithIndex = $"{CommonUtil.GetZM(mKeyColumIndexForShow)} : {KeyName}";
 
@@ -86,9 +86,9 @@ namespace ExcelTool
             return _result;
         }
 
-        public int GetKeyColumIndexInList()
+        public int GetKeyIndexInDataList()
         {
-            return mKeyColumIndexInList;
+            return mKeyIndexInDatList;
         }
 
         public int GetKeyIndexForShow()

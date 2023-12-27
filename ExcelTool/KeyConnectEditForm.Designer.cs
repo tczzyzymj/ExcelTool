@@ -324,7 +324,7 @@
             // 
             // BindKeyList
             // 
-            BindKeyList.HeaderText = "绑定Key";
+            BindKeyList.HeaderText = "绑定的Key";
             BindKeyList.Name = "BindKeyList";
             BindKeyList.Width = 180;
             // 

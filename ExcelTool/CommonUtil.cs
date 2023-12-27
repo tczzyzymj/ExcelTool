@@ -25,6 +25,48 @@ namespace ExcelTool
 
     public static class CommonUtil
     {
+        public static List<string> ParsRowCellDataToRowStringData(List<CellValueData> inDataList)
+        {
+            List<string> _result = new List<string>();
+            if (inDataList != null && _result.Count > 0)
+            {
+                foreach (var _cell in inDataList)
+                {
+                    _result.Add(_cell.GetCellValue());
+                }
+            }
+
+            return _result;
+        }
+
+        public static List<int>? ParsKeyDataToInexInDataList(List<KeyData> inKeyDataList)
+        {
+            if (inKeyDataList == null || inKeyDataList.Count < 1)
+            {
+                return null;
+            }
+
+            List<int> _result = new List<int>();
+            foreach (var _singleKey in inKeyDataList)
+            {
+                _result.Add(_singleKey.GetKeyIndexInDataList());
+            }
+
+            return _result;
+        }
+
+        public static void ShowError(string content, bool throwException = false)
+        {
+            if (throwException)
+            {
+                throw new Exception(content);
+            }
+            else
+            {
+                MessageBox.Show(content, "错误");
+            }
+        }
+
         public static string GetZM(int indexValue)
         {
             string _columName = string.Empty;

@@ -38,6 +38,12 @@ namespace ExcelTool
         }
     }
 
+    public enum MultiResultReturnType
+    {
+        SingleString,
+        StringList,
+    }
+
     public enum LoadFileType
     {
         // 普通文件

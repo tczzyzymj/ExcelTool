@@ -121,16 +121,30 @@ namespace ExcelTool
                                         throw new Exception($" Key : [{_singleKey.KeyName}] 没有忽略，并且也没有指定数据请检查");
                                     }
 
-                                    var _dataAfterAction = _action.TryProcessData(_singleRow);
+                                    var _listStringData = CommonUtil.ParsRowCellDataToRowStringData(_singleRow);
 
-                                    _writeDataMap.Add(_singleKey, _dataAfterAction);
+                                    var _dataAfterAction = _action.TryProcessData(_listStringData);
+
+                                    if (_dataAfterAction == null || _dataAfterAction.Count < 1)
+                                    {
+                                        _writeDataMap.Add(_singleKey, string.Empty);
+                                    }
+                                    else
+                                    {
+                                        if (_dataAfterAction.Count > 1)
+                                        {
+                                            throw new Exception($"错误，导出 Key:[{_singleKey.KeyName}] 绑定的行为居然返回多个数据，请检查!");
+                                        }
+
+                                        _writeDataMap.Add(_singleKey, _dataAfterAction[0]);
+                                    }
                                 }
 
                                 // 检测冲突
                                 {
                                     foreach (var _theKey in _theKeyList)
                                     {
-                                        _theKeyInListIndexList.Add(_theKey.GetKeyColumIndexInList());
+                                        _theKeyInListIndexList.Add(_theKey.GetKeyIndexInDataList());
                                         if (_writeDataMap.TryGetValue(_theKey, out var _tempValue))
                                         {
                                             _theKeyCompareValue.Add(_tempValue);
@@ -139,7 +153,7 @@ namespace ExcelTool
 
                                     if (_theKeyCompareValue.Count > 0)
                                     {
-                                        var _rowData = _currentSheet.GetRowDataByTargetKeysAndValus(_theKeyInListIndexList, _theKeyCompareValue);
+                                        var _rowData = _currentSheet.GetRowCellDataByTargetKeysAndValus(_theKeyInListIndexList, _theKeyCompareValue);
                                         if (_rowData != null && _rowData.Count > 0)
                                         {
                                             // 有冲突
@@ -176,17 +190,30 @@ namespace ExcelTool
                                     {
                                         throw new Exception($" Key : [{_singleKey.KeyName}] 没有忽略，并且也没有指定数据请检查");
                                     }
+                                    var _listStringData = CommonUtil.ParsRowCellDataToRowStringData(_singleRow);
 
-                                    var _dataAfterAction = _action.TryProcessData(_singleRow);
+                                    var _dataAfterAction = _action.TryProcessData(_listStringData);
 
-                                    _writeDataMap.Add(_singleKey, _dataAfterAction);
+                                    if (_dataAfterAction == null || _dataAfterAction.Count < 1)
+                                    {
+                                        _writeDataMap.Add(_singleKey, string.Empty);
+                                    }
+                                    else
+                                    {
+                                        if (_dataAfterAction.Count > 1)
+                                        {
+                                            throw new Exception($"错误，导出 Key:[{_singleKey.KeyName}] 绑定的行为居然返回多个数据，请检查!");
+                                        }
+
+                                        _writeDataMap.Add(_singleKey, _dataAfterAction[0]);
+                                    }
                                 }
 
                                 // 检测冲突
                                 {
                                     foreach (var _theKey in _theKeyList)
                                     {
-                                        _theKeyInListIndexList.Add(_theKey.GetKeyColumIndexInList());
+                                        _theKeyInListIndexList.Add(_theKey.GetKeyIndexInDataList());
                                         if (_writeDataMap.TryGetValue(_theKey, out var _tempValue))
                                         {
                                             _theKeyCompareValue.Add(_tempValue);
@@ -195,7 +222,7 @@ namespace ExcelTool
 
                                     if (_theKeyCompareValue.Count > 0)
                                     {
-                                        var _rowData = _currentSheet.GetRowDataByTargetKeysAndValus(_theKeyInListIndexList, _theKeyCompareValue);
+                                        var _rowData = _currentSheet.GetRowCellDataByTargetKeysAndValus(_theKeyInListIndexList, _theKeyCompareValue);
                                         if (_rowData != null && _rowData.Count > 0)
                                         {
                                             // 有冲突
@@ -233,16 +260,30 @@ namespace ExcelTool
                                         throw new Exception($" Key : [{_singleKey.KeyName}] 没有忽略，并且也没有指定数据请检查");
                                     }
 
-                                    var _dataAfterAction = _action.TryProcessData(_singleRow);
+                                    var _listStringData = CommonUtil.ParsRowCellDataToRowStringData(_singleRow);
 
-                                    _writeDataMap.Add(_singleKey, _dataAfterAction);
+                                    var _dataAfterAction = _action.TryProcessData(_listStringData);
+
+                                    if (_dataAfterAction == null || _dataAfterAction.Count < 1)
+                                    {
+                                        _writeDataMap.Add(_singleKey, string.Empty);
+                                    }
+                                    else
+                                    {
+                                        if (_dataAfterAction.Count > 1)
+                                        {
+                                            throw new Exception($"错误，导出 Key:[{_singleKey.KeyName}] 绑定的行为居然返回多个数据，请检查!");
+                                        }
+
+                                        _writeDataMap.Add(_singleKey, _dataAfterAction[0]);
+                                    }
                                 }
 
                                 // 检测冲突
                                 {
                                     foreach (var _theKey in _theKeyList)
                                     {
-                                        _theKeyInListIndexList.Add(_theKey.GetKeyColumIndexInList());
+                                        _theKeyInListIndexList.Add(_theKey.GetKeyIndexInDataList());
                                         if (_writeDataMap.TryGetValue(_theKey, out var _tempValue))
                                         {
                                             _theKeyCompareValue.Add(_tempValue);
@@ -251,7 +292,7 @@ namespace ExcelTool
 
                                     if (_theKeyCompareValue.Count > 0)
                                     {
-                                        var _rowData = _currentSheet.GetRowDataByTargetKeysAndValus(_theKeyInListIndexList, _theKeyCompareValue);
+                                        var _rowData = _currentSheet.GetRowCellDataByTargetKeysAndValus(_theKeyInListIndexList, _theKeyCompareValue);
                                         if (_rowData == null)
                                         {
                                             // 没有冲突
@@ -289,9 +330,23 @@ namespace ExcelTool
                                 throw new Exception($" Key : [{_singleKey.KeyName}] 没有忽略，并且也没有指定数据请检查");
                             }
 
-                            var _dataAfterAction = _action.TryProcessData(_singleRow);
+                            var _listStringData = CommonUtil.ParsRowCellDataToRowStringData(_singleRow);
 
-                            _writeDataMap.Add(_singleKey, _dataAfterAction);
+                            var _dataAfterAction = _action.TryProcessData(_listStringData);
+
+                            if (_dataAfterAction == null || _dataAfterAction.Count < 1)
+                            {
+                                _writeDataMap.Add(_singleKey, string.Empty);
+                            }
+                            else
+                            {
+                                if (_dataAfterAction.Count > 1)
+                                {
+                                    throw new Exception($"错误，导出 Key:[{_singleKey.KeyName}] 绑定的行为居然返回多个数据，请检查!");
+                                }
+
+                                _writeDataMap.Add(_singleKey, _dataAfterAction[0]);
+                            }
                         }
 
                         _currentSheet.WriteOneData(-1, _writeDataMap, true, false);
