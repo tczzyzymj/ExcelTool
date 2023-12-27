@@ -63,7 +63,7 @@ namespace ExcelTool
             LabelSelectSheet.Visible = mCanLoadNewFile;
             ComboBoxForWorkSheet.Visible = mCanLoadNewFile;
 
-            if (!mCanLoadNewFile && mFromAction is DataProcessActionForFindRowDataInOtherSheet _findAction)
+            if (!mCanLoadNewFile && mFromAction is ActionFindRowDataInOtherSheet _findAction)
             {
                 LabelForFromTable.Text = _findAction.SearchTargetSheet.GetOwnerTable()?.DisplayName + "->" + _findAction.SearchTargetSheet.DisplayName;
                 mSelectSheet = _findAction.SearchTargetSheet;
@@ -340,7 +340,7 @@ namespace ExcelTool
                 {
                     // 根据不同的行为，打开不同的编辑界面
                     var _action = this.mTargetActionList[e.RowIndex];
-                    if (_action is DataProcessActionForFindRowDataInOtherSheet _findAction)
+                    if (_action is ActionFindRowDataInOtherSheet _findAction)
                     {
                     }
 
@@ -459,9 +459,9 @@ namespace ExcelTool
                 InternalClearAllKeySelect();
                 InternalRefreshForActionDataView();
             }
-            else if (mFromAction is DataProcessActionForFindRowDataInOtherSheet _findAction)
+            else if (mFromAction is ActionFindRowDataInOtherSheet _findAction)
             {
-                _findAction.ActionListAfterFindValues.Add(_newClassIns);
+                _findAction.FollowActionList.Add(_newClassIns);
                 mSelectKeyList.Clear();
                 InternalClearAllKeySelect();
                 InternalRefreshForActionDataView();
@@ -493,9 +493,9 @@ namespace ExcelTool
             {
                 mTargetActionList = _sourceAction.ActionList;
             }
-            else if (mFromAction is DataProcessActionForFindRowDataInOtherSheet _findAction)
+            else if (mFromAction is ActionFindRowDataInOtherSheet _findAction)
             {
-                mTargetActionList = _findAction.ActionListAfterFindValues;
+                mTargetActionList = _findAction.FollowActionList;
             }
 
             this.DataViewForAction.DataSource = null;
@@ -505,7 +505,7 @@ namespace ExcelTool
                 string _contentForSetSearchKey = "无功能";
                 string _contentForSetActionAfterSearch = "无功能";
                 StringBuilder _connectInfo = new StringBuilder();
-                if (mTargetActionList[i] is DataProcessActionForFindRowDataInOtherSheet _findAction)
+                if (mTargetActionList[i] is ActionFindRowDataInOtherSheet _findAction)
                 {
                     if (_findAction.SearchTargetSheet != null)
                     {
@@ -518,7 +518,7 @@ namespace ExcelTool
                     }
 
                     _contentForSetSearchKey = _findAction.SearchKeyList.Count > 0 ? "已设置" : "设置";
-                    _contentForSetActionAfterSearch = _findAction.ActionListAfterFindValues.Count > 0 ? "已设置" : "设置";
+                    _contentForSetActionAfterSearch = _findAction.FollowActionList.Count > 0 ? "已设置" : "设置";
                     foreach (var _tempKey in _findAction.SearchKeyList)
                     {
                         _connectInfo.Append(_tempKey.KeyName);

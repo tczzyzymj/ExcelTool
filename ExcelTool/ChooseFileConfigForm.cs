@@ -28,7 +28,7 @@ namespace ExcelTool
         private List<KeyData> mKeyDataList = new List<KeyData>();
 
         private List<KeyData> mSelectKeyList = new List<KeyData>(); // 跨文件查找用到
-        private DataProcessActionForFindRowDataInOtherSheet mFromAction = null;// 跨文件查找用到
+        private ActionFindRowDataInOtherSheet mFromAction = null;// 跨文件查找用到
 
         public FileDataBase? GetChooseFile()
         {
@@ -57,7 +57,7 @@ namespace ExcelTool
             mFromSheet = fromSheet;
         }
 
-        public void SetFindAction(DataProcessActionForFindRowDataInOtherSheet targetAction)
+        public void SetFindAction(ActionFindRowDataInOtherSheet targetAction)
         {
             mFromFileType = LoadFileType.SetSearchKey;
             mFromAction = targetAction;
