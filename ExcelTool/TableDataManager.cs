@@ -163,8 +163,7 @@ namespace ExcelTool
             MessageBox.Show("数据导出完成", "提示");
         }
 
-
-        private List<List<string>> InternalProcssExportData()
+        private List<Dictionary<KeyData, string>> InternalProcssExportData()
         {
             var _sourceFile = GetSourceFileData();
             if (_sourceFile == null)
@@ -185,8 +184,8 @@ namespace ExcelTool
                 throw new Exception("_sourceSheetIndex < 0 ，请检查");
             }
 
-            var _inRowDataList = _sourceFile.GetFilteredDataList(SourceDataFilterMap, _sourceSheetIndex);
-            if (_inRowDataList == null || _inRowDataList.Count < 1)
+            var _sourceRowDataList = _sourceFile.GetFilteredDataList(SourceDataFilterMap, _sourceSheetIndex);
+            if (_sourceRowDataList == null || _sourceRowDataList.Count < 1)
             {
                 throw new Exception("过滤后的源数据为空，没有写入的必要，请检查一下");
             }
@@ -210,38 +209,47 @@ namespace ExcelTool
                 throw new Exception($"{InternalProcssExportData} 出错，无法获取当前数据表格的 KeyList，请检查!");
             }
 
-            List<List<string>> _resultList = new List<List<string>>();
-            foreach (var _singleKey in _currentKeyList)
+            List<Dictionary<KeyData, string>> _resultList = new List<Dictionary<KeyData, string>>();
+
+            foreach (var _sourceRowData in _sourceRowDataList)
             {
-                if (_singleKey.IsIgnore)
-                {
-                    _writeDataMap.Add(_singleKey, string.Empty);
-                    continue;
-                }
+                Dictionary<KeyData, string> _writeDataMap = new Dictionary<KeyData, string>();
+                _resultList.Add(_writeDataMap);
 
-                if (!_keyActionMap.TryGetValue(_singleKey, out var _action))
+                foreach (var _singleKey in _currentKeyList)
                 {
-                    throw new Exception($" Key : [{_singleKey.KeyName}] 没有忽略，并且也没有指定数据请检查");
-                }
-
-                var _listStringData = _singleRow;
-
-                var _dataAfterAction = _action.TryProcessData(_listStringData);
-
-                if (_dataAfterAction == null || _dataAfterAction.Count < 1)
-                {
-                    _writeDataMap.Add(_singleKey, string.Empty);
-                }
-                else
-                {
-                    if (_dataAfterAction.Count > 1)
+                    if (_singleKey.IsIgnore)
                     {
-                        throw new Exception($"错误，导出 Key:[{_singleKey.KeyName}] 绑定的行为居然返回多个数据，请检查!");
+                        _writeDataMap.Add(_singleKey, string.Empty);
+                        continue;
                     }
 
-                    _writeDataMap.Add(_singleKey, _dataAfterAction[0]);
+                    if (!_keyActionMap.TryGetValue(_singleKey, out var _action))
+                    {
+                        throw new Exception($" Key : [{_singleKey.KeyName}] 没有忽略，并且也没有指定数据请检查");
+                    }
+
+                    var _listStringData = CommonUtil.ParsRowCellDataToRowStringData(_sourceRowData);
+
+                    var _dataAfterAction = _action.TryProcessData(_listStringData);
+
+                    if (_dataAfterAction == null || _dataAfterAction.Count < 1)
+                    {
+                        _writeDataMap.Add(_singleKey, string.Empty);
+                    }
+                    else
+                    {
+                        if (_dataAfterAction.Count > 1)
+                        {
+                            throw new Exception($"错误，导出 Key:[{_singleKey.KeyName}] 绑定的行为居然返回多个数据，请检查!");
+                        }
+
+                        _writeDataMap.Add(_singleKey, _dataAfterAction[0]);
+                    }
                 }
             }
+
+            return _resultList;
         }
 
         public FileDataBase? TryLoadExportFile(string absoluteFilePath)
