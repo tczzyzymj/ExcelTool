@@ -23,7 +23,7 @@ namespace ExcelTool
             set;
         } = ",";
 
-        public override bool WriteData(List<List<CellValueData>> filteredInData, int workSheetIndex)
+        public override bool WriteData(List<List<string>> filteredInData, int workSheetIndex)
         {
             if (!base.WriteData(filteredInData, workSheetIndex))
             {

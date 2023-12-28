@@ -16,9 +16,9 @@ namespace ExcelTool
 
         public enum ExportConflictDealWayType
         {
-            UseOldData = 0, // 使用旧数据
-            UseNewDataSkipEmptyData, // 使用新数据，空数据跳过
-            UseNewDataOverwriteAll, // 使用新数据全覆盖
+            UseOldData = 0, // KEY有冲突，使用旧数据
+            UseNewDataSkipEmptyData, // KEY有冲突，使用新数据，空数据跳过
+            UseNewDataOverwriteAll, // KEY有冲突，使用新数据全覆盖
         }
 
         public enum FilterCompareValueType

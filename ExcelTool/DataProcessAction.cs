@@ -308,5 +308,53 @@ namespace ExcelTool
             return true;
         }
     }
+
+
+    public abstract class ActionCore
+    {
+        public abstract List<string> ProcessData(List<string> inDataList);
+    }
+
+    public abstract class ActionNoFollowActions : ActionCore
+    {
+    }
+
+    /// <summary>
+    /// 对数据，自身不做任何执行，交给序列内的行为执行
+    /// </summary>
+    public class SequenceAction : ActionNoFollowActions
+    {
+        public List<ActionCore> ActionSequence = new List<ActionCore>();
+
+        public override List<string> ProcessData(List<string> inDataList)
+        {
+            List<string> _resultList = new List<string>();
+
+            for (int i = 0; i < ActionSequence.Count; ++i)
+            {
+                var _tempResult = ActionSequence[i].ProcessData(inDataList);
+                _resultList.AddRange(_tempResult);
+            }
+
+            return _resultList;
+        }
+    }
+
+    /// <summary>
+    /// 对数据，自己是要执行的，并且如果有后续行为，要将自己执行的结果交给后续行为
+    /// </summary>
+    public abstract class ActionWithFollowActions : ActionCore
+    {
+        public SequenceAction FollowActionSequence = new SequenceAction();
+
+        public List<int> InDataMatchIndexList = new List<int>();
+
+        public override List<string> ProcessData(List<string> inDataList)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected abstract List<string> OnSelfProcessData(List<string> inDataList);
+    }
 }
 

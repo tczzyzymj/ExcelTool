@@ -55,6 +55,13 @@ namespace ExcelTool
             return true;
         }
 
+        /// <summary>
+        /// 注意，这里写入的数据一定是按下标来的
+        /// </summary>
+        /// <param name="inRowDataList"></param>
+        /// <param name="workSheetIndex"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public virtual bool WriteData(List<List<string>> inRowDataList, int workSheetIndex)
         {
             if (inRowDataList == null || inRowDataList.Count < 1)
@@ -73,22 +80,22 @@ namespace ExcelTool
                 throw new Exception($"{WriteData} 出错，无法获取当前数据表格的 KeyList，请检查!");
             }
 
-            _currentSheet.LoadAllCellData(false);
-
-            List<string> _theKeyCompareValue = new List<string>();
-            List<KeyData> _theKeyList = new List<KeyData>();
-            for (int i = 0; i < _currentKeyList.Count; ++i)
+            List<int> _mainKeyIndexList = new List<int>();
+            foreach (var _key in _currentKeyList)
             {
-                if (_currentKeyList[i].IsMainKey)
+                if (_key.IsMainKey)
                 {
-                    _theKeyList.Add(_currentKeyList[i]);
+                    _mainKeyIndexList.Add(_key.KeyIndexInList);
                 }
             }
 
-            List<int> _theKeyInListIndexList = new List<int>(); //在 List 中的index ，不是 sheet 里面的index
+            if (_mainKeyIndexList.Count < 1)
+            {
+                throw new Exception($"导出目标 : {_currentSheet.DisplayName} 没有 主 KEY，请检查");
+            }
 
-            Dictionary<KeyData, string> _writeDataMap = new Dictionary<KeyData, string>();
-
+            _currentSheet.LoadAllCellData(false);
+            List<string> _theKeyCompareValue = new List<string>();
             switch (TableDataManager.Ins().ExportWriteWayType)
             {
                 case MainTypeDefine.ExportWriteWayType.Append:
@@ -99,67 +106,23 @@ namespace ExcelTool
                         {
                             foreach (var _singleRow in inRowDataList)
                             {
-                                _writeDataMap.Clear();
                                 _theKeyCompareValue.Clear();
-                                _theKeyInListIndexList.Clear();
-
-                                foreach (var _singleKey in _currentKeyList)
+                                foreach (var _keyIndex in _mainKeyIndexList)
                                 {
-                                    if (_singleKey.IsIgnore)
-                                    {
-                                        _writeDataMap.Add(_singleKey, string.Empty);
-                                        continue;
-                                    }
-
-                                    if (!_keyActionMap.TryGetValue(_singleKey, out var _action))
-                                    {
-                                        throw new Exception($" Key : [{_singleKey.KeyName}] 没有忽略，并且也没有指定数据请检查");
-                                    }
-
-                                    var _listStringData = _singleRow;
-
-                                    var _dataAfterAction = _action.TryProcessData(_listStringData);
-
-                                    if (_dataAfterAction == null || _dataAfterAction.Count < 1)
-                                    {
-                                        _writeDataMap.Add(_singleKey, string.Empty);
-                                    }
-                                    else
-                                    {
-                                        if (_dataAfterAction.Count > 1)
-                                        {
-                                            throw new Exception($"错误，导出 Key:[{_singleKey.KeyName}] 绑定的行为居然返回多个数据，请检查!");
-                                        }
-
-                                        _writeDataMap.Add(_singleKey, _dataAfterAction[0]);
-                                    }
+                                    _theKeyCompareValue.Add(_singleRow[_keyIndex]);
                                 }
 
                                 // 检测冲突
+                                var _rowData = _currentSheet.GetRowCellDataByTargetKeysAndValus(_mainKeyIndexList, _theKeyCompareValue);
+                                if (_rowData != null && _rowData.Count > 0)
                                 {
-                                    foreach (var _theKey in _theKeyList)
-                                    {
-                                        _theKeyInListIndexList.Add(_theKey.GetKeyIndexInDataList());
-                                        if (_writeDataMap.TryGetValue(_theKey, out var _tempValue))
-                                        {
-                                            _theKeyCompareValue.Add(_tempValue);
-                                        }
-                                    }
-
-                                    if (_theKeyCompareValue.Count > 0)
-                                    {
-                                        var _rowData = _currentSheet.GetRowCellDataByTargetKeysAndValus(_theKeyInListIndexList, _theKeyCompareValue);
-                                        if (_rowData != null && _rowData.Count > 0)
-                                        {
-                                            // 有冲突
-                                            _currentSheet.WriteOneData(_rowData[0].GetCellRowIndexInSheet(), _writeDataMap, false, true);
-                                        }
-                                        else
-                                        {
-                                            // 没有冲突
-                                            _currentSheet.WriteOneData(-1, _writeDataMap, true, true);
-                                        }
-                                    }
+                                    // 有冲突
+                                    _currentSheet.WriteOneData(_rowData[0].GetCellRowIndexInSheet(), _singleRow, true);
+                                }
+                                else
+                                {
+                                    // 没有冲突
+                                    _currentSheet.WriteOneData(-1, _singleRow, false);
                                 }
                             }
 
@@ -169,66 +132,23 @@ namespace ExcelTool
                         {
                             foreach (var _singleRow in inRowDataList)
                             {
-                                _writeDataMap.Clear();
                                 _theKeyCompareValue.Clear();
-                                _theKeyInListIndexList.Clear();
-
-                                foreach (var _singleKey in _currentKeyList)
+                                foreach (var _keyIndex in _mainKeyIndexList)
                                 {
-                                    if (_singleKey.IsIgnore)
-                                    {
-                                        _writeDataMap.Add(_singleKey, string.Empty);
-                                        continue;
-                                    }
-
-                                    if (!_keyActionMap.TryGetValue(_singleKey, out var _action))
-                                    {
-                                        throw new Exception($" Key : [{_singleKey.KeyName}] 没有忽略，并且也没有指定数据请检查");
-                                    }
-                                    var _listStringData = _singleRow;
-
-                                    var _dataAfterAction = _action.TryProcessData(_listStringData);
-
-                                    if (_dataAfterAction == null || _dataAfterAction.Count < 1)
-                                    {
-                                        _writeDataMap.Add(_singleKey, string.Empty);
-                                    }
-                                    else
-                                    {
-                                        if (_dataAfterAction.Count > 1)
-                                        {
-                                            throw new Exception($"错误，导出 Key:[{_singleKey.KeyName}] 绑定的行为居然返回多个数据，请检查!");
-                                        }
-
-                                        _writeDataMap.Add(_singleKey, _dataAfterAction[0]);
-                                    }
+                                    _theKeyCompareValue.Add(_singleRow[_keyIndex]);
                                 }
 
                                 // 检测冲突
+                                var _rowData = _currentSheet.GetRowCellDataByTargetKeysAndValus(_mainKeyIndexList, _theKeyCompareValue);
+                                if (_rowData != null && _rowData.Count > 0)
                                 {
-                                    foreach (var _theKey in _theKeyList)
-                                    {
-                                        _theKeyInListIndexList.Add(_theKey.GetKeyIndexInDataList());
-                                        if (_writeDataMap.TryGetValue(_theKey, out var _tempValue))
-                                        {
-                                            _theKeyCompareValue.Add(_tempValue);
-                                        }
-                                    }
-
-                                    if (_theKeyCompareValue.Count > 0)
-                                    {
-                                        var _rowData = _currentSheet.GetRowCellDataByTargetKeysAndValus(_theKeyInListIndexList, _theKeyCompareValue);
-                                        if (_rowData != null && _rowData.Count > 0)
-                                        {
-                                            // 有冲突
-                                            _currentSheet.WriteOneData(_rowData[0].GetCellRowIndexInSheet(), _writeDataMap, false, false);
-                                        }
-                                        else
-                                        {
-                                            // 没有冲突
-                                            _currentSheet.WriteOneData(-1, _writeDataMap, true, false);
-                                        }
-                                    }
+                                    // 有冲突
+                                    _currentSheet.WriteOneData(_rowData[0].GetCellRowIndexInSheet(), _singleRow, false);
+                                }
+                                else
+                                {
+                                    // 没有冲突
+                                    _currentSheet.WriteOneData(-1, _singleRow, false);
                                 }
                             }
 
@@ -238,63 +158,21 @@ namespace ExcelTool
                         {
                             foreach (var _singleRow in inRowDataList)
                             {
-                                _writeDataMap.Clear();
                                 _theKeyCompareValue.Clear();
-                                _theKeyInListIndexList.Clear();
-
-                                foreach (var _singleKey in _currentKeyList)
+                                foreach (var _keyIndex in _mainKeyIndexList)
                                 {
-                                    if (_singleKey.IsIgnore)
-                                    {
-                                        _writeDataMap.Add(_singleKey, string.Empty);
-                                        continue;
-                                    }
-
-                                    if (!_keyActionMap.TryGetValue(_singleKey, out var _action))
-                                    {
-                                        throw new Exception($" Key : [{_singleKey.KeyName}] 没有忽略，并且也没有指定数据请检查");
-                                    }
-
-                                    var _listStringData = _singleRow;
-
-                                    var _dataAfterAction = _action.TryProcessData(_listStringData);
-
-                                    if (_dataAfterAction == null || _dataAfterAction.Count < 1)
-                                    {
-                                        _writeDataMap.Add(_singleKey, string.Empty);
-                                    }
-                                    else
-                                    {
-                                        if (_dataAfterAction.Count > 1)
-                                        {
-                                            throw new Exception($"错误，导出 Key:[{_singleKey.KeyName}] 绑定的行为居然返回多个数据，请检查!");
-                                        }
-
-                                        _writeDataMap.Add(_singleKey, _dataAfterAction[0]);
-                                    }
+                                    _theKeyCompareValue.Add(_singleRow[_keyIndex]);
                                 }
 
                                 // 检测冲突
+                                var _rowData = _currentSheet.GetRowCellDataByTargetKeysAndValus(_mainKeyIndexList, _theKeyCompareValue);
+                                if (_rowData != null && _rowData.Count > 0)
                                 {
-                                    foreach (var _theKey in _theKeyList)
-                                    {
-                                        _theKeyInListIndexList.Add(_theKey.GetKeyIndexInDataList());
-                                        if (_writeDataMap.TryGetValue(_theKey, out var _tempValue))
-                                        {
-                                            _theKeyCompareValue.Add(_tempValue);
-                                        }
-                                    }
-
-                                    if (_theKeyCompareValue.Count > 0)
-                                    {
-                                        var _rowData = _currentSheet.GetRowCellDataByTargetKeysAndValus(_theKeyInListIndexList, _theKeyCompareValue);
-                                        if (_rowData == null)
-                                        {
-                                            // 没有冲突
-                                            _currentSheet.WriteOneData(-1, _writeDataMap, true, false);
-                                        }
-                                    }
+                                    continue;
                                 }
+
+                                // 没有冲突
+                                _currentSheet.WriteOneData(-1, _singleRow, false);
                             }
 
                             break;
@@ -308,43 +186,7 @@ namespace ExcelTool
 
                     foreach (var _singleRow in inRowDataList)
                     {
-                        _writeDataMap.Clear();
-                        _theKeyCompareValue.Clear();
-                        _theKeyInListIndexList.Clear();
-
-                        foreach (var _singleKey in _currentKeyList)
-                        {
-                            if (_singleKey.IsIgnore)
-                            {
-                                _writeDataMap.Add(_singleKey, string.Empty);
-                                continue;
-                            }
-
-                            if (!_keyActionMap.TryGetValue(_singleKey, out var _action))
-                            {
-                                throw new Exception($" Key : [{_singleKey.KeyName}] 没有忽略，并且也没有指定数据请检查");
-                            }
-
-                            var _listStringData = _singleRow;
-
-                            var _dataAfterAction = _action.TryProcessData(_listStringData);
-
-                            if (_dataAfterAction == null || _dataAfterAction.Count < 1)
-                            {
-                                _writeDataMap.Add(_singleKey, string.Empty);
-                            }
-                            else
-                            {
-                                if (_dataAfterAction.Count > 1)
-                                {
-                                    throw new Exception($"错误，导出 Key:[{_singleKey.KeyName}] 绑定的行为居然返回多个数据，请检查!");
-                                }
-
-                                _writeDataMap.Add(_singleKey, _dataAfterAction[0]);
-                            }
-                        }
-
-                        _currentSheet.WriteOneData(-1, _writeDataMap, true, false);
+                        _currentSheet.WriteOneData(-1, _singleRow, false);
                     }
 
                     break;

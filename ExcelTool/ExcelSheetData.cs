@@ -43,9 +43,9 @@ namespace ExcelTool
             mOriginSheetData.DeleteRow(_contentStartIndex, mOriginSheetData.Dimension.Rows);
         }
 
-        public override bool WriteOneData(int rowIndexInSheet, Dictionary<KeyData, string> valueMap, bool isNewData, bool skipEmptyData)
+        public override bool WriteOneData(int rowIndexInSheet, List<string> inValueList, bool skipEmptyData)
         {
-            if (!base.WriteOneData(rowIndexInSheet, valueMap, isNewData, skipEmptyData))
+            if (!base.WriteOneData(rowIndexInSheet, inValueList, skipEmptyData))
             {
                 return false;
             }
@@ -63,10 +63,9 @@ namespace ExcelTool
             }
 
             var _targetRowIndex = rowIndexInSheet;
-            if (isNewData)
+            if (_targetRowIndex == -1)
             {
                 _targetRowIndex = mOriginSheetData.Dimension.Rows + 1;
-
             }
             else
             {
@@ -79,7 +78,8 @@ namespace ExcelTool
 
             for (int i = 0; i < _keyList.Count; ++i)
             {
-                valueMap.TryGetValue(_keyList[i], out var _tempContent);
+                var _tempContent = inValueList[i];
+
                 if (skipEmptyData)
                 {
                     if (!string.IsNullOrEmpty(_tempContent))

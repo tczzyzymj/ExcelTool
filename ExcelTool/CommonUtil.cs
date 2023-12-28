@@ -49,7 +49,7 @@ namespace ExcelTool
             List<int> _result = new List<int>();
             foreach (var _singleKey in inKeyDataList)
             {
-                _result.Add(_singleKey.GetKeyIndexInDataList());
+                _result.Add(_singleKey.KeyIndexInList);
             }
 
             return _result;

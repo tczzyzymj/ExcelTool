@@ -163,7 +163,7 @@ namespace ExcelTool
             MessageBox.Show("数据导出完成", "提示");
         }
 
-        private List<Dictionary<KeyData, string>> InternalProcssExportData()
+        private List<List<string>> InternalProcssExportData()
         {
             var _sourceFile = GetSourceFileData();
             if (_sourceFile == null)
@@ -209,18 +209,25 @@ namespace ExcelTool
                 throw new Exception($"{InternalProcssExportData} 出错，无法获取当前数据表格的 KeyList，请检查!");
             }
 
-            List<Dictionary<KeyData, string>> _resultList = new List<Dictionary<KeyData, string>>();
+            _currentKeyList.Sort(
+                (a, b) =>
+                {
+                    return (int)a.KeyIndexInList.CompareTo((int)b.KeyIndexInList);
+                }
+            );
+
+            List<List<string>> _resultList = new List<List<string>>();
 
             foreach (var _sourceRowData in _sourceRowDataList)
             {
-                Dictionary<KeyData, string> _writeDataMap = new Dictionary<KeyData, string>();
-                _resultList.Add(_writeDataMap);
+                List<string> _writeDataList = new List<string>();
+                _resultList.Add(_writeDataList);
 
                 foreach (var _singleKey in _currentKeyList)
                 {
                     if (_singleKey.IsIgnore)
                     {
-                        _writeDataMap.Add(_singleKey, string.Empty);
+                        _writeDataList.Add(string.Empty);
                         continue;
                     }
 
@@ -235,7 +242,7 @@ namespace ExcelTool
 
                     if (_dataAfterAction == null || _dataAfterAction.Count < 1)
                     {
-                        _writeDataMap.Add(_singleKey, string.Empty);
+                        _writeDataList.Add(string.Empty);
                     }
                     else
                     {
@@ -244,7 +251,7 @@ namespace ExcelTool
                             throw new Exception($"错误，导出 Key:[{_singleKey.KeyName}] 绑定的行为居然返回多个数据，请检查!");
                         }
 
-                        _writeDataMap.Add(_singleKey, _dataAfterAction[0]);
+                        _writeDataList.Add(_dataAfterAction[0]);
                     }
                 }
             }

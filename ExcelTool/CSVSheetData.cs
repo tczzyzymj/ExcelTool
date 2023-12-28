@@ -26,9 +26,10 @@ namespace ExcelTool
             InternalInitWithKey(mAllSheetData, true);
         }
 
-        public override bool WriteOneData(int rowIndexInSheet, Dictionary<KeyData, string> valueMap, bool isNewData, bool skipEmptyData)
+        public override bool WriteOneData(int rowIndexInSheet, List<string> valueList, bool skipEmptyData)
         {
-            if (!base.WriteOneData(rowIndexInSheet, valueMap, isNewData, skipEmptyData))
+            throw new Exception("CSV写入功能完善中");
+            if (!base.WriteOneData(rowIndexInSheet, valueList, skipEmptyData))
             {
                 return false;
             }
@@ -39,13 +40,6 @@ namespace ExcelTool
                 MessageBox.Show("WriteData ，但是 KeyList 为空，请检查", "错误");
 
                 return false;
-            }
-
-            if (isNewData)
-            {
-            }
-            else
-            {
             }
 
             return true;

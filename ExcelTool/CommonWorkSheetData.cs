@@ -202,7 +202,7 @@ namespace ExcelTool
                 {
                     foreach (var _filterFunc in _pair.Value)
                     {
-                        if (!_filterFunc.IsMatchFilter(_rowData[_pair.Key.GetKeyIndexInDataList()].GetCellValue()))
+                        if (!_filterFunc.IsMatchFilter(_rowData[_pair.Key.KeyIndexInList].GetCellValue()))
                         {
                             _match = false;
 
@@ -224,11 +224,35 @@ namespace ExcelTool
         {
         }
 
-        public virtual bool WriteOneData(int rowIndexInSheet, Dictionary<KeyData, string> valueMap, bool newData, bool skipEmptyData)
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        /// <param name="rowIndexInSheet">-1表示新加一行数据</param>
+        /// <param name="inValueList"></param>
+        /// <param name="skipEmptyData"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public virtual bool WriteOneData(int rowIndexInSheet, List<string> inValueList, bool skipEmptyData)
         {
             if (mCellData2DList == null)
             {
                 throw new Exception($"{WriteOneData} 出错，mCellData2DList 为空");
+            }
+
+            if (inValueList == null || inValueList.Count == 0)
+            {
+                throw new Exception($"{WriteOneData} 出错，inValueList 为空");
+            }
+
+            var _keyList = GetKeyListData();
+            if (_keyList == null)
+            {
+                throw new Exception("错误，写入数据的时候，获取的 keylist 为空");
+            }
+
+            if (_keyList.Count != inValueList.Count)
+            {
+                throw new Exception("错误，写入数据的时候，输入的数据数量和 keylist 数量不匹配");
             }
 
             return true;
@@ -289,7 +313,7 @@ namespace ExcelTool
 
         protected virtual bool AddNewKeyData(int indexInList, int indexInSheetData, string nameValue)
         {
-            var _existData = mKeyDataList.Find((x) => x.GetKeyIndexInDataList() == indexInList);
+            var _existData = mKeyDataList.Find((x) => x.KeyIndexInList == indexInList);
             if (_existData != null)
             {
                 MessageBox.Show($"已经存在相同的 indexInList : {indexInList}, 内容分别是：{_existData.KeyName} {nameValue}");
