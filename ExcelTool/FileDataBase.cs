@@ -55,7 +55,7 @@ namespace ExcelTool
             return true;
         }
 
-        public virtual bool WriteData(List<List<CellValueData>> inRowDataList, int workSheetIndex)
+        public virtual bool WriteData(List<List<string>> inRowDataList, int workSheetIndex)
         {
             if (inRowDataList == null || inRowDataList.Count < 1)
             {
@@ -66,11 +66,6 @@ namespace ExcelTool
                 throw new Exception($"{WriteData}下标无效");
             }
 
-            var _keyActionMap = TableDataManager.Ins().ExportKeyActionMap;
-            if (_keyActionMap.Count < 1)
-            {
-                throw new Exception($"{WriteData} 出错，未配置 ExportKeyActionMap，请检查");
-            }
             var _currentSheet = mWorkSheetList[workSheetIndex];
             var _currentKeyList = _currentSheet.GetKeyListData();
             if (_currentKeyList == null)
@@ -121,7 +116,7 @@ namespace ExcelTool
                                         throw new Exception($" Key : [{_singleKey.KeyName}] 没有忽略，并且也没有指定数据请检查");
                                     }
 
-                                    var _listStringData = CommonUtil.ParsRowCellDataToRowStringData(_singleRow);
+                                    var _listStringData = _singleRow;
 
                                     var _dataAfterAction = _action.TryProcessData(_listStringData);
 
@@ -190,7 +185,7 @@ namespace ExcelTool
                                     {
                                         throw new Exception($" Key : [{_singleKey.KeyName}] 没有忽略，并且也没有指定数据请检查");
                                     }
-                                    var _listStringData = CommonUtil.ParsRowCellDataToRowStringData(_singleRow);
+                                    var _listStringData = _singleRow;
 
                                     var _dataAfterAction = _action.TryProcessData(_listStringData);
 
@@ -260,7 +255,7 @@ namespace ExcelTool
                                         throw new Exception($" Key : [{_singleKey.KeyName}] 没有忽略，并且也没有指定数据请检查");
                                     }
 
-                                    var _listStringData = CommonUtil.ParsRowCellDataToRowStringData(_singleRow);
+                                    var _listStringData = _singleRow;
 
                                     var _dataAfterAction = _action.TryProcessData(_listStringData);
 
@@ -330,7 +325,7 @@ namespace ExcelTool
                                 throw new Exception($" Key : [{_singleKey.KeyName}] 没有忽略，并且也没有指定数据请检查");
                             }
 
-                            var _listStringData = CommonUtil.ParsRowCellDataToRowStringData(_singleRow);
+                            var _listStringData = _singleRow;
 
                             var _dataAfterAction = _action.TryProcessData(_listStringData);
 

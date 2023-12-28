@@ -22,14 +22,16 @@ namespace ExcelTool
             return mIns;
         }
 
-        private static TableDataManager mIns = null;
+        private static TableDataManager mIns = new TableDataManager();
 
         private static List<FileDataBase> mDataList = new List<FileDataBase>();
 
         private FileDataBase? mExportTargetFile = null; // 导出目标文件，其关联在里面设置
+
         private CommonWorkSheetData? mExportSheet = null;
 
         private FileDataBase? mSourceFile = null; // 数据源文件
+
         private CommonWorkSheetData? mSourceSheet = null;
 
         public Dictionary<KeyData, SourceAction> ExportKeyActionMap = new Dictionary<KeyData, SourceAction>();
@@ -44,13 +46,13 @@ namespace ExcelTool
         } = new Dictionary<KeyData, List<FilterFuncBase>>();
 
         /// <summary>
-        /// 导出目标文件的数据过滤器，考虑到可能是对原有数据的更新
+        /// 注意，这个INDEX是 IndexInRowData 不是 sheetData
         /// </summary>
-        private Dictionary<KeyData, List<FilterFuncBase>> ExportDataFilterMap
+        public int IDIndexForSourceData
         {
             get;
             set;
-        } = new Dictionary<KeyData, List<FilterFuncBase>>();
+        }
 
         public MainTypeDefine.ExportWriteWayType ExportWriteWayType
         {
@@ -72,9 +74,15 @@ namespace ExcelTool
             }
         }
 
-        public List<FilterFuncBase>? GetSourceFileDataFilterFuncByKey(KeyData targetKey)
+        public List<FilterFuncBase>? GetSourceFileDataFilterFuncByKey(KeyData? targetKey)
         {
+            if (targetKey == null)
+            {
+                return null;
+            }
+
             SourceDataFilterMap.TryGetValue(targetKey, out var _funcList);
+
             return _funcList;
         }
 
@@ -95,7 +103,6 @@ namespace ExcelTool
 
             return true;
         }
-
 
         private void InternalSetSortIndex()
         {
@@ -130,43 +137,20 @@ namespace ExcelTool
                 return;
             }
 
-            var _sourceFile = GetSourceFileData();
-            if (_sourceFile == null)
-            {
-                MessageBox.Show("StartExportData 但是 _sourceFile 文件没有配置，请检查", "错误");
-                return;
-            }
-
-            var _sourceSheet = TableDataManager.Ins().GetSourceSheet();
-            if (_sourceSheet == null)
-            {
-                throw new Exception("_sourceSheet 为空");
-            }
-            _sourceSheet.LoadAllCellData(true);
-            var _sourceSheetIndex = _sourceFile.GetWorkSheetList().IndexOf(_sourceSheet);
-            if (_sourceSheetIndex < 0)
-            {
-                throw new Exception("_sourceSheetIndex < 0 ，请检查");
-            }
-
-            var _inRowDataList = _sourceFile.GetFilteredDataList(SourceDataFilterMap, _sourceSheetIndex);
-            if (_inRowDataList == null || _inRowDataList.Count < 1)
-            {
-                MessageBox.Show("过滤后的源数据为空，没有写入的必要，请检查一下", "提示");
-                return;
-            }
-
             var _exportSheet = TableDataManager.Ins().GetExportSheet();
             if (_exportSheet == null)
             {
                 throw new Exception($"_exportSheet 为空");
             }
+
             _exportSheet.LoadAllCellData(true);
             var _exportSheetIndex = _exportFile.GetWorkSheetList().IndexOf(_exportSheet);
             if (_exportSheetIndex < 0)
             {
                 throw new Exception("_exportSheetIndex 无效");
             }
+
+            var _inRowDataList = InternalProcssExportData();
 
             if (!_exportFile.WriteData(_inRowDataList, _exportSheetIndex))
             {
@@ -177,6 +161,87 @@ namespace ExcelTool
             _exportFile.SaveFile();
 
             MessageBox.Show("数据导出完成", "提示");
+        }
+
+
+        private List<List<string>> InternalProcssExportData()
+        {
+            var _sourceFile = GetSourceFileData();
+            if (_sourceFile == null)
+            {
+                throw new Exception("StartExportData 但是 _sourceFile 文件没有配置，请检查");
+            }
+
+            var _sourceSheet = TableDataManager.Ins().GetSourceSheet();
+            if (_sourceSheet == null)
+            {
+                throw new Exception("_sourceSheet 为空");
+            }
+
+            _sourceSheet.LoadAllCellData(true);
+            var _sourceSheetIndex = _sourceFile.GetWorkSheetList().IndexOf(_sourceSheet);
+            if (_sourceSheetIndex < 0)
+            {
+                throw new Exception("_sourceSheetIndex < 0 ，请检查");
+            }
+
+            var _inRowDataList = _sourceFile.GetFilteredDataList(SourceDataFilterMap, _sourceSheetIndex);
+            if (_inRowDataList == null || _inRowDataList.Count < 1)
+            {
+                throw new Exception("过滤后的源数据为空，没有写入的必要，请检查一下");
+            }
+
+            var _keyActionMap = TableDataManager.Ins().ExportKeyActionMap;
+            if (_keyActionMap.Count < 1)
+            {
+                throw new Exception($"{InternalProcssExportData} 出错，未配置 ExportKeyActionMap，请检查");
+            }
+
+            var _currentSheet = TableDataManager.Ins().GetExportSheet();
+            if (_currentSheet == null)
+            {
+                throw new Exception($"_exportSheet 为空");
+            }
+
+            var _currentKeyList = _currentSheet.GetKeyListData();
+
+            if (_currentKeyList == null)
+            {
+                throw new Exception($"{InternalProcssExportData} 出错，无法获取当前数据表格的 KeyList，请检查!");
+            }
+
+            List<List<string>> _resultList = new List<List<string>>();
+            foreach (var _singleKey in _currentKeyList)
+            {
+                if (_singleKey.IsIgnore)
+                {
+                    _writeDataMap.Add(_singleKey, string.Empty);
+                    continue;
+                }
+
+                if (!_keyActionMap.TryGetValue(_singleKey, out var _action))
+                {
+                    throw new Exception($" Key : [{_singleKey.KeyName}] 没有忽略，并且也没有指定数据请检查");
+                }
+
+                var _listStringData = _singleRow;
+
+                var _dataAfterAction = _action.TryProcessData(_listStringData);
+
+                if (_dataAfterAction == null || _dataAfterAction.Count < 1)
+                {
+                    _writeDataMap.Add(_singleKey, string.Empty);
+                }
+                else
+                {
+                    if (_dataAfterAction.Count > 1)
+                    {
+                        throw new Exception($"错误，导出 Key:[{_singleKey.KeyName}] 绑定的行为居然返回多个数据，请检查!");
+                    }
+
+                    _writeDataMap.Add(_singleKey, _dataAfterAction[0]);
+                }
+            }
         }
 
         public FileDataBase? TryLoadExportFile(string absoluteFilePath)

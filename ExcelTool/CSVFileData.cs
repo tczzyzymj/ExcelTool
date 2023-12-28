@@ -39,7 +39,7 @@ namespace ExcelTool
 
         public override bool InternalLoadFile(string absolutePath)
         {
-            string[] _keyArray = null;
+            string[]? _keyArray = null;
             using (StreamReader sr = new StreamReader(absolutePath))
             {
                 using (CsvReader _csvReader = new CsvReader(sr, CultureInfo.InvariantCulture))

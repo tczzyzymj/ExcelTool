@@ -27,22 +27,10 @@ namespace ExcelTool
 
         private List<KeyData> mKeyDataList = new List<KeyData>();
 
-        private List<KeyData> mSelectKeyList = new List<KeyData>(); // 跨文件查找用到
-        private ActionForFindValue mFromAction = null;// 跨文件查找用到
 
         public FileDataBase? GetChooseFile()
         {
             return mChooseFile;
-        }
-
-        public CommonWorkSheetData GetChooseSheet()
-        {
-            return mChooseSheet;
-        }
-
-        public List<KeyData> GetSelectKeyList()
-        {
-            return mSelectKeyList;
         }
 
         private CommonWorkSheetData? mFromSheet = null;
@@ -60,7 +48,6 @@ namespace ExcelTool
         public void SetFindAction(ActionForFindValue targetAction)
         {
             mFromFileType = LoadFileType.SetSearchKey;
-            mFromAction = targetAction;
             mFromSheet = targetAction.SearchTargetSheet;
         }
 
@@ -276,25 +263,18 @@ namespace ExcelTool
                 return;
             }
 
-            mChooseSheet = _selectItem;
-
-            InternalRefreshDataViewForSheetKey();
+            InternalChooseSheet(_selectItem);
         }
 
-        private void InternalRefreshDataViewForSheetKey()
+        private void InternalChooseSheet(CommonWorkSheetData targetSheet)
         {
-            // 这里重置一下数据
-            // 这里导出 key 供选择
-            if (mChooseSheet == null)
+            if (targetSheet == null)
             {
-                MessageBox.Show("当前的 Sheet 数据为空，请检查文件", "错误 ");
+                CommonUtil.ShowError(" InternalChooseSheet 出错，targetSheet为空");
                 return;
             }
 
-            TextBoxForKeyStartRow.Text = mChooseSheet.GetKeyStartRowIndex().ToString();
-            TextBoxForKeyStartColm.Text = mChooseSheet.GetKeyStartColmIndex().ToString();
-            TextBoxForContentStartRow.Text = mChooseSheet.GetContentStartRowIndex().ToString();
-
+            mChooseSheet = targetSheet;
             switch (this.mFromFileType)
             {
                 case LoadFileType.NormalFile:
@@ -313,18 +293,39 @@ namespace ExcelTool
                 }
             }
 
+            InternalRefreshDataViewForSheetKey();
+        }
+
+        private void InternalRefreshDataViewForSheetKey()
+        {
+            // 这里重置一下数据
+            // 这里导出 key 供选择
+            if (mChooseSheet == null)
+            {
+                MessageBox.Show("当前的 Sheet 数据为空，请检查文件", "错误 ");
+                return;
+            }
+
+            TextBoxForKeyStartRow.Text = mChooseSheet.GetKeyStartRowIndex().ToString();
+            TextBoxForKeyStartColm.Text = mChooseSheet.GetKeyStartColmIndex().ToString();
+            TextBoxForContentStartRow.Text = mChooseSheet.GetContentStartRowIndex().ToString();
+
             mKeyDataList = mChooseSheet.GetKeyListData();
 
             DataGridViewForKeyFilter.Rows.Clear();
+
+            if (mFromFileType == LoadFileType.SourceFile)
+            {
+            }
+            else
+            {
+            }
 
             for (int i = 0; i < mKeyDataList.Count; i++)
             {
                 var _filter = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mKeyDataList[i]);
                 bool _showSelect = false;
-                if (mFromAction != null)
-                {
-                    _showSelect = mFromAction.SearchKeyIndexList.Contains(mKeyDataList[i].GetKeyIndexInDataList());
-                }
+
                 DataGridViewForKeyFilter.Rows.Add(
                     CommonUtil.GetZM(mKeyDataList[i].GetKeyIndexForShow()),
                     mKeyDataList[i].KeyName,
@@ -336,9 +337,8 @@ namespace ExcelTool
         }
 
         private const int mInexForHasSetFilter = 2;
-        private const int IndexForSelectSearchKey = 4; // 查找KEY用的，目前只有 设置跨表查找的时候用到
-        private const int mIndexForSetButton = 3;
-
+        private const int mIndexForSetButton = 3; // 设置过滤的按钮
+        private const int mIndexForSelectSearchKey = 4; // 查找KEY用的，目前只有 设置跨表查找的时候用到
 
         private void DataGridViewForKeyFilter_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -360,20 +360,13 @@ namespace ExcelTool
                 {
                     break;
                 }
-                case IndexForSelectSearchKey:
+                case mIndexForSelectSearchKey:
                 {
                     bool _isSelect = (bool)this.DataGridViewForKeyFilter.Rows[e.RowIndex].Cells[e.ColumnIndex].EditedFormattedValue;
 
                     var _targetKey = mKeyDataList[e.RowIndex];
 
-                    if (_isSelect)
-                    {
-                        mSelectKeyList.Add(_targetKey);
-                    }
-                    else
-                    {
-                        mSelectKeyList.Remove(_targetKey);
-                    }
+                    _targetKey.IsMainKey = _isSelect;
 
                     break;
                 }
@@ -432,7 +425,7 @@ namespace ExcelTool
 
                     DataGridViewForKeyFilter.Columns[mInexForHasSetFilter].Visible = false;
                     DataGridViewForKeyFilter.Columns[mIndexForSetButton].Visible = false;
-                    DataGridViewForKeyFilter.Columns[IndexForSelectSearchKey].Visible = false;
+                    DataGridViewForKeyFilter.Columns[mIndexForSelectSearchKey].Visible = false;
                     LabelLoadedFiles.Visible = false;
                     ComboBoxForLoadedFile.Visible = false;
 
@@ -446,7 +439,7 @@ namespace ExcelTool
                     ComboBoxForLoadedFile.Visible = false;
                     BtnShowHasSetFilter.Visible = true;
                     _targetFile = TableDataManager.Ins().GetSourceFileData();
-                    DataGridViewForKeyFilter.Columns[IndexForSelectSearchKey].Visible = false;
+                    DataGridViewForKeyFilter.Columns[mIndexForSelectSearchKey].Visible = false;
                     break;
                 }
                 case LoadFileType.NormalFile:
@@ -461,7 +454,7 @@ namespace ExcelTool
                     BtnShowHasSetFilter.Visible = false;
                     DataGridViewForKeyFilter.Columns[mInexForHasSetFilter].Visible = false;
                     DataGridViewForKeyFilter.Columns[mIndexForSetButton].Visible = false;
-                    DataGridViewForKeyFilter.Columns[IndexForSelectSearchKey].Visible = false;
+                    DataGridViewForKeyFilter.Columns[mIndexForSelectSearchKey].Visible = false;
 
                     break;
                 }
@@ -477,7 +470,7 @@ namespace ExcelTool
                     BtnShowHasSetFilter.Visible = false;
                     DataGridViewForKeyFilter.Columns[mInexForHasSetFilter].Visible = false;
                     DataGridViewForKeyFilter.Columns[mIndexForSetButton].Visible = false;
-                    DataGridViewForKeyFilter.Columns[IndexForSelectSearchKey].Visible = true;
+                    DataGridViewForKeyFilter.Columns[mIndexForSelectSearchKey].Visible = true;
 
                     break;
                 }
@@ -491,7 +484,7 @@ namespace ExcelTool
 
                 PanelForConfigs.Enabled = true;
 
-                if (mChooseFile is CSVFileData _csvFile)
+                if (_targetFile is CSVFileData _csvFile)
                 {
                     LableForSplitSymbol.Visible = true;
                     TextBoxSplitSymbol.Visible = true;
@@ -503,7 +496,7 @@ namespace ExcelTool
                     TextBoxSplitSymbol.Visible = false;
                 }
 
-                TextForFilePath.Text = mChooseFile.GetFileAbsulotePath();
+                TextForFilePath.Text = _targetFile.GetFileAbsulotePath();
             }
             else
             {
@@ -559,6 +552,28 @@ namespace ExcelTool
             {
                 MessageBox.Show("未选中 Sheet，请检查");
                 return;
+            }
+
+            if (mFromSheet == null)
+            {
+                CommonUtil.ShowError("mFromSheet 为空，请检查");
+                return;
+            }
+
+            // 这里判断一下，如果是配置的 sourcefile，那么一定要指定 主 id key
+            if (mFromFileType == LoadFileType.SourceFile)
+            {
+                var _fromSheetKeyList = mFromSheet.GetKeyListData();
+                if (_fromSheetKeyList == null)
+                {
+                    CommonUtil.ShowError("无法获取 KeyList, 请检查!");
+                    return;
+                }
+
+                for (int i = 0; i < _fromSheetKeyList.Count; ++i)
+                {
+
+                }
             }
 
             this.DialogResult = DialogResult.OK;

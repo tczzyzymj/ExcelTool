@@ -47,6 +47,13 @@
             label5 = new Label();
             label2 = new Label();
             DataViewForAction = new DataGridView();
+            ActionName = new DataGridViewTextBoxColumn();
+            BindKeyList = new DataGridViewComboBoxColumn();
+            dataGridViewButtonColumn1 = new DataGridViewButtonColumn();
+            ConnectInfoColum = new DataGridViewTextBoxColumn();
+            RemoveBtnColum = new DataGridViewButtonColumn();
+            MoveUpColum = new DataGridViewButtonColumn();
+            MoveDownColum = new DataGridViewButtonColumn();
             BtnAddAction = new Button();
             label4 = new Label();
             label6 = new Label();
@@ -55,13 +62,6 @@
             label7 = new Label();
             contextMenuStrip1 = new ContextMenuStrip(components);
             ComboBoxForSelectKey = new ComboBox();
-            ActionName = new DataGridViewTextBoxColumn();
-            BindKeyList = new DataGridViewComboBoxColumn();
-            dataGridViewButtonColumn1 = new DataGridViewButtonColumn();
-            ConnectInfoColum = new DataGridViewTextBoxColumn();
-            RemoveBtnColum = new DataGridViewButtonColumn();
-            MoveUpColum = new DataGridViewButtonColumn();
-            MoveDownColum = new DataGridViewButtonColumn();
             ((System.ComponentModel.ISupportInitialize)DataViewForKeyList).BeginInit();
             ((System.ComponentModel.ISupportInitialize)DataViewForAction).BeginInit();
             SuspendLayout();
@@ -219,9 +219,9 @@
             label2.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label2.Location = new Point(12, 468);
             label2.Name = "label2";
-            label2.Size = new Size(90, 21);
+            label2.Size = new Size(346, 21);
             label2.TabIndex = 44;
-            label2.Text = "已配置行为";
+            label2.Text = "已配置行为序列，前面的结果会作为后面的输入";
             // 
             // DataViewForAction
             // 
@@ -234,6 +234,56 @@
             DataViewForAction.Size = new Size(995, 263);
             DataViewForAction.TabIndex = 45;
             DataViewForAction.CellContentClick += DataViewForAction_CellContentClick;
+            // 
+            // ActionName
+            // 
+            ActionName.HeaderText = "行为名字";
+            ActionName.Name = "ActionName";
+            ActionName.ReadOnly = true;
+            ActionName.Width = 120;
+            // 
+            // BindKeyList
+            // 
+            BindKeyList.HeaderText = "绑定的Key";
+            BindKeyList.Name = "BindKeyList";
+            BindKeyList.Width = 180;
+            // 
+            // dataGridViewButtonColumn1
+            // 
+            dataGridViewButtonColumn1.FillWeight = 160F;
+            dataGridViewButtonColumn1.HeaderText = "详细配置";
+            dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
+            dataGridViewButtonColumn1.Text = "详细配置";
+            dataGridViewButtonColumn1.ToolTipText = "详细配置";
+            // 
+            // ConnectInfoColum
+            // 
+            ConnectInfoColum.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            ConnectInfoColum.HeaderText = "关联信息";
+            ConnectInfoColum.Name = "ConnectInfoColum";
+            ConnectInfoColum.ReadOnly = true;
+            // 
+            // RemoveBtnColum
+            // 
+            RemoveBtnColum.HeaderText = "移除";
+            RemoveBtnColum.Name = "RemoveBtnColum";
+            RemoveBtnColum.Width = 60;
+            // 
+            // MoveUpColum
+            // 
+            MoveUpColum.HeaderText = "上移";
+            MoveUpColum.Name = "MoveUpColum";
+            MoveUpColum.Text = "上移";
+            MoveUpColum.ToolTipText = "上移";
+            MoveUpColum.Width = 40;
+            // 
+            // MoveDownColum
+            // 
+            MoveDownColum.HeaderText = "下移";
+            MoveDownColum.Name = "MoveDownColum";
+            MoveDownColum.Text = "下移";
+            MoveDownColum.ToolTipText = "下移";
+            MoveDownColum.Width = 40;
             // 
             // BtnAddAction
             // 
@@ -314,56 +364,6 @@
             ComboBoxForSelectKey.Size = new Size(242, 29);
             ComboBoxForSelectKey.TabIndex = 53;
             ComboBoxForSelectKey.SelectedIndexChanged += ComboBoxForSelectKey_SelectedIndexChanged;
-            // 
-            // ActionName
-            // 
-            ActionName.HeaderText = "行为名字";
-            ActionName.Name = "ActionName";
-            ActionName.ReadOnly = true;
-            ActionName.Width = 120;
-            // 
-            // BindKeyList
-            // 
-            BindKeyList.HeaderText = "绑定的Key";
-            BindKeyList.Name = "BindKeyList";
-            BindKeyList.Width = 180;
-            // 
-            // dataGridViewButtonColumn1
-            // 
-            dataGridViewButtonColumn1.FillWeight = 160F;
-            dataGridViewButtonColumn1.HeaderText = "详细配置";
-            dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
-            dataGridViewButtonColumn1.Text = "详细配置";
-            dataGridViewButtonColumn1.ToolTipText = "详细配置";
-            // 
-            // ConnectInfoColum
-            // 
-            ConnectInfoColum.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            ConnectInfoColum.HeaderText = "关联信息";
-            ConnectInfoColum.Name = "ConnectInfoColum";
-            ConnectInfoColum.ReadOnly = true;
-            // 
-            // RemoveBtnColum
-            // 
-            RemoveBtnColum.HeaderText = "移除";
-            RemoveBtnColum.Name = "RemoveBtnColum";
-            RemoveBtnColum.Width = 60;
-            // 
-            // MoveUpColum
-            // 
-            MoveUpColum.HeaderText = "上移";
-            MoveUpColum.Name = "MoveUpColum";
-            MoveUpColum.Text = "上移";
-            MoveUpColum.ToolTipText = "上移";
-            MoveUpColum.Width = 40;
-            // 
-            // MoveDownColum
-            // 
-            MoveDownColum.HeaderText = "下移";
-            MoveDownColum.Name = "MoveDownColum";
-            MoveDownColum.Text = "下移";
-            MoveDownColum.ToolTipText = "下移";
-            MoveDownColum.Width = 40;
             // 
             // KeyConnectEditForm
             // 

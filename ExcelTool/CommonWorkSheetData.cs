@@ -75,32 +75,39 @@ namespace ExcelTool
                 throw new Exception("GetListCellDataBySpecificKeysAndValues, 传入的数据数量不一致，请检查");
             }
 
-            List<CellValueData> _result = null;
-
             for (int _rowIndex = 0; _rowIndex < mCellData2DList.Count; ++_rowIndex)
             {
                 var _rowData = mCellData2DList[_rowIndex];
 
-                bool _isMatch = false;
+                int _matchCount = 0;
 
                 for (int i = 0; i < matchKeyList.Count; ++i)
                 {
                     var _matchKeyIndex = matchKeyList[i];
-                    if (string.Equals(_rowData[_matchKeyIndex].GetCellValue(), matchValueList[i]))
+                    var _matchKeyCellValue = _rowData[_matchKeyIndex].GetCellValue().Trim();
+
+                    foreach (var _matchTargetStr in matchValueList)
                     {
-                        _isMatch = true;
+                        if (string.Equals(_matchKeyCellValue, _matchTargetStr.Trim()))
+                        {
+                            ++_matchCount;
+                            break;
+                        }
+                    }
+
+                    if (_matchCount == matchValueList.Count)
+                    {
                         break;
                     }
                 }
 
-                if (_isMatch)
+                if (_matchCount == matchValueList.Count)
                 {
-                    _result = _rowData;
-                    break;
+                    return _rowData;
                 }
             }
 
-            return _result;
+            return null;
         }
 
         /// <summary>

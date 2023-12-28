@@ -202,6 +202,10 @@ namespace ExcelTool
                     _newList.Add(_newCellData);
                     var _value = mOriginSheetData.Cells[_row, _colum].Value;
                     var _stringValue = _value == null ? string.Empty : _value.ToString();
+                    if (_stringValue == null)
+                    {
+                        _stringValue = string.Empty;
+                    }
                     _newCellData.Init(
                         _stringValue,
                         _row,

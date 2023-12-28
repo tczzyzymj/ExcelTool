@@ -18,23 +18,26 @@ namespace ExcelTool
         {
             get;
             set;
-        }
+        } = string.Empty;
     }
 
     public abstract class DataProcessActionBase
     {
-        public virtual List<string>? TryProcessData(List<string> inRowData)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inRowData"></param>
+        /// <returns>返回值有可能是作为行为序列中，查找行为的传入值，可能由多个value组成一个需要查找的值，因此不能返回 CellData</returns>
+        /// <returns>同理， CellData 也不能作为输入值</returns>
+        /// <exception cref="Exception"></exception>
+        public virtual List<string> TryProcessData(List<string> inRowData)
         {
             if (inRowData == null || inRowData.Count < 1)
             {
-                return null;
+                return new List<string>();
             }
 
             var _resultList = InternalProcessData(inRowData);
-            if (_resultList == null)
-            {
-                return null;
-            }
 
             switch (ResultReturnType)
             {
@@ -70,7 +73,12 @@ namespace ExcelTool
 
         public List<int> MatchKeyIndexList = new List<int>(); // 对于源行为来说，需要在在配置源文件的时候，去指定 ID key 是哪个
 
-        protected abstract List<string>? InternalProcessData(List<string> inRowData);
+        protected abstract List<string> InternalProcessData(List<string> inRowData);
+
+        public virtual bool HaveDetailEdit()
+        {
+            return false;
+        }
     }
 
     /// <summary>
@@ -81,7 +89,7 @@ namespace ExcelTool
     {
         public ActionForFindValue FindAction = new ActionForFindValue();
 
-        protected override List<string>? InternalProcessData(List<string> inRowData)
+        protected override List<string> InternalProcessData(List<string> inRowData)
         {
             return FindAction.TryProcessData(inRowData);
         }
@@ -90,7 +98,7 @@ namespace ExcelTool
     /// <summary>
     /// 只管找数据，找到数据以后返回交给后续处理
     /// </summary>
-    [ProcessAction("跨表查找")]
+    [ProcessAction("查找行为")]
     public class ActionForFindValue : DataProcessActionBase
     {
         public CommonWorkSheetData? SearchTargetSheet = null; // 去哪个 sheet 查找
@@ -98,20 +106,24 @@ namespace ExcelTool
         public List<int> SearchKeyIndexList = new List<int>(); // 去 sheet 的那个位置找，注意 index 是 index in row ， 不是 index in sheet
 
         /// <summary>
+        /// 注意，这里是给输入源数据用的
+        /// </summary>
+        public bool SkipSearch
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// 找到数值后操作行为序列
         /// </summary>
         public List<DataProcessActionBase> FollowActionList = new List<DataProcessActionBase>();
 
-        protected override List<string>? InternalProcessData(List<string> inData)
+        protected override List<string> InternalProcessData(List<string> inData)
         {
             if (SearchTargetSheet == null)
             {
                 throw new Exception($" ActionForFindValue 出错，TryProcessData ， SearchTargetSheet 为空");
-            }
-
-            if (MatchKeyIndexList == null || MatchKeyIndexList.Count < 1)
-            {
-                throw new Exception($" ActionForFindValue 出错，TryProcessData ， MatchKeyIndexList 为空");
             }
 
             if (inData == null || inData.Count < 1)
@@ -119,16 +131,32 @@ namespace ExcelTool
                 throw new Exception($" ActionForFindValue 出错，TryProcessData ， inData 为空");
             }
 
-            List<string> _matchValue = new List<string>();
-            foreach (var _index in MatchKeyIndexList)
+            List<string> _findRowData;
+            if (SkipSearch)
             {
-                _matchValue.Add(inData[_index]);
+                _findRowData = inData;
+            }
+            else
+            {
+                List<string> _matchValue = new List<string>();
+                if (MatchKeyIndexList.Count > 0)
+                {
+                    foreach (var _index in MatchKeyIndexList)
+                    {
+                        _matchValue.Add(inData[_index]);
+                    }
+                }
+                else
+                {
+                    _matchValue.AddRange(inData);
+                }
+
+                _findRowData = SearchTargetSheet.GetRowStringDataByTargetKeysAndValus(SearchKeyIndexList, _matchValue);
             }
 
-            var _findRowData = SearchTargetSheet.GetRowStringDataByTargetKeysAndValus(SearchKeyIndexList, _matchValue);
             if (_findRowData == null)
             {
-                return null;
+                return new List<string>();
             }
 
             List<string> _resultList = new List<string>();
@@ -138,7 +166,7 @@ namespace ExcelTool
                 var _result = FollowActionList[i].TryProcessData(_findRowData);
                 if (_result == null || _result.Count == 0)
                 {
-                    return null;
+                    return new List<string>();
                 }
                 else
                 {
@@ -146,7 +174,12 @@ namespace ExcelTool
                 }
             }
 
-            return null;
+            return new List<string>();
+        }
+
+        public override bool HaveDetailEdit()
+        {
+            return true;
         }
     }
 
@@ -156,12 +189,17 @@ namespace ExcelTool
     [ProcessAction("直接返回")]
     public class ActionDirectReturn : DataProcessActionBase
     {
-        protected override List<string>? InternalProcessData(List<string> inRowData)
+        protected override List<string> InternalProcessData(List<string> rowData)
         {
             List<string> _resultList = new List<string>();
+            if (rowData == null || rowData.Count < 1)
+            {
+                return _resultList;
+            }
+
             for (int i = 0; i < MatchKeyIndexList.Count; ++i)
             {
-                var _cell = inRowData[MatchKeyIndexList[i]];
+                var _cell = rowData[MatchKeyIndexList[i]];
                 _resultList.Add(_cell);
             }
 
@@ -169,13 +207,17 @@ namespace ExcelTool
         }
     }
 
-
     [ProcessAction("返回为UEPos")]
     public class ActionReturnAsUEPos : DataProcessActionBase
     {
-        protected override List<string>? InternalProcessData(List<string> rowData)
+        protected override List<string> InternalProcessData(List<string> rowData)
         {
             List<string> _resultList = new List<string>();
+            if (rowData == null || rowData.Count < 1)
+            {
+                return _resultList;
+            }
+
             for (int i = 0; i < MatchKeyIndexList.Count; ++i)
             {
                 var _cellValue = rowData[MatchKeyIndexList[i]];
@@ -190,9 +232,14 @@ namespace ExcelTool
     [ProcessAction("返回为UE旋转")]
     public class ActionReturnAsUERotateY : DataProcessActionBase
     {
-        protected override List<string>? InternalProcessData(List<string> rowData)
+        protected override List<string> InternalProcessData(List<string> rowData)
         {
             List<string> _resultList = new List<string>();
+            if (rowData == null || rowData.Count < 1)
+            {
+                return _resultList;
+            }
+
             for (int i = 0; i < MatchKeyIndexList.Count; ++i)
             {
                 var _tempCellValue = rowData[MatchKeyIndexList[i]];
@@ -210,18 +257,22 @@ namespace ExcelTool
     {
         public string FormatStr = string.Empty;
 
-        protected override List<string>? InternalProcessData(List<string> rowData)
+        protected override List<string> InternalProcessData(List<string> rowData)
         {
-            List<string> _result = new List<string>();
+            List<string> _resultList = new List<string>();
+            if (rowData == null || rowData.Count < 1)
+            {
+                return _resultList;
+            }
 
             for (int i = 0; i < rowData.Count; ++i)
             {
                 bool _success = true;
                 try
                 {
-                    _result.Add(string.Format(FormatStr, rowData[i]));
+                    _resultList.Add(string.Format(FormatStr, rowData[i]));
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     _success = false;
                 }
@@ -249,7 +300,12 @@ namespace ExcelTool
                 }
             }
 
-            return _result;
+            return _resultList;
+        }
+
+        public override bool HaveDetailEdit()
+        {
+            return true;
         }
     }
 }

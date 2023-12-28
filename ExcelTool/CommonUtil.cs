@@ -10,7 +10,7 @@ namespace ExcelTool
 {
     public class CommonDataForClass
     {
-        public Type TargetType;
+        public Type? TargetType = null;
 
         public int Index
         {
@@ -20,7 +20,7 @@ namespace ExcelTool
         public string Name
         {
             get; set;
-        }
+        } = string.Empty;
     }
 
     public static class CommonUtil

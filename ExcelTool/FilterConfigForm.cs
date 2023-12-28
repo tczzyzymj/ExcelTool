@@ -15,7 +15,7 @@ namespace ExcelTool
     {
         private int mRowIndex = 0;
         private int mColumnIndex = 0;
-        private KeyData mKeyData = null;
+        private KeyData? mKeyData = null;
 
         private const int mCompareDataColumIndex = 0;
 
@@ -146,9 +146,17 @@ namespace ExcelTool
         {
             if (mKeyData == null)
             {
+                CommonUtil.ShowError("mKeyData 为空");
                 return;
             }
+
             var _funcList = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mKeyData);
+            if (_funcList == null)
+            {
+                CommonUtil.ShowError("GetSourceFileDataFilterFuncByKey 结果为空");
+                return;
+            }
+
             var _cell = this.DataGridViewForFilterFunc.Rows[e.RowIndex].Cells[e.ColumnIndex];
             if (_cell == null || _cell.EditedFormattedValue == null)
             {
@@ -170,7 +178,12 @@ namespace ExcelTool
                 {
                     if (_cell.EditedFormattedValue != null)
                     {
-                        _funcList[e.RowIndex].SetCompareValue(_cell.EditedFormattedValue.ToString());
+                        var _compareValue = _cell.EditedFormattedValue.ToString();
+                        if (_compareValue == null)
+                        {
+                            _compareValue = string.Empty;
+                        }
+                        _funcList[e.RowIndex].SetCompareValue(_compareValue);
                     }
 
                     break;

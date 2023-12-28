@@ -28,7 +28,9 @@ namespace ExcelTool
             MessageBox.Show("功能制作中", "提示");
             return;
             // 导出配置
+#pragma warning disable CS0162 // Unreachable code detected
             var mExportTargetFile = TableDataManager.Ins().GetExportFileData();
+
             if (mExportTargetFile == null)
             {
                 MessageBox.Show("没有可导出的配置", "提示");
@@ -49,14 +51,17 @@ namespace ExcelTool
 
                 MessageBox.Show("保存成功", " 提示");
             }
+#pragma warning restore CS0162 // Unreachable code detected
         }
 
         private void BtnImport_Click(object sender, EventArgs e)
         {
             MessageBox.Show("功能制作中", "提示");
             return;
+#pragma warning disable CS0162 // Unreachable code detected
             var mExportTargetFile = TableDataManager.Ins().GetExportFileData();
-            // 导入配置
+
+                              // 导入配置
             OpenFileDialog _openfileDialog = new OpenFileDialog();
             if (_openfileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -66,6 +71,7 @@ namespace ExcelTool
 
                 }
             }
+#pragma warning restore CS0162 // Unreachable code detected
         }
 
         private void BntChooseExportFile_Click(object sender, EventArgs e)
@@ -206,9 +212,9 @@ namespace ExcelTool
 
         private void BtnChooseSourceFile_Click(object sender, EventArgs e)
         {
-            ChooseFileConfigForm _form = new ChooseFileConfigForm();
-            _form.SetInitData(LoadFileType.SourceFile, TableDataManager.Ins().GetSourceSheet());
-            if (_form.ShowDialog(this) == DialogResult.OK)
+            ChooseFileConfigForm _sourceFileChooseForm = new ChooseFileConfigForm();
+            _sourceFileChooseForm.SetInitData(LoadFileType.SourceFile, TableDataManager.Ins().GetSourceSheet());
+            if (_sourceFileChooseForm.ShowDialog(this) == DialogResult.OK)
             {
             }
         }
@@ -318,7 +324,7 @@ namespace ExcelTool
                         _action = new SourceAction();
                         TableDataManager.Ins().ExportKeyActionMap.Add(_fromKey, _action);
                     }
-                    _form.InitData(_action, true, _sourceSheet);
+                    _form.InitData(_action.FindAction, true, _sourceSheet);
                     if (_form.ShowDialog() == DialogResult.OK)
                     {
                         // TODO 这里去检测一下，看是否有循环引用

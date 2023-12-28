@@ -13,7 +13,7 @@ namespace ExcelTool
 {
     public partial class KeyConnectEditForm : Form
     {
-        private ActionForFindValue mFromAction = null;
+        private ActionForFindValue? mFromAction = null;
         private FileDataBase? mTargetFile = null;
         private CommonWorkSheetData? mFromSheet = null;
         private CommonWorkSheetData? mSelectSheet = null;
@@ -23,9 +23,9 @@ namespace ExcelTool
 
         private List<KeyData> mWorkSheetKeyListData = new List<KeyData>();
 
-        private List<CommonDataForClass> mDataClassList = new List<CommonDataForClass>();
+        private List<CommonDataForClass> mTypeListForAction = new List<CommonDataForClass>();
 
-        private CommonDataForClass mChooseActionType = null;
+        private CommonDataForClass? mChooseActionType = null;
 
         private bool mCanLoadNewFile = true;
 
@@ -77,10 +77,10 @@ namespace ExcelTool
                 mTargetFile = mSelectSheet?.GetOwnerTable();
             }
 
-            mDataClassList = CommonUtil.CreateComboBoxDataForType<DataProcessActionBase>();
+            mTypeListForAction = CommonUtil.CreateComboBoxDataForType<DataProcessActionBase>();
             ComboBoxForActionTypeList.DataSource = null;
             ComboBoxForActionTypeList.Items.Clear();
-            ComboBoxForActionTypeList.DataSource = mDataClassList;
+            ComboBoxForActionTypeList.DataSource = mTypeListForAction;
             ComboBoxForActionTypeList.ValueMember = "Index";
             ComboBoxForActionTypeList.DisplayMember = "Name";
             MultiDataSplitSymbol.Text = mFromAction.MultiValueSplitSymbol;
@@ -466,19 +466,16 @@ namespace ExcelTool
                 return;
             }
 
-            _newClassIns.MatchKeyIndexList.AddRange(_keyIndexList);
+            mFromAction.FollowActionList.Add(_newClassIns);
+            mSelectKeyList.Clear();
 
-            if (mFromAction is ActionForFindValue _findAction)
+            if (mFromAction.FollowActionList.Count == 1)
             {
-                _findAction.FollowActionList.Add(_newClassIns);
-                mSelectKeyList.Clear();
-                InternalClearAllKeySelect();
-                InternalRefreshForActionDataView();
+                _newClassIns.MatchKeyIndexList.AddRange(_keyIndexList);
             }
-            else
-            {
-                CommonUtil.ShowError($"{BtnAddAction_Click} 错误，类型未处理：{mFromAction.GetType().FullName}");
-            }
+
+            InternalClearAllKeySelect();
+            InternalRefreshForActionDataView();
         }
 
         private void InternalClearAllKeySelect()
@@ -498,6 +495,12 @@ namespace ExcelTool
         /// </summary>
         private void InternalRefreshForActionDataView()
         {
+            if (mFromAction == null)
+            {
+                CommonUtil.ShowError("mFromAction 为空，请检查！");
+                return;
+            }
+
             mTargetActionList = mFromAction.FollowActionList;
 
             this.DataViewForAction.DataSource = null;
@@ -518,16 +521,20 @@ namespace ExcelTool
                     _connectInfo.Append("->");
                 }
 
-                _contentForSetSearchKey = mFromAction.SearchKeyIndexList.Count > 0 ? "已设置" : "设置";
-                _contentForSetActionAfterSearch = mFromAction.FollowActionList.Count > 0 ? "已设置" : "设置";
+                if (mFromAction.HaveDetailEdit())
+                {
+                    _contentForSetSearchKey = mFromAction.SearchKeyIndexList.Count > 0 ? "已设置" : "设置";
+                    _contentForSetActionAfterSearch = mFromAction.FollowActionList.Count > 0 ? "已设置" : "设置";
+                }
+
                 foreach (var _tempKey in mFromAction.SearchKeyIndexList)
                 {
-                    _connectInfo.Append(_tempKey.KeyName);
-                    _connectInfo.Append(";");
+                    //_connectInfo.Append(_tempKey.KeyName);
+                    //_connectInfo.Append(";");
                 }
 
                 var _index = this.DataViewForAction.Rows.Add(
-                    mTargetActionList[i].GetType().GetCustomAttribute<ProcessActionAttribute>().DisplayName,
+                    mTargetActionList[i].GetType().GetCustomAttribute<ProcessActionAttribute>()?.DisplayName,
                     null,
                     _contentForSetSearchKey,
                     _contentForSetActionAfterSearch,
@@ -540,24 +547,24 @@ namespace ExcelTool
                 var _row = DataViewForAction.Rows[_index];
 
                 {
-                    // 处理绑定 KEY
-                    var _cell = _row.Cells[mBindKeyColumIndex] as DataGridViewComboBoxCell;
-                    if (_cell != null)
-                    {
-                        foreach (var _key in mTargetActionList[i].MatchKeyList)
-                        {
-                            _cell.Items.Add(_key.KeyNameWithIndex);
-                        }
+                    //// 显示绑定KEY相关信息
+                    //var _cell = _row.Cells[mBindKeyColumIndex] as DataGridViewComboBoxCell;
+                    //if (_cell != null)
+                    //{
+                    //    foreach (var _key in mTargetActionList[i].MatchKeyIndexList)
+                    //    {
+                    //        _cell.Items.Add(_key.KeyNameWithIndex);
+                    //    }
 
-                        _cell.Value = mTargetActionList[i].MatchKeyList[0].KeyNameWithIndex;
-                    }
+                    //    _cell.Value = mTargetActionList[i].MatchKeyList[0].KeyNameWithIndex;
+                    //}
                 }
             }
         }
 
         private DataProcessActionBase? GetNewDataForChooseAction()
         {
-            DataProcessActionBase _result = null;
+            DataProcessActionBase? _result = null;
 
             if (mChooseActionType == null)
             {
@@ -593,6 +600,11 @@ namespace ExcelTool
 
         private void MultiDataSplitSymbol_TextChanged(object sender, EventArgs e)
         {
+            if (mFromAction == null)
+            {
+                CommonUtil.ShowError("mFromAction 为空，请检查");
+                return;
+            }
             this.mFromAction.MultiValueSplitSymbol = this.MultiDataSplitSymbol.Text;
         }
 
@@ -625,9 +637,9 @@ namespace ExcelTool
         private void ComboBoxForActionTypeList_SelectedIndexChanged(object sender, EventArgs e)
         {
             var _index = this.ComboBoxForActionTypeList.SelectedIndex;
-            if (_index >= 0 && _index < mDataClassList.Count)
+            if (_index >= 0 && _index < mTypeListForAction.Count)
             {
-                mChooseActionType = this.mDataClassList[_index];
+                mChooseActionType = this.mTypeListForAction[_index];
             }
         }
     }
