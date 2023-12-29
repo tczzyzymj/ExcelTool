@@ -41,7 +41,7 @@ namespace ExcelTool
     public enum MultiResultReturnType
     {
         SingleString,
-        StringList,
+        ListString,
     }
 
     public enum LoadFileType

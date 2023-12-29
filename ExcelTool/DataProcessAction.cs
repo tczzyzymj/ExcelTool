@@ -56,7 +56,7 @@ namespace ExcelTool
 
                     return new List<string>() { _builder.ToString() };
                 }
-                case MultiResultReturnType.StringList:
+                case MultiResultReturnType.ListString:
                 {
                     return _resultList;
                 }
@@ -312,6 +312,10 @@ namespace ExcelTool
 
     public abstract class ActionCore
     {
+        public MultiResultReturnType ResultReturnType = MultiResultReturnType.SingleString;
+
+        public string MultiValueSplitSymbol = ",";
+
         public abstract List<string> ProcessData(List<string> inDataList);
     }
 
@@ -319,10 +323,29 @@ namespace ExcelTool
     {
     }
 
+
     /// <summary>
-    /// 对数据，自身不做任何执行，交给序列内的行为执行
+    /// 对数据，自身不做任何执行
     /// </summary>
-    public class SequenceAction : ActionNoFollowActions
+    public abstract class ActionNoSelfProcess : ActionCore
+    {
+
+    }
+
+    /// <summary>
+    /// 对数据，自己是要执行的
+    /// </summary>
+    public abstract class ActionWithSelfProcess : ActionCore
+    {
+        public override List<string> ProcessData(List<string> inDataList)
+        {
+            return OnSelfProcessData(inDataList);
+        }
+
+        protected abstract List<string> OnSelfProcessData(List<string> inDataList);
+    }
+
+    public class SequenceAction : ActionNoSelfProcess
     {
         public List<ActionCore> ActionSequence = new List<ActionCore>();
 
@@ -336,14 +359,37 @@ namespace ExcelTool
                 _resultList.AddRange(_tempResult);
             }
 
-            return _resultList;
+            switch (ResultReturnType)
+            {
+                case MultiResultReturnType.SingleString:
+                {
+                    StringBuilder _builder = new StringBuilder();
+
+                    for (int i = 0; i < _resultList.Count; ++i)
+                    {
+                        _builder.Append(_resultList[i]);
+                        if (i < _resultList.Count - 1)
+                        {
+                            _builder.Append(MultiValueSplitSymbol);
+                        }
+                    }
+
+                    return new List<string>() { _builder.ToString() };
+                }
+                case MultiResultReturnType.ListString:
+                {
+                    return _resultList;
+                }
+                default:
+                {
+                    throw new Exception($"未处理的枚举:{ResultReturnType}");
+                }
+            }
         }
     }
 
-    /// <summary>
-    /// 对数据，自己是要执行的，并且如果有后续行为，要将自己执行的结果交给后续行为
-    /// </summary>
-    public abstract class ActionWithFollowActions : ActionCore
+
+    public abstract class ActionWithFollowActions : ActionWithSelfProcess
     {
         public SequenceAction FollowActionSequence = new SequenceAction();
 
@@ -351,10 +397,45 @@ namespace ExcelTool
 
         public override List<string> ProcessData(List<string> inDataList)
         {
-            throw new NotImplementedException();
-        }
+            List<string> _finalResultList = new List<string>();
+            if (FollowActionSequence.ActionSequence.Count < 1)
+            {
+                var _tempResultList = OnSelfProcessData(inDataList);
+                _finalResultList.AddRange(_tempResultList);
+            }
+            else
+            {
+                var _tempResultList = FollowActionSequence.ProcessData(inDataList);
+                _finalResultList.AddRange(_tempResultList);
+            }
 
-        protected abstract List<string> OnSelfProcessData(List<string> inDataList);
+            switch (ResultReturnType)
+            {
+                case MultiResultReturnType.SingleString:
+                {
+                    StringBuilder _builder = new StringBuilder();
+
+                    for (int i = 0; i < _finalResultList.Count; ++i)
+                    {
+                        _builder.Append(_finalResultList[i]);
+                        if (i < _finalResultList.Count - 1)
+                        {
+                            _builder.Append(MultiValueSplitSymbol);
+                        }
+                    }
+
+                    return new List<string>() { _builder.ToString() };
+                }
+                case MultiResultReturnType.ListString:
+                {
+                    return _finalResultList;
+                }
+                default:
+                {
+                    throw new Exception($"未处理的枚举:{ResultReturnType}");
+                }
+            }
+        }
     }
 }
 
