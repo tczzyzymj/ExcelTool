@@ -1,6 +1,6 @@
 ﻿namespace ExcelTool
 {
-    partial class ConnectEditForm
+    partial class SequenceActionConnectEditForm
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             BtnLoadNewFile = new Button();
             ComboBoxForLoadedFile = new ComboBox();
             LabelLoadedFile = new Label();
@@ -47,13 +47,6 @@
             label5 = new Label();
             label2 = new Label();
             DataViewForAction = new DataGridView();
-            ActionName = new DataGridViewTextBoxColumn();
-            BindKeyList = new DataGridViewComboBoxColumn();
-            dataGridViewButtonColumn1 = new DataGridViewButtonColumn();
-            ConnectInfoColum = new DataGridViewTextBoxColumn();
-            RemoveBtnColum = new DataGridViewButtonColumn();
-            MoveUpColum = new DataGridViewButtonColumn();
-            MoveDownColum = new DataGridViewButtonColumn();
             BtnAddAction = new Button();
             label4 = new Label();
             label6 = new Label();
@@ -62,6 +55,16 @@
             label7 = new Label();
             contextMenuStrip1 = new ContextMenuStrip(components);
             ComboBoxForSelectKey = new ComboBox();
+            label1 = new Label();
+            ComboBoxForReturnType = new ComboBox();
+            ActionName = new DataGridViewTextBoxColumn();
+            BindKeyList = new DataGridViewComboBoxColumn();
+            dataGridViewButtonColumn1 = new DataGridViewButtonColumn();
+            ConnectInfoColum = new DataGridViewTextBoxColumn();
+            RemoveBtnColum = new DataGridViewButtonColumn();
+            MoveUpColum = new DataGridViewButtonColumn();
+            MoveDownColum = new DataGridViewButtonColumn();
+            FollowActionColum = new DataGridViewButtonColumn();
             ((System.ComponentModel.ISupportInitialize)DataViewForKeyList).BeginInit();
             ((System.ComponentModel.ISupportInitialize)DataViewForAction).BeginInit();
             SuspendLayout();
@@ -119,8 +122,8 @@
             // KeyName
             // 
             KeyName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            KeyName.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            KeyName.DefaultCellStyle = dataGridViewCellStyle1;
             KeyName.FillWeight = 160F;
             KeyName.HeaderText = "Key名字";
             KeyName.Name = "KeyName";
@@ -227,13 +230,114 @@
             // 
             DataViewForAction.BackgroundColor = SystemColors.ControlLight;
             DataViewForAction.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            DataViewForAction.Columns.AddRange(new DataGridViewColumn[] { ActionName, BindKeyList, dataGridViewButtonColumn1, ConnectInfoColum, RemoveBtnColum, MoveUpColum, MoveDownColum });
+            DataViewForAction.Columns.AddRange(new DataGridViewColumn[] { ActionName, BindKeyList, dataGridViewButtonColumn1, ConnectInfoColum, RemoveBtnColum, MoveUpColum, MoveDownColum, FollowActionColum });
             DataViewForAction.Location = new Point(14, 492);
             DataViewForAction.Name = "DataViewForAction";
             DataViewForAction.RowTemplate.Height = 25;
             DataViewForAction.Size = new Size(995, 263);
             DataViewForAction.TabIndex = 45;
             DataViewForAction.CellContentClick += DataViewForAction_CellContentClick;
+            // 
+            // BtnAddAction
+            // 
+            BtnAddAction.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            BtnAddAction.Location = new Point(878, 400);
+            BtnAddAction.Name = "BtnAddAction";
+            BtnAddAction.Size = new Size(130, 30);
+            BtnAddAction.TabIndex = 46;
+            BtnAddAction.Text = "添加行为";
+            BtnAddAction.UseVisualStyleBackColor = true;
+            BtnAddAction.Click += BtnAddAction_Click;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            label4.Location = new Point(12, 403);
+            label4.Name = "label4";
+            label4.Size = new Size(170, 21);
+            label4.TabIndex = 48;
+            label4.Text = "已选数据列，注意顺序";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            label6.Location = new Point(438, 403);
+            label6.Name = "label6";
+            label6.Size = new Size(42, 21);
+            label6.TabIndex = 50;
+            label6.Text = "行为";
+            // 
+            // ComboBoxForActionTypeList
+            // 
+            ComboBoxForActionTypeList.DropDownStyle = ComboBoxStyle.DropDownList;
+            ComboBoxForActionTypeList.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            ComboBoxForActionTypeList.FormattingEnabled = true;
+            ComboBoxForActionTypeList.Location = new Point(481, 400);
+            ComboBoxForActionTypeList.Name = "ComboBoxForActionTypeList";
+            ComboBoxForActionTypeList.Size = new Size(138, 29);
+            ComboBoxForActionTypeList.TabIndex = 49;
+            ComboBoxForActionTypeList.SelectedIndexChanged += ComboBoxForActionTypeList_SelectedIndexChanged;
+            // 
+            // MultiDataSplitSymbol
+            // 
+            MultiDataSplitSymbol.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            MultiDataSplitSymbol.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
+            MultiDataSplitSymbol.Location = new Point(769, 440);
+            MultiDataSplitSymbol.Name = "MultiDataSplitSymbol";
+            MultiDataSplitSymbol.Size = new Size(53, 26);
+            MultiDataSplitSymbol.TabIndex = 52;
+            MultiDataSplitSymbol.Text = ",";
+            MultiDataSplitSymbol.TextAlign = HorizontalAlignment.Center;
+            MultiDataSplitSymbol.TextChanged += MultiDataSplitSymbol_TextChanged;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            label7.Location = new Point(652, 443);
+            label7.Name = "label7";
+            label7.Size = new Size(106, 21);
+            label7.TabIndex = 51;
+            label7.Text = "多数据分隔符";
+            // 
+            // contextMenuStrip1
+            // 
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new Size(61, 4);
+            // 
+            // ComboBoxForSelectKey
+            // 
+            ComboBoxForSelectKey.DropDownStyle = ComboBoxStyle.DropDownList;
+            ComboBoxForSelectKey.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            ComboBoxForSelectKey.FormattingEnabled = true;
+            ComboBoxForSelectKey.Location = new Point(188, 400);
+            ComboBoxForSelectKey.Name = "ComboBoxForSelectKey";
+            ComboBoxForSelectKey.Size = new Size(224, 29);
+            ComboBoxForSelectKey.TabIndex = 53;
+            ComboBoxForSelectKey.SelectedIndexChanged += ComboBoxForSelectKey_SelectedIndexChanged;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            label1.Location = new Point(652, 403);
+            label1.Name = "label1";
+            label1.Size = new Size(90, 21);
+            label1.TabIndex = 55;
+            label1.Text = "多数据返回";
+            // 
+            // ComboBoxForReturnType
+            // 
+            ComboBoxForReturnType.DropDownStyle = ComboBoxStyle.DropDownList;
+            ComboBoxForReturnType.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            ComboBoxForReturnType.FormattingEnabled = true;
+            ComboBoxForReturnType.Location = new Point(750, 400);
+            ComboBoxForReturnType.Name = "ComboBoxForReturnType";
+            ComboBoxForReturnType.Size = new Size(110, 29);
+            ComboBoxForReturnType.TabIndex = 54;
+            ComboBoxForReturnType.SelectedIndexChanged += ComboBoxForReturnType_SelectedIndexChanged;
             // 
             // ActionName
             // 
@@ -285,91 +389,20 @@
             MoveDownColum.ToolTipText = "下移";
             MoveDownColum.Width = 40;
             // 
-            // BtnAddAction
+            // FollowActionColum
             // 
-            BtnAddAction.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            BtnAddAction.Location = new Point(878, 403);
-            BtnAddAction.Name = "BtnAddAction";
-            BtnAddAction.Size = new Size(130, 30);
-            BtnAddAction.TabIndex = 46;
-            BtnAddAction.Text = "添加行为";
-            BtnAddAction.UseVisualStyleBackColor = true;
-            BtnAddAction.Click += BtnAddAction_Click;
+            FollowActionColum.HeaderText = "子行为配置";
+            FollowActionColum.Name = "FollowActionColum";
+            FollowActionColum.Resizable = DataGridViewTriState.True;
+            FollowActionColum.SortMode = DataGridViewColumnSortMode.Automatic;
             // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label4.Location = new Point(12, 403);
-            label4.Name = "label4";
-            label4.Size = new Size(170, 21);
-            label4.TabIndex = 48;
-            label4.Text = "已选数据列，注意顺序";
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label6.Location = new Point(468, 403);
-            label6.Name = "label6";
-            label6.Size = new Size(42, 21);
-            label6.TabIndex = 50;
-            label6.Text = "行为";
-            // 
-            // ComboBoxForActionTypeList
-            // 
-            ComboBoxForActionTypeList.DropDownStyle = ComboBoxStyle.DropDownList;
-            ComboBoxForActionTypeList.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            ComboBoxForActionTypeList.FormattingEnabled = true;
-            ComboBoxForActionTypeList.Location = new Point(511, 400);
-            ComboBoxForActionTypeList.Name = "ComboBoxForActionTypeList";
-            ComboBoxForActionTypeList.Size = new Size(130, 29);
-            ComboBoxForActionTypeList.TabIndex = 49;
-            ComboBoxForActionTypeList.SelectedIndexChanged += ComboBoxForActionTypeList_SelectedIndexChanged;
-            // 
-            // MultiDataSplitSymbol
-            // 
-            MultiDataSplitSymbol.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            MultiDataSplitSymbol.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
-            MultiDataSplitSymbol.Location = new Point(955, 58);
-            MultiDataSplitSymbol.Name = "MultiDataSplitSymbol";
-            MultiDataSplitSymbol.Size = new Size(53, 26);
-            MultiDataSplitSymbol.TabIndex = 52;
-            MultiDataSplitSymbol.Text = ",";
-            MultiDataSplitSymbol.TextAlign = HorizontalAlignment.Center;
-            MultiDataSplitSymbol.TextChanged += MultiDataSplitSymbol_TextChanged;
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label7.Location = new Point(838, 61);
-            label7.Name = "label7";
-            label7.Size = new Size(106, 21);
-            label7.TabIndex = 51;
-            label7.Text = "多数据分隔符";
-            // 
-            // contextMenuStrip1
-            // 
-            contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(61, 4);
-            // 
-            // ComboBoxForSelectKey
-            // 
-            ComboBoxForSelectKey.DropDownStyle = ComboBoxStyle.DropDownList;
-            ComboBoxForSelectKey.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            ComboBoxForSelectKey.FormattingEnabled = true;
-            ComboBoxForSelectKey.Location = new Point(188, 400);
-            ComboBoxForSelectKey.Name = "ComboBoxForSelectKey";
-            ComboBoxForSelectKey.Size = new Size(242, 29);
-            ComboBoxForSelectKey.TabIndex = 53;
-            ComboBoxForSelectKey.SelectedIndexChanged += ComboBoxForSelectKey_SelectedIndexChanged;
-            // 
-            // ConnectEditForm
+            // SequenceActionConnectEditForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1021, 816);
+            Controls.Add(label1);
+            Controls.Add(ComboBoxForReturnType);
             Controls.Add(ComboBoxForSelectKey);
             Controls.Add(MultiDataSplitSymbol);
             Controls.Add(label7);
@@ -391,8 +424,8 @@
             Controls.Add(LabelLoadedFile);
             Controls.Add(ComboBoxForLoadedFile);
             Controls.Add(BtnLoadNewFile);
-            Name = "ConnectEditForm";
-            Text = "ConnectEditForm";
+            Name = "SequenceActionConnectEditForm";
+            Text = "SequenceActionConnectEditForm";
             Load += KeyConnectEditForm_Load;
             ((System.ComponentModel.ISupportInitialize)DataViewForKeyList).EndInit();
             ((System.ComponentModel.ISupportInitialize)DataViewForAction).EndInit();
@@ -426,6 +459,8 @@
         private Label label7;
         private ContextMenuStrip contextMenuStrip1;
         private ComboBox ComboBoxForSelectKey;
+        private Label label1;
+        private ComboBox ComboBoxForReturnType;
         private DataGridViewTextBoxColumn ActionName;
         private DataGridViewComboBoxColumn BindKeyList;
         private DataGridViewButtonColumn dataGridViewButtonColumn1;
@@ -433,5 +468,6 @@
         private DataGridViewButtonColumn RemoveBtnColum;
         private DataGridViewButtonColumn MoveUpColum;
         private DataGridViewButtonColumn MoveDownColum;
+        private DataGridViewButtonColumn FollowActionColum;
     }
 }

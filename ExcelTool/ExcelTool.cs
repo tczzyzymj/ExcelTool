@@ -318,14 +318,14 @@ namespace ExcelTool
                         return;
                     }
 
-                    ConnectEditForm _form = new ConnectEditForm();
+                    SequenceActionConnectEditForm _form = new SequenceActionConnectEditForm();
                     if (!TableDataManager.Ins().ExportKeyActionMap.TryGetValue(_fromKey, out var _action))
                     {
                         _action = new SequenceAction();
                         TableDataManager.Ins().ExportKeyActionMap.Add(_fromKey, _action);
                         _action.WorkSheetData = TableDataManager.Ins().GetSourceSheet();
                     }
-                    _form.InitData(_action, true, _sourceSheet);
+                    _form.InitData(_action);
                     if (_form.ShowDialog() == DialogResult.OK)
                     {
                         // TODO 这里去检测一下，看是否有循环引用

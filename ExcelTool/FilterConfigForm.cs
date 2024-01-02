@@ -146,7 +146,6 @@ namespace ExcelTool
         {
             if (mKeyData == null)
             {
-                CommonUtil.ShowError("mKeyData 为空");
                 return;
             }
 

@@ -8,25 +8,9 @@ using System.Threading.Tasks;
 
 namespace ExcelTool
 {
-    public class CommonDataForClass
-    {
-        public Type? TargetType = null;
-
-        public int Index
-        {
-            get; set;
-        }
-
-        public string Name
-        {
-            get; set;
-        } = string.Empty;
-    }
-
-
     public static class CommonUtil
     {
-        public static ActionCore? GetNewDataForChooseAction(CommonDataForClass mChooseActionType)
+        public static ActionCore? GetNewDataForChooseAction(Type mChooseActionType, MultiResultReturnType returnType)
         {
             ActionCore? _result = null;
 
@@ -36,13 +20,13 @@ namespace ExcelTool
                 return null;
             }
 
-            if (mChooseActionType.TargetType == null)
+            if (mChooseActionType == null)
             {
                 MessageBox.Show($"{GetNewDataForChooseAction} 错误，mChooseActionType.TargetType 为空，请检查");
                 return null;
             }
 
-            var _className = mChooseActionType.TargetType.FullName;
+            var _className = mChooseActionType.FullName;
 
             if (string.IsNullOrEmpty(_className))
             {
@@ -58,7 +42,7 @@ namespace ExcelTool
 
                 return null;
             }
-
+            _result.ResultReturnType = returnType;
             return _result;
         }
 
@@ -116,34 +100,60 @@ namespace ExcelTool
             return _columName;
         }
 
-        public static List<CommonDataForClass> CreateComboBoxDataForType<T>() where T : class
+        public static List<CommonDataForComboBox> CreateComboBoxDataForType<T>() where T : class
         {
-            List<CommonDataForClass> _result = new List<CommonDataForClass>();
+            List<CommonDataForComboBox> _result = new List<CommonDataForComboBox>();
 
             var _types = Assembly.GetExecutingAssembly().GetTypes();
             List<Type> _recordList = new List<Type>();
 
             var _targetType = typeof(T);
-            var _ignoreType = typeof(ActionCore);
             foreach (var _pair in _types)
             {
-                if (_pair == _ignoreType)
+                if (_pair.IsSubclassOf(_targetType))
                 {
-                    continue;
-                }
-                if (_pair.BaseType == _targetType)
-                {
-                    var _newData = new CommonDataForClass();
+                    var _newData = new CommonDataForComboBox();
                     _newData.Index = _recordList.Count;
                     _newData.TargetType = _pair;
-                    var _attribute = _pair.GetCustomAttribute<ProcessActionAttribute>();
+                    var _attribute = _pair.GetCustomAttribute<DisplayNameAttribute>();
                     if (_attribute != null)
                     {
-                        _newData.Name = _attribute.DisplayName;
+                        _newData.DisplayName = _attribute.DisplayName;
+                        _result.Add(_newData);
                     }
-
-                    _result.Add(_newData);
                 }
+            }
+
+            return _result;
+        }
+
+        public static List<CommonDataForComboBox> CreateComboBoxDataForEnum<T>() where T : Enum
+        {
+            List<CommonDataForComboBox> _result = new List<CommonDataForComboBox>();
+
+            var _targetType = typeof(T);
+            var _allFiels = _targetType.GetFields(BindingFlags.Static | BindingFlags.Public);
+
+            foreach (var _singleEnum in _allFiels)
+            {
+                var _tempValue = _singleEnum.GetValue(null);
+                if (_tempValue == null)
+                {
+                    CommonUtil.ShowError($"枚举获取值出错：[{_singleEnum}]");
+                    continue;
+                }
+
+                var _newData = new CommonDataForComboBox();
+                _newData.Index = _result.Count;
+                _newData.RealValue = (int)(_tempValue);
+                _newData.TargetType = typeof(T);
+                var _attribute = _singleEnum.GetCustomAttribute<DisplayNameAttribute>();
+                if (_attribute != null)
+                {
+                    _newData.DisplayName = _attribute.DisplayName;
+                }
+
+                _result.Add(_newData);
             }
 
             return _result;

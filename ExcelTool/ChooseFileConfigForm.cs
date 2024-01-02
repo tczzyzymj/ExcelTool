@@ -577,29 +577,13 @@ namespace ExcelTool
                 return;
             }
 
-            if (mFromSheet == null)
+            if (mChooseSheet == null)
             {
-                CommonUtil.ShowError("mFromSheet 为空，请检查");
+                CommonUtil.ShowError("mChooseSheet 为空，请检查");
                 return;
             }
 
-            // 这里判断一下，如果是配置的 sourcefile，那么一定要指定 主 id key
-            if (mFromFileType == LoadFileType.SourceFile)
-            {
-                var _fromSheetKeyList = mFromSheet.GetKeyListData();
-                if (_fromSheetKeyList == null)
-                {
-                    CommonUtil.ShowError("无法获取 KeyList, 请检查!");
-                    return;
-                }
-
-                for (int i = 0; i < _fromSheetKeyList.Count; ++i)
-                {
-
-                }
-            }
-
-            this.DialogResult = DialogResult.OK;
+            DialogResult = DialogResult.OK;
         }
 
         private void TextBoxSplitSymbol_TextChanged(object sender, EventArgs e)

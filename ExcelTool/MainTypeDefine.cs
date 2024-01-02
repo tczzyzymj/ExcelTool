@@ -40,7 +40,10 @@ namespace ExcelTool
 
     public enum MultiResultReturnType
     {
+        [DisplayName("单值返回")]
         SingleString,
+
+        [DisplayName("数组返回")]
         ListString,
     }
 
@@ -72,6 +75,18 @@ namespace ExcelTool
             get;
             set;
         } = string.Empty;
+
+        public Type? TargetType
+        {
+            get;
+            set;
+        } = null;
+
+        public int Index
+        {
+            get;
+            set;
+        } = 0;
     }
 
     public enum EventTypeEnum

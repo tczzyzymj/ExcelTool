@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace ExcelTool
 {
-    public class ProcessActionAttribute : Attribute
+    public class DisplayNameAttribute : Attribute
     {
-        public ProcessActionAttribute(string displayName)
+        public DisplayNameAttribute(string displayName)
         {
             DisplayName = displayName;
         }
@@ -153,7 +153,7 @@ namespace ExcelTool
     /// <summary>
     /// 直接返回值
     /// </summary>
-    [ProcessAction("直接返回")]
+    [DisplayName("直接返回")]
     public class ActionDirectReturn : NormalActionBase
     {
         protected override List<string> InternalSelfProcessData(List<string> inDataList)
@@ -179,7 +179,7 @@ namespace ExcelTool
         }
     }
 
-    [ProcessAction("查找行为")]
+    [DisplayName("查找行为")]
     public class FindAction : NormalActionBase
     {
         protected CommonWorkSheetData? SearchWorkSheet = null;
@@ -248,7 +248,7 @@ namespace ExcelTool
         }
     }
 
-    [ProcessAction("返回为UEPos")]
+    [DisplayName("返回为UEPos")]
     public class ActionReturnAsUEPos : NormalActionBase
     {
         protected override List<string> InternalSelfProcessData(List<string> rowData)
@@ -275,7 +275,7 @@ namespace ExcelTool
         }
     }
 
-    [ProcessAction("返回为UE旋转")]
+    [DisplayName("返回为UE旋转")]
     public class ActionReturnAsUERotateY : NormalActionBase
     {
         protected override List<string> InternalSelfProcessData(List<string> rowData)
@@ -303,7 +303,7 @@ namespace ExcelTool
         }
     }
 
-    [ProcessAction("格式化后返回")]
+    [DisplayName("格式化后返回")]
     public class ActionReturnAfterFormat : NormalActionBase
     {
         public string FormatStr = string.Empty;

@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace ExcelTool
 {
-    public partial class ConnectEditForm : Form
+    public partial class SequenceActionConnectEditForm : Form
     {
         private SequenceAction? mFromAction = null;
         private FileDataBase? mTargetFile = null;
@@ -21,32 +21,43 @@ namespace ExcelTool
         private const int mColumIndexForEditConnect = 3;
         private const int mColumIndexForSetConnect = 4;
 
+        private MultiResultReturnType mReturnType = MultiResultReturnType.SingleString;
+
         private List<KeyData> mWorkSheetKeyListData = new List<KeyData>();
 
-        private List<CommonDataForClass> mTypeListForAction = new List<CommonDataForClass>();
+        private List<CommonDataForComboBox> mListDataForActionType = new List<CommonDataForComboBox>();
 
-        private CommonDataForClass? mChooseActionType = null;
+        private List<CommonDataForComboBox> mListDataForReturnType = new List<CommonDataForComboBox>();
+
+        private CommonDataForComboBox? mChooseActionType = null;
 
         private bool mCanLoadNewFile = true;
 
-        public ConnectEditForm()
+        public SequenceActionConnectEditForm()
         {
             InitializeComponent();
             this.DataViewForKeyList.AllowUserToAddRows = false;
             DataViewForAction.AllowUserToAddRows = false;
         }
 
-        public bool InitData(SequenceAction targetAction, bool canLoadNewFile, CommonWorkSheetData fromSheet)
+        public bool InitData(SequenceAction targetAction)
         {
             if (targetAction == null)
             {
-                CommonUtil.ShowError("传入的 KeyData 为空，请检查！");
+                CommonUtil.ShowError("传入的 SequenceAction 为空，请检查！");
                 this.Close();
                 return false;
             }
 
-            mFromSheet = fromSheet;
-            mCanLoadNewFile = canLoadNewFile;
+            if (targetAction.WorkSheetData == null)
+            {
+                CommonUtil.ShowError("传入的 SequenceAction.WorkSheetData 为空，请检查！");
+                this.Close();
+                return false;
+            }
+
+            mFromSheet = targetAction.WorkSheetData;
+            mCanLoadNewFile = false;
             mFromAction = targetAction;
             return true;
         }
@@ -78,13 +89,20 @@ namespace ExcelTool
                 mTargetFile = mSelectSheet?.GetOwnerTable();
             }
 
-            mTypeListForAction = CommonUtil.CreateComboBoxDataForType<ActionCore>();
+            mListDataForActionType = CommonUtil.CreateComboBoxDataForType<ActionCore>();
             ComboBoxForActionTypeList.DataSource = null;
             ComboBoxForActionTypeList.Items.Clear();
-            ComboBoxForActionTypeList.DataSource = mTypeListForAction;
+            ComboBoxForActionTypeList.DataSource = mListDataForActionType;
             ComboBoxForActionTypeList.ValueMember = "Index";
-            ComboBoxForActionTypeList.DisplayMember = "Name";
+            ComboBoxForActionTypeList.DisplayMember = "DisplayName";
             MultiDataSplitSymbol.Text = mFromAction.MultiValueSplitSymbol;
+
+            mListDataForReturnType = CommonUtil.CreateComboBoxDataForEnum<MultiResultReturnType>();
+            ComboBoxForReturnType.DataSource = null;
+            ComboBoxForReturnType.Items.Clear();
+            ComboBoxForReturnType.DataSource = mListDataForReturnType;
+            ComboBoxForReturnType.ValueMember = "RealValue";
+            ComboBoxForReturnType.DisplayMember = "DisplayName";
 
             InternalRefreshForActionDataView();
             InternalRefreshAfterLoadFile();
@@ -300,10 +318,11 @@ namespace ExcelTool
         }
 
         private const int mBindKeyColumIndex = 1; // 绑定的 key
-        private const int mDetailConfigIndex = 2; // 设置查找其他表KEY
+        private const int mDetailConfigIndex = 2; // 自己的详细设置
         private const int mRemoveColumIndex = 4;// 移除按钮
         private const int mMoveUpColum = 5; // 上移按钮
         private const int mMoveDownColum = 6; // 下移按钮
+        private const int mFollowActionColum = 7; // 下移按钮
         private void DataViewForAction_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0)// 什么傻逼玩意，-1也发消息
@@ -319,26 +338,6 @@ namespace ExcelTool
 
             switch (e.ColumnIndex)
             {
-                //case mConnectActionBtnColumIndex:
-                //{
-                //    var _action = this.mTargetActionList[e.RowIndex];
-                //    if (_action is DataProcessActionForFindRowDataInOtherSheet _findAction)
-                //    {
-                //        if (_findAction.SearchTargetSheet == null)
-                //        {
-                //            MessageBox.Show("请先设置查找表 Key");
-                //            return;
-                //        }
-                //        KeyConnectEditForm _newForm = new KeyConnectEditForm();
-                //        _newForm.InitData(_action, false, _findAction.SearchTargetSheet);
-                //        if (_newForm.ShowDialog() == DialogResult.OK)
-                //        {
-                //            InternalRefreshForActionDataView();
-                //        }
-                //    }
-
-                //    break;
-                //}
                 case mRemoveColumIndex:
                 {
                     mFromAction.ActionSequence.RemoveAt(e.RowIndex);
@@ -349,31 +348,7 @@ namespace ExcelTool
                 {
                     // 根据不同的行为，打开不同的编辑界面
                     var _action = this.mFromAction.ActionSequence[e.RowIndex];
-                    if (_action is FindAction _findAction)
-                    {
-                    }
-
-                    //if (_action is DataProcessActionForFindRowDataInOtherSheet _findAction)
-                    //{
-                    //    ChooseFileConfigForm _newForm = new ChooseFileConfigForm();
-                    //    _newForm.SetFindAction(_findAction);
-                    //    if (_newForm.ShowDialog() == DialogResult.OK)
-                    //    {
-                    //        var _keyList = _newForm.GetSelectKeyList();
-
-                    //        if (_keyList.Count <= 0)
-                    //        {
-                    //            MessageBox.Show("为什么没有配置任何 Key？", "错误");
-                    //            return;
-                    //        }
-
-                    //        _findAction.SearchKeyList = _keyList;
-
-                    //        _findAction.SearchTargetSheet = _newForm.GetChooseSheet();
-
-                    //        InternalRefreshForActionDataView();
-                    //    }
-                    //}
+                    _action.OpenDetailEditForm();
 
                     break;
                 }
@@ -393,6 +368,44 @@ namespace ExcelTool
                     if (InternalSwapForActionList(e.RowIndex, true))
                     {
                         InternalRefreshForActionDataView();
+                    }
+
+                    break;
+                }
+                case mFollowActionColum:
+                {
+                    var _action = this.mFromAction.ActionSequence[e.RowIndex];
+                    if (_action is FindAction _findAction)
+                    {
+                        var _workSheetData = _findAction.GetSearchWorkSheetData();
+                        if (_workSheetData == null)
+                        {
+                            CommonUtil.ShowError("当前查找行为没有配置查找目标，请在详细配置中设置后，再设置后续配置");
+                            return;
+                        }
+
+                        SequenceActionConnectEditForm _form = new SequenceActionConnectEditForm();
+                        if (!_form.InitData(_findAction.FollowSequenceAction))
+                        {
+                            return;
+                        }
+
+                        _form.ShowDialog();
+                    }
+                    else if (_action is NormalActionBase _normalAction)
+                    {
+                        // 这里就去做普通的后续配置
+                        NormalActionConnectEditForm _form = new NormalActionConnectEditForm();
+                        if (!_form.InitData(_normalAction))
+                        {
+                            return;
+                        }
+                        _form.ShowDialog();
+                    }
+                    else
+                    {
+                        CommonUtil.ShowError($"未处理的类类型：[{_action.GetType().FullName}]");
+                        break;
                     }
 
                     break;
@@ -433,7 +446,6 @@ namespace ExcelTool
             return true;
         }
 
-
         private void BtnAddAction_Click(object sender, EventArgs e)
         {
             if (mFromAction == null)
@@ -453,7 +465,13 @@ namespace ExcelTool
                 return;
             }
 
-            var _newClassIns = CommonUtil.GetNewDataForChooseAction(mChooseActionType) as NormalActionBase;
+            if (mChooseActionType.TargetType == null)
+            {
+                CommonUtil.ShowError($"{BtnAddAction_Click} 错误，mChooseActionType.TargetType，请检查");
+                return;
+            }
+
+            var _newClassIns = CommonUtil.GetNewDataForChooseAction(mChooseActionType.TargetType, mReturnType) as NormalActionBase;
             if (_newClassIns == null)
             {
                 CommonUtil.ShowError($"{BtnAddAction_Click} 错误，GetNewDataForChooseAction 为空，请检查");
@@ -540,14 +558,14 @@ namespace ExcelTool
                 //}
 
                 var _index = this.DataViewForAction.Rows.Add(
-                    mTargetActionList[i].GetType().GetCustomAttribute<ProcessActionAttribute>()?.DisplayName,
+                    mTargetActionList[i].GetType().GetCustomAttribute<DisplayNameAttribute>()?.DisplayName,
                     null,
                     _contentForSetSearchKey,
                     _contentForSetActionAfterSearch,
-                    string.Empty,
                     "移除",
                     "↑",
-                    "↓"
+                    "↓",
+                    "设置"
                 );
 
                 var _row = DataViewForAction.Rows[_index];
@@ -607,9 +625,18 @@ namespace ExcelTool
         private void ComboBoxForActionTypeList_SelectedIndexChanged(object sender, EventArgs e)
         {
             var _index = this.ComboBoxForActionTypeList.SelectedIndex;
-            if (_index >= 0 && _index < mTypeListForAction.Count)
+            if (_index >= 0 && _index < mListDataForActionType.Count)
             {
-                mChooseActionType = this.mTypeListForAction[_index];
+                mChooseActionType = this.mListDataForActionType[_index];
+            }
+        }
+
+        private void ComboBoxForReturnType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var _index = this.ComboBoxForReturnType.SelectedIndex;
+            if (_index >= 0 && _index < mListDataForReturnType.Count)
+            {
+                mReturnType = (MultiResultReturnType)mListDataForReturnType[_index].RealValue;
             }
         }
     }
