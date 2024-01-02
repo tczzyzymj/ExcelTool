@@ -27,6 +27,11 @@ namespace ExcelTool
 
         private List<KeyData> mKeyDataList = new List<KeyData>();
 
+        public FileDataBase? GetChooseFile()
+        {
+            return mChooseFile;
+        }
+
         public CommonWorkSheetData? GetChooseSheet()
         {
             return mChooseSheet;

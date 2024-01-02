@@ -406,7 +406,7 @@ namespace ExcelTool
 
         private bool InternalSwapForActionList(int chooseIndex, bool isUp)
         {
-            if (this.mTargetActionList == null || mTargetActionList.Count < 2)
+            if (mFromAction == null || mFromAction.ActionSequence == null || mFromAction.ActionSequence.Count < 2)
             {
                 return false;
             }
@@ -421,14 +421,14 @@ namespace ExcelTool
                 _targetIndex = _targetIndex + 1;
             }
 
-            if (_targetIndex < 0 || _targetIndex >= mTargetActionList.Count)
+            if (_targetIndex < 0 || _targetIndex >= mFromAction.ActionSequence.Count)
             {
                 return false;
             }
 
-            var _tempData = mTargetActionList[chooseIndex];
-            mTargetActionList[chooseIndex] = mTargetActionList[_targetIndex];
-            mTargetActionList[_targetIndex] = _tempData;
+            var _tempData = mFromAction.ActionSequence[chooseIndex];
+            mFromAction.ActionSequence[chooseIndex] = mFromAction.ActionSequence[_targetIndex];
+            mFromAction.ActionSequence[_targetIndex] = _tempData;
 
             return true;
         }
@@ -453,7 +453,7 @@ namespace ExcelTool
                 return;
             }
 
-            var _newClassIns = GetNewDataForChooseAction();
+            var _newClassIns = CommonUtil.GetNewDataForChooseAction(mChooseActionType) as NormalActionBase;
             if (_newClassIns == null)
             {
                 CommonUtil.ShowError($"{BtnAddAction_Click} 错误，GetNewDataForChooseAction 为空，请检查");
@@ -467,13 +467,17 @@ namespace ExcelTool
                 return;
             }
 
-            mFromAction.FollowActionList.Add(_newClassIns);
-            mSelectKeyList.Clear();
+            mFromAction.ActionSequence.Add(_newClassIns);
 
-            if (mFromAction.FollowActionList.Count == 1)
+            _newClassIns.MatchKeyIndexList.Clear();
+            _newClassIns.MatchKeyIndexList.AddRange(_keyIndexList);
+            _newClassIns.MatchKeyNameList.Clear();
+            foreach (var _keyData in mSelectKeyList)
             {
-                _newClassIns.MatchKeyIndexList.AddRange(_keyIndexList);
+                _newClassIns.MatchKeyNameList.Add(_keyData.KeyNameWithIndex);
             }
+
+            mSelectKeyList.Clear();
 
             InternalClearAllKeySelect();
             InternalRefreshForActionDataView();
