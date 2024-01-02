@@ -21,23 +21,15 @@ namespace ExcelTool
         } = string.Empty;
     }
 
-    public abstract class DataProcessActionBase
+    public abstract class ActionCore
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="inRowData"></param>
-        /// <returns>返回值有可能是作为行为序列中，查找行为的传入值，可能由多个value组成一个需要查找的值，因此不能返回 CellData</returns>
-        /// <returns>同理， CellData 也不能作为输入值</returns>
-        /// <exception cref="Exception"></exception>
-        public virtual List<string> TryProcessData(List<string> inRowData)
-        {
-            if (inRowData == null || inRowData.Count < 1)
-            {
-                return new List<string>();
-            }
+        public MultiResultReturnType ResultReturnType = MultiResultReturnType.SingleString;
 
-            var _resultList = InternalProcessData(inRowData);
+        public string MultiValueSplitSymbol = ",";
+
+        public virtual List<string> ProcessData(List<string> inDataList)
+        {
+            var _resultList = OnProcessData(inDataList);
 
             switch (ResultReturnType)
             {
@@ -67,150 +59,199 @@ namespace ExcelTool
             }
         }
 
-        public string MultiValueSplitSymbol = ",";
+        protected abstract List<string> OnProcessData(List<string> inDataList);
 
-        public MultiResultReturnType ResultReturnType = MultiResultReturnType.SingleString;
+        public abstract bool HaveDetailEdit();
 
-        public List<int> MatchKeyIndexList = new List<int>(); // 对于源行为来说，需要在在配置源文件的时候，去指定 ID key 是哪个
+        public virtual void OpenDetailEditForm()
+        {
+        }
+    }
 
-        protected abstract List<string> InternalProcessData(List<string> inRowData);
+    /// <summary>
+    /// 对数据，自身不做任何执行
+    /// </summary>
+    public abstract class ActionNoSelfProcess : ActionCore
+    {
+    }
 
-        public virtual bool HaveDetailEdit()
+    /// <summary>
+    /// 对数据，自己是要执行的
+    /// </summary>
+    public abstract class ActionWithSelfProcess : ActionCore
+    {
+        protected override List<string> OnProcessData(List<string> inDataList)
+        {
+            return OnSelfProcessData(inDataList);
+        }
+
+        protected abstract List<string> OnSelfProcessData(List<string> inDataList);
+    }
+
+    public class SequenceAction : ActionNoSelfProcess
+    {
+        public List<ActionCore> ActionSequence = new List<ActionCore>();
+
+        public CommonWorkSheetData? WorkSheetData = null;
+
+        protected override List<string> OnProcessData(List<string> inDataList)
+        {
+            List<string> _resultList = new List<string>();
+
+            for (int i = 0; i < ActionSequence.Count; ++i)
+            {
+                var _tempResult = ActionSequence[i].ProcessData(inDataList);
+                _resultList.AddRange(_tempResult);
+            }
+
+            return _resultList;
+        }
+
+        public override bool HaveDetailEdit()
         {
             return false;
         }
     }
 
-    /// <summary>
-    /// 作为导出表的 key 映射的第一个行为
-    /// </summary>
-    [ProcessAction("输入源数据")]
-    public class SourceAction : DataProcessActionBase
+    public abstract class NormalActionBase : ActionWithSelfProcess
     {
-        public ActionForFindValue FindAction = new ActionForFindValue();
+        public List<int> MatchKeyIndexList = new List<int>();
 
-        protected override List<string> InternalProcessData(List<string> inRowData)
+        public List<string> MatchKeyNameList = new List<string>(); // 给外面显示用的
+
+        public SequenceAction FollowSequenceAction = new SequenceAction();
+
+        protected override List<string> OnSelfProcessData(List<string> inDataList)
         {
-            return FindAction.TryProcessData(inRowData);
-        }
-    }
-
-    /// <summary>
-    /// 只管找数据，找到数据以后返回交给后续处理
-    /// </summary>
-    [ProcessAction("查找行为")]
-    public class ActionForFindValue : DataProcessActionBase
-    {
-        public CommonWorkSheetData? SearchTargetSheet = null; // 去哪个 sheet 查找
-
-        public List<int> SearchKeyIndexList = new List<int>(); // 去 sheet 的那个位置找，注意 index 是 index in row ， 不是 index in sheet
-
-        /// <summary>
-        /// 注意，这里是给输入源数据用的
-        /// </summary>
-        public bool SkipSearch
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 找到数值后操作行为序列
-        /// </summary>
-        public List<DataProcessActionBase> FollowActionList = new List<DataProcessActionBase>();
-
-        protected override List<string> InternalProcessData(List<string> inData)
-        {
-            if (SearchTargetSheet == null)
+            if (MatchKeyIndexList.Count > 0)
             {
-                throw new Exception($" ActionForFindValue 出错，TryProcessData ， SearchTargetSheet 为空");
-            }
+                List<string> _tempInDataList = new List<string>();
 
-            if (inData == null || inData.Count < 1)
-            {
-                throw new Exception($" ActionForFindValue 出错，TryProcessData ， inData 为空");
-            }
+                for (int i = 0; i < MatchKeyIndexList.Count; ++i)
+                {
+                    if (MatchKeyIndexList[i] < 0 || MatchKeyIndexList[i] > inDataList.Count)
+                    {
+                        throw new Exception(
+                            $"错误，下标越界了，传入的数据数量：[{inDataList.Count}] , 记录的下标 Index : [{i}],数值 : [{MatchKeyIndexList[i]}]"
+                        );
+                    }
 
-            List<string> _findRowData;
-            if (SkipSearch)
-            {
-                _findRowData = inData;
+                    _tempInDataList.Add(inDataList[MatchKeyIndexList[i]]);
+                }
+
+                return InternalSelfProcessData(_tempInDataList);
             }
             else
             {
-                List<string> _matchValue = new List<string>();
-                if (MatchKeyIndexList.Count > 0)
-                {
-                    foreach (var _index in MatchKeyIndexList)
-                    {
-                        _matchValue.Add(inData[_index]);
-                    }
-                }
-                else
-                {
-                    _matchValue.AddRange(inData);
-                }
-
-                _findRowData = SearchTargetSheet.GetRowStringDataByTargetKeysAndValus(SearchKeyIndexList, _matchValue);
+                return InternalSelfProcessData(inDataList);
             }
-
-            if (_findRowData == null)
-            {
-                return new List<string>();
-            }
-
-            List<string> _resultList = new List<string>();
-
-            for (int i = 0; i < FollowActionList.Count; ++i)
-            {
-                var _result = FollowActionList[i].TryProcessData(_findRowData);
-                if (_result == null || _result.Count == 0)
-                {
-                    return new List<string>();
-                }
-                else
-                {
-                    _resultList.AddRange(_result);
-                }
-            }
-
-            return new List<string>();
         }
 
-        public override bool HaveDetailEdit()
-        {
-            return true;
-        }
+        protected abstract List<string> InternalSelfProcessData(List<string> inDataList);
     }
 
     /// <summary>
     /// 直接返回值
     /// </summary>
     [ProcessAction("直接返回")]
-    public class ActionDirectReturn : DataProcessActionBase
+    public class ActionDirectReturn : NormalActionBase
     {
-        protected override List<string> InternalProcessData(List<string> rowData)
+        protected override List<string> InternalSelfProcessData(List<string> inDataList)
         {
             List<string> _resultList = new List<string>();
-            if (rowData == null || rowData.Count < 1)
+            if (inDataList == null || inDataList.Count < 1)
             {
                 return _resultList;
             }
 
             for (int i = 0; i < MatchKeyIndexList.Count; ++i)
             {
-                var _cell = rowData[MatchKeyIndexList[i]];
+                var _cell = inDataList[MatchKeyIndexList[i]];
                 _resultList.Add(_cell);
             }
 
             return _resultList;
         }
+
+        public override bool HaveDetailEdit()
+        {
+            return false;
+        }
+    }
+
+    [ProcessAction("查找行为")]
+    public class FindAction : NormalActionBase
+    {
+        protected CommonWorkSheetData? SearchWorkSheet = null;
+
+        public List<int> SearchKeyIndexList = new List<int>();
+
+        protected override List<string> InternalSelfProcessData(List<string> inDataList)
+        {
+            if (SearchWorkSheet == null)
+            {
+                throw new Exception($"错误，查找的目标表格为空，请检查");
+            }
+
+            if (SearchKeyIndexList.Count < 1)
+            {
+                throw new Exception($"错误，查找的 KeyIndexList 为空，请检查！");
+            }
+
+            var _rowData = SearchWorkSheet.GetRowStringDataByTargetKeysAndValus(SearchKeyIndexList, inDataList);
+
+            return _rowData;
+        }
+
+        public void SetSearchWorkSheet(CommonWorkSheetData targetSheet)
+        {
+            SearchWorkSheet = targetSheet;
+
+            FollowSequenceAction.WorkSheetData = SearchWorkSheet;
+        }
+
+        public CommonWorkSheetData? GetSearchWorkSheetData()
+        {
+            return SearchWorkSheet;
+        }
+
+        public override bool HaveDetailEdit()
+        {
+            return true;
+        }
+
+        public override void OpenDetailEditForm()
+        {
+            ChooseFileConfigForm _form = new ChooseFileConfigForm();
+            _form.SetFindAction(this);
+            if (_form.ShowDialog() == DialogResult.OK)
+            {
+                var _chooseSheet = _form.GetChooseSheet();
+                if (_chooseSheet == null)
+                {
+                    CommonUtil.ShowError("FindAction -> OpenDetailEditForm , 没有选择正确的 WorkSheet ");
+                    return;
+                }
+
+                var _selectKeyIndexList = _form.GetSelectKeyIndexList();
+                if (_selectKeyIndexList == null || _selectKeyIndexList.Count < 1)
+                {
+                    CommonUtil.ShowError("FindAction -> OpenDetailEditForm , 没有选择匹配 Key ");
+
+                    return;
+                }
+
+                SetSearchWorkSheet(_chooseSheet);
+                SearchKeyIndexList.Clear();
+                SearchKeyIndexList.AddRange(_selectKeyIndexList);
+            }
+        }
     }
 
     [ProcessAction("返回为UEPos")]
-    public class ActionReturnAsUEPos : DataProcessActionBase
+    public class ActionReturnAsUEPos : NormalActionBase
     {
-        protected override List<string> InternalProcessData(List<string> rowData)
+        protected override List<string> InternalSelfProcessData(List<string> rowData)
         {
             List<string> _resultList = new List<string>();
             if (rowData == null || rowData.Count < 1)
@@ -227,12 +268,17 @@ namespace ExcelTool
             }
             return _resultList;
         }
+
+        public override bool HaveDetailEdit()
+        {
+            return false;
+        }
     }
 
     [ProcessAction("返回为UE旋转")]
-    public class ActionReturnAsUERotateY : DataProcessActionBase
+    public class ActionReturnAsUERotateY : NormalActionBase
     {
-        protected override List<string> InternalProcessData(List<string> rowData)
+        protected override List<string> InternalSelfProcessData(List<string> rowData)
         {
             List<string> _resultList = new List<string>();
             if (rowData == null || rowData.Count < 1)
@@ -250,14 +296,19 @@ namespace ExcelTool
 
             return _resultList;
         }
+
+        public override bool HaveDetailEdit()
+        {
+            return false;
+        }
     }
 
     [ProcessAction("格式化后返回")]
-    public class ActionReturnAfterFormat : DataProcessActionBase
+    public class ActionReturnAfterFormat : NormalActionBase
     {
         public string FormatStr = string.Empty;
 
-        protected override List<string> InternalProcessData(List<string> rowData)
+        protected override List<string> InternalSelfProcessData(List<string> rowData)
         {
             List<string> _resultList = new List<string>();
             if (rowData == null || rowData.Count < 1)
@@ -306,135 +357,6 @@ namespace ExcelTool
         public override bool HaveDetailEdit()
         {
             return true;
-        }
-    }
-
-
-    public abstract class ActionCore
-    {
-        public MultiResultReturnType ResultReturnType = MultiResultReturnType.SingleString;
-
-        public string MultiValueSplitSymbol = ",";
-
-        public abstract List<string> ProcessData(List<string> inDataList);
-    }
-
-    public abstract class ActionNoFollowActions : ActionCore
-    {
-    }
-
-
-    /// <summary>
-    /// 对数据，自身不做任何执行
-    /// </summary>
-    public abstract class ActionNoSelfProcess : ActionCore
-    {
-
-    }
-
-    /// <summary>
-    /// 对数据，自己是要执行的
-    /// </summary>
-    public abstract class ActionWithSelfProcess : ActionCore
-    {
-        public override List<string> ProcessData(List<string> inDataList)
-        {
-            return OnSelfProcessData(inDataList);
-        }
-
-        protected abstract List<string> OnSelfProcessData(List<string> inDataList);
-    }
-
-    public class SequenceAction : ActionNoSelfProcess
-    {
-        public List<ActionCore> ActionSequence = new List<ActionCore>();
-
-        public override List<string> ProcessData(List<string> inDataList)
-        {
-            List<string> _resultList = new List<string>();
-
-            for (int i = 0; i < ActionSequence.Count; ++i)
-            {
-                var _tempResult = ActionSequence[i].ProcessData(inDataList);
-                _resultList.AddRange(_tempResult);
-            }
-
-            switch (ResultReturnType)
-            {
-                case MultiResultReturnType.SingleString:
-                {
-                    StringBuilder _builder = new StringBuilder();
-
-                    for (int i = 0; i < _resultList.Count; ++i)
-                    {
-                        _builder.Append(_resultList[i]);
-                        if (i < _resultList.Count - 1)
-                        {
-                            _builder.Append(MultiValueSplitSymbol);
-                        }
-                    }
-
-                    return new List<string>() { _builder.ToString() };
-                }
-                case MultiResultReturnType.ListString:
-                {
-                    return _resultList;
-                }
-                default:
-                {
-                    throw new Exception($"未处理的枚举:{ResultReturnType}");
-                }
-            }
-        }
-    }
-
-
-    public abstract class ActionWithFollowActions : ActionWithSelfProcess
-    {
-        public SequenceAction FollowActionSequence = new SequenceAction();
-
-        public List<int> InDataMatchIndexList = new List<int>();
-
-        public override List<string> ProcessData(List<string> inDataList)
-        {
-            List<string> _finalResultList = new List<string>();
-            if (FollowActionSequence.ActionSequence.Count < 1)
-            {
-                var _tempResultList = OnSelfProcessData(inDataList);
-                _finalResultList.AddRange(_tempResultList);
-            }
-            else
-            {
-                var _tempResultList = FollowActionSequence.ProcessData(inDataList);
-                _finalResultList.AddRange(_tempResultList);
-            }
-
-            switch (ResultReturnType)
-            {
-                case MultiResultReturnType.SingleString:
-                {
-                    StringBuilder _builder = new StringBuilder();
-
-                    for (int i = 0; i < _finalResultList.Count; ++i)
-                    {
-                        _builder.Append(_finalResultList[i]);
-                        if (i < _finalResultList.Count - 1)
-                        {
-                            _builder.Append(MultiValueSplitSymbol);
-                        }
-                    }
-
-                    return new List<string>() { _builder.ToString() };
-                }
-                case MultiResultReturnType.ListString:
-                {
-                    return _finalResultList;
-                }
-                default:
-                {
-                    throw new Exception($"未处理的枚举:{ResultReturnType}");
-                }
-            }
         }
     }
 }

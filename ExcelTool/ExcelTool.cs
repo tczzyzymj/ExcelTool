@@ -61,7 +61,7 @@ namespace ExcelTool
 #pragma warning disable CS0162 // Unreachable code detected
             var mExportTargetFile = TableDataManager.Ins().GetExportFileData();
 
-                              // 导入配置
+            // 导入配置
             OpenFileDialog _openfileDialog = new OpenFileDialog();
             if (_openfileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -134,8 +134,8 @@ namespace ExcelTool
             var _actionMap = TableDataManager.Ins().ExportKeyActionMap;
             for (int i = 0; i < _rows.Count; ++i)
             {
-                _actionMap.TryGetValue(mKeyList[i], out var sourceAction);
-                bool _hasConfig = sourceAction != null && sourceAction.FindAction.FollowActionList.Count > 0;
+                _actionMap.TryGetValue(mKeyList[i], out var _sequenceAction);
+                bool _hasConfig = _sequenceAction != null && _sequenceAction.ActionSequence.Count > 0;
                 _rows[i].Cells[mColumIndexForHasConfigKey].Value = _hasConfig;
                 _rows[i].Cells[mColumIndexForSetIgnore].Value = !_hasConfig;
                 if (_hasConfig)
@@ -321,10 +321,11 @@ namespace ExcelTool
                     KeyConnectEditForm _form = new KeyConnectEditForm();
                     if (!TableDataManager.Ins().ExportKeyActionMap.TryGetValue(_fromKey, out var _action))
                     {
-                        _action = new SourceAction();
+                        _action = new SequenceAction();
                         TableDataManager.Ins().ExportKeyActionMap.Add(_fromKey, _action);
+                        _action.WorkSheetData = TableDataManager.Ins().GetSourceSheet();
                     }
-                    _form.InitData(_action.FindAction, true, _sourceSheet);
+                    _form.InitData(_action, true, _sourceSheet);
                     if (_form.ShowDialog() == DialogResult.OK)
                     {
                         // TODO 这里去检测一下，看是否有循环引用

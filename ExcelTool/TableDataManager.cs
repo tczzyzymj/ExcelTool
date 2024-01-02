@@ -34,7 +34,7 @@ namespace ExcelTool
 
         private CommonWorkSheetData? mSourceSheet = null;
 
-        public Dictionary<KeyData, SourceAction> ExportKeyActionMap = new Dictionary<KeyData, SourceAction>();
+        public Dictionary<KeyData, SequenceAction> ExportKeyActionMap = new Dictionary<KeyData, SequenceAction>();
 
         /// <summary>
         /// 源文件的数据过滤器
@@ -238,7 +238,7 @@ namespace ExcelTool
 
                     var _listStringData = CommonUtil.ParsRowCellDataToRowStringData(_sourceRowData);
 
-                    var _dataAfterAction = _action.TryProcessData(_listStringData);
+                    var _dataAfterAction = _action.ProcessData(_listStringData);
 
                     if (_dataAfterAction == null || _dataAfterAction.Count < 1)
                     {

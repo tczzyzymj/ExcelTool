@@ -13,7 +13,7 @@ namespace ExcelTool
 {
     public partial class KeyConnectEditForm : Form
     {
-        private ActionForFindValue? mFromAction = null;
+        private SequenceAction? mFromAction = null;
         private FileDataBase? mTargetFile = null;
         private CommonWorkSheetData? mFromSheet = null;
         private CommonWorkSheetData? mSelectSheet = null;
@@ -36,7 +36,7 @@ namespace ExcelTool
             DataViewForAction.AllowUserToAddRows = false;
         }
 
-        public bool InitData(ActionForFindValue targetAction, bool canLoadNewFile, CommonWorkSheetData fromSheet)
+        public bool InitData(SequenceAction targetAction, bool canLoadNewFile, CommonWorkSheetData fromSheet)
         {
             if (targetAction == null)
             {
@@ -44,6 +44,7 @@ namespace ExcelTool
                 this.Close();
                 return false;
             }
+
             mFromSheet = fromSheet;
             mCanLoadNewFile = canLoadNewFile;
             mFromAction = targetAction;
@@ -64,20 +65,20 @@ namespace ExcelTool
             LabelSelectSheet.Visible = mCanLoadNewFile;
             ComboBoxForWorkSheet.Visible = mCanLoadNewFile;
 
-            if (!mCanLoadNewFile && mFromAction is ActionForFindValue _findAction)
+            if (!mCanLoadNewFile)
             {
-                if (_findAction.SearchTargetSheet == null)
+                if (mFromAction.WorkSheetData == null)
                 {
                     CommonUtil.ShowError($"KeyConnectEditForm_Load 错误，_findAction.SearchTargetSheet 为空");
                     return;
                 }
 
-                LabelForFromTable.Text = _findAction.SearchTargetSheet.GetOwnerTable()?.DisplayName + "->" + _findAction.SearchTargetSheet.DisplayName;
-                mSelectSheet = _findAction.SearchTargetSheet;
+                LabelForFromTable.Text = mFromAction.WorkSheetData.GetOwnerTable()?.DisplayName + "->" + mFromAction.WorkSheetData.DisplayName;
+                mSelectSheet = mFromAction.WorkSheetData;
                 mTargetFile = mSelectSheet?.GetOwnerTable();
             }
 
-            mTypeListForAction = CommonUtil.CreateComboBoxDataForType<DataProcessActionBase>();
+            mTypeListForAction = CommonUtil.CreateComboBoxDataForType<ActionCore>();
             ComboBoxForActionTypeList.DataSource = null;
             ComboBoxForActionTypeList.Items.Clear();
             ComboBoxForActionTypeList.DataSource = mTypeListForAction;
@@ -340,15 +341,15 @@ namespace ExcelTool
                 //}
                 case mRemoveColumIndex:
                 {
-                    mTargetActionList.RemoveAt(e.RowIndex);
+                    mFromAction.ActionSequence.RemoveAt(e.RowIndex);
                     InternalRefreshForActionDataView();
                     break;
                 }
                 case mDetailConfigIndex:
                 {
                     // 根据不同的行为，打开不同的编辑界面
-                    var _action = this.mTargetActionList[e.RowIndex];
-                    if (_action is ActionForFindValue _findAction)
+                    var _action = this.mFromAction.ActionSequence[e.RowIndex];
+                    if (_action is FindAction _findAction)
                     {
                     }
 
@@ -488,8 +489,6 @@ namespace ExcelTool
             }
         }
 
-        private List<DataProcessActionBase> mTargetActionList = new List<DataProcessActionBase>();
-
         /// <summary>
         /// 刷新当前行为步骤
         /// </summary>
@@ -501,7 +500,7 @@ namespace ExcelTool
                 return;
             }
 
-            mTargetActionList = mFromAction.FollowActionList;
+            var mTargetActionList = mFromAction.ActionSequence;
 
             this.DataViewForAction.DataSource = null;
             this.DataViewForAction.Rows.Clear();
@@ -510,28 +509,31 @@ namespace ExcelTool
                 string _contentForSetSearchKey = "无功能";
                 string _contentForSetActionAfterSearch = "无功能";
                 StringBuilder _connectInfo = new StringBuilder();
-
-                if (mFromAction.SearchTargetSheet != null)
+                var _singleAction = mTargetActionList[i];
+                if (mFromAction.WorkSheetData != null)
                 {
                     var _tempInfo = string.Format("{0}->{1}",
-                        mFromAction.SearchTargetSheet.GetOwnerTable()?.DisplayName,
-                        mFromAction.SearchTargetSheet.DisplayName
+                        mFromAction.WorkSheetData.GetOwnerTable()?.DisplayName,
+                        mFromAction.WorkSheetData.DisplayName
                     );
                     _connectInfo.Append(_tempInfo);
                     _connectInfo.Append("->");
                 }
 
-                if (mFromAction.HaveDetailEdit())
+                if (_singleAction.HaveDetailEdit())
                 {
-                    _contentForSetSearchKey = mFromAction.SearchKeyIndexList.Count > 0 ? "已设置" : "设置";
-                    _contentForSetActionAfterSearch = mFromAction.FollowActionList.Count > 0 ? "已设置" : "设置";
+                    //_contentForSetSearchKey = _singleAction.SearchKeyIndexList.Count > 0 ? "已设置" : "设置";
+                    //_contentForSetActionAfterSearch = _singleAction.FollowActionList.Count > 0 ? "已设置" : "设置";
+
+                    _contentForSetSearchKey = "详细设置";
+                    _contentForSetActionAfterSearch = "详细设置";
                 }
 
-                foreach (var _tempKey in mFromAction.SearchKeyIndexList)
-                {
-                    //_connectInfo.Append(_tempKey.KeyName);
-                    //_connectInfo.Append(";");
-                }
+                //foreach (var _tempKey in _singleAction.SearchKeyIndexList)
+                //{
+                //    //_connectInfo.Append(_tempKey.KeyName);
+                //    //_connectInfo.Append(";");
+                //}
 
                 var _index = this.DataViewForAction.Rows.Add(
                     mTargetActionList[i].GetType().GetCustomAttribute<ProcessActionAttribute>()?.DisplayName,
@@ -560,42 +562,6 @@ namespace ExcelTool
                     //}
                 }
             }
-        }
-
-        private DataProcessActionBase? GetNewDataForChooseAction()
-        {
-            DataProcessActionBase? _result = null;
-
-            if (mChooseActionType == null)
-            {
-                MessageBox.Show($"{GetNewDataForChooseAction} 错误，mChooseActionType为空，请检查");
-                return null;
-            }
-
-            if (mChooseActionType.TargetType == null)
-            {
-                MessageBox.Show($"{GetNewDataForChooseAction} 错误，mChooseActionType.TargetType 为空，请检查");
-                return null;
-            }
-
-            var _className = mChooseActionType.TargetType.FullName;
-
-            if (string.IsNullOrEmpty(_className))
-            {
-                MessageBox.Show($"{GetNewDataForChooseAction} 错误，mChooseActionType.TargetType.FullName 为空，请检查");
-                return null;
-            }
-
-            _result = Assembly.GetExecutingAssembly().CreateInstance(_className, true) as DataProcessActionBase;
-
-            if (_result == null)
-            {
-                MessageBox.Show($"{GetNewDataForChooseAction} 错误，实例化失败，请检查");
-
-                return null;
-            }
-
-            return _result;
         }
 
         private void MultiDataSplitSymbol_TextChanged(object sender, EventArgs e)

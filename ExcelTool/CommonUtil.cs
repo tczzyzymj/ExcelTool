@@ -23,8 +23,45 @@ namespace ExcelTool
         } = string.Empty;
     }
 
+
     public static class CommonUtil
     {
+        public static ActionCore? GetNewDataForChooseAction(CommonDataForClass mChooseActionType)
+        {
+            ActionCore? _result = null;
+
+            if (mChooseActionType == null)
+            {
+                MessageBox.Show($"{GetNewDataForChooseAction} 错误，mChooseActionType为空，请检查");
+                return null;
+            }
+
+            if (mChooseActionType.TargetType == null)
+            {
+                MessageBox.Show($"{GetNewDataForChooseAction} 错误，mChooseActionType.TargetType 为空，请检查");
+                return null;
+            }
+
+            var _className = mChooseActionType.TargetType.FullName;
+
+            if (string.IsNullOrEmpty(_className))
+            {
+                MessageBox.Show($"{GetNewDataForChooseAction} 错误，mChooseActionType.TargetType.FullName 为空，请检查");
+                return null;
+            }
+
+            _result = Assembly.GetExecutingAssembly().CreateInstance(_className, true) as ActionCore;
+
+            if (_result == null)
+            {
+                MessageBox.Show($"{GetNewDataForChooseAction} 错误，实例化失败，请检查");
+
+                return null;
+            }
+
+            return _result;
+        }
+
         public static List<string> ParsRowCellDataToRowStringData(List<CellValueData> inDataList)
         {
             List<string> _result = new List<string>();
@@ -79,30 +116,6 @@ namespace ExcelTool
             return _columName;
         }
 
-        // 这里要做下循环检测
-        //// 检测看下是否安全，没有循环引用，主要是对比表格和sheet的名字
-        //public static bool IsSafeNoCycleReferenceForKey(ChaineKeyData? keyChaine)
-        //{
-        //    if (keyChaine == null)
-        //    {
-        //        return false;
-        //    }
-
-        //    return false;
-        //}
-
-        //public static string GetKeyConnectFullInfo(ChaineKeyData? targetData)
-        //{
-        //    if (targetData == null)
-        //    {
-        //        return string.Empty;
-        //    }
-
-        //    var _result = string.Empty;
-
-        //    return _result;
-        //}
-
         public static List<CommonDataForClass> CreateComboBoxDataForType<T>() where T : class
         {
             List<CommonDataForClass> _result = new List<CommonDataForClass>();
@@ -111,7 +124,7 @@ namespace ExcelTool
             List<Type> _recordList = new List<Type>();
 
             var _targetType = typeof(T);
-            var _ignoreType = typeof(SourceAction);
+            var _ignoreType = typeof(ActionCore);
             foreach (var _pair in _types)
             {
                 if (_pair == _ignoreType)

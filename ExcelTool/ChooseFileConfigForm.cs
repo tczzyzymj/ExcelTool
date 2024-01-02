@@ -27,10 +27,16 @@ namespace ExcelTool
 
         private List<KeyData> mKeyDataList = new List<KeyData>();
 
-
-        public FileDataBase? GetChooseFile()
+        public CommonWorkSheetData? GetChooseSheet()
         {
-            return mChooseFile;
+            return mChooseSheet;
+        }
+
+        public List<int> mSelectKeyIndexList = new List<int>();
+
+        public List<int> GetSelectKeyIndexList()
+        {
+            return mSelectKeyIndexList;
         }
 
         private CommonWorkSheetData? mFromSheet = null;
@@ -45,10 +51,12 @@ namespace ExcelTool
             mFromSheet = fromSheet;
         }
 
-        public void SetFindAction(ActionForFindValue targetAction)
+        public void SetFindAction(FindAction targetAction)
         {
             mFromFileType = LoadFileType.SetSearchKey;
-            mFromSheet = targetAction.SearchTargetSheet;
+            mFromSheet = targetAction.GetSearchWorkSheetData();
+            mSelectKeyIndexList.Clear();
+            mSelectKeyIndexList.AddRange(targetAction.SearchKeyIndexList);
         }
 
         private FileDataBase? InternalLoadFile(string absolutePath)
@@ -363,10 +371,20 @@ namespace ExcelTool
                 case mIndexForSelectSearchKey:
                 {
                     bool _isSelect = (bool)this.DataGridViewForKeyFilter.Rows[e.RowIndex].Cells[e.ColumnIndex].EditedFormattedValue;
+                    if (mFromFileType == LoadFileType.SetSearchKey)
+                    {
+                        mSelectKeyIndexList.Remove(e.RowIndex);
+                        if (_isSelect)
+                        {
+                            mSelectKeyIndexList.Add(e.RowIndex);
+                        }
+                    }
+                    else
+                    {
+                        var _targetKey = mKeyDataList[e.RowIndex];
 
-                    var _targetKey = mKeyDataList[e.RowIndex];
-
-                    _targetKey.IsMainKey = _isSelect;
+                        _targetKey.IsMainKey = _isSelect;
+                    }
 
                     break;
                 }
