@@ -571,17 +571,17 @@ namespace ExcelTool
                 var _row = DataViewForAction.Rows[_index];
 
                 {
-                    //// 显示绑定KEY相关信息
-                    //var _cell = _row.Cells[mBindKeyColumIndex] as DataGridViewComboBoxCell;
-                    //if (_cell != null)
-                    //{
-                    //    foreach (var _key in mTargetActionList[i].MatchKeyIndexList)
-                    //    {
-                    //        _cell.Items.Add(_key.KeyNameWithIndex);
-                    //    }
+                    // 显示绑定KEY相关信息
+                    var _cell = _row.Cells[mBindKeyColumIndex] as DataGridViewComboBoxCell;
+                    if (_cell != null)
+                    {
+                        foreach (var _keyName in mTargetActionList[i].MatchKeyNameList)
+                        {
+                            _cell.Items.Add(_keyName);
+                        }
 
-                    //    _cell.Value = mTargetActionList[i].MatchKeyList[0].KeyNameWithIndex;
-                    //}
+                        _cell.Value = mTargetActionList[i].MatchKeyNameList[0];
+                    }
                 }
             }
         }

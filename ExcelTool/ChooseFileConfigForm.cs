@@ -56,8 +56,10 @@ namespace ExcelTool
             mFromSheet = fromSheet;
         }
 
+        private FindAction? mFromAction = null;
         public void SetFindAction(FindAction targetAction)
         {
+            mFromAction = targetAction;
             mFromFileType = LoadFileType.SetSearchKey;
             mFromSheet = targetAction.GetSearchWorkSheetData();
             mSelectKeyIndexList.Clear();
@@ -329,23 +331,38 @@ namespace ExcelTool
 
             if (mFromFileType == LoadFileType.SourceFile)
             {
-            }
-            else
-            {
-            }
+                for (int i = 0; i < mKeyDataList.Count; i++)
+                {
+                    var _filter = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mKeyDataList[i]);
 
-            for (int i = 0; i < mKeyDataList.Count; i++)
+                    DataGridViewForKeyFilter.Rows.Add(
+                        CommonUtil.GetZM(mKeyDataList[i].GetKeyIndexForShow()),
+                        mKeyDataList[i].KeyName,
+                        _filter != null && _filter.Count > 0,
+                        "设置",
+                        false
+                    );
+                }
+            }
+            else if (mFromFileType == LoadFileType.SetSearchKey)
             {
-                var _filter = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mKeyDataList[i]);
-                bool _showSelect = false;
+                for (int i = 0; i < mKeyDataList.Count; i++)
+                {
+                    var _filter = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mKeyDataList[i]);
+                    bool _showSelect = false;
+                    if (mFromAction != null)
+                    {
+                        _showSelect = mFromAction.SearchKeyIndexList.Contains(i);
+                    }
 
-                DataGridViewForKeyFilter.Rows.Add(
-                    CommonUtil.GetZM(mKeyDataList[i].GetKeyIndexForShow()),
-                    mKeyDataList[i].KeyName,
-                    _filter != null && _filter.Count > 0,
-                    "设置",
-                    _showSelect
-                );
+                    DataGridViewForKeyFilter.Rows.Add(
+                        CommonUtil.GetZM(mKeyDataList[i].GetKeyIndexForShow()),
+                        mKeyDataList[i].KeyName,
+                        _filter != null && _filter.Count > 0,
+                        "设置",
+                        _showSelect
+                    );
+                }
             }
         }
 

@@ -90,7 +90,7 @@ namespace ExcelTool
 
     public class SequenceAction : ActionNoSelfProcess
     {
-        public List<ActionCore> ActionSequence = new List<ActionCore>();
+        public List<NormalActionBase> ActionSequence = new List<NormalActionBase>();
 
         public CommonWorkSheetData? WorkSheetData = null;
 
