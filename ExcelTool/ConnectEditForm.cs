@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace ExcelTool
 {
-    public partial class KeyConnectEditForm : Form
+    public partial class ConnectEditForm : Form
     {
         private SequenceAction? mFromAction = null;
         private FileDataBase? mTargetFile = null;
@@ -29,7 +29,7 @@ namespace ExcelTool
 
         private bool mCanLoadNewFile = true;
 
-        public KeyConnectEditForm()
+        public ConnectEditForm()
         {
             InitializeComponent();
             this.DataViewForKeyList.AllowUserToAddRows = false;

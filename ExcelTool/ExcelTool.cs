@@ -318,7 +318,7 @@ namespace ExcelTool
                         return;
                     }
 
-                    KeyConnectEditForm _form = new KeyConnectEditForm();
+                    ConnectEditForm _form = new ConnectEditForm();
                     if (!TableDataManager.Ins().ExportKeyActionMap.TryGetValue(_fromKey, out var _action))
                     {
                         _action = new SequenceAction();

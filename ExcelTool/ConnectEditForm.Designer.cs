@@ -1,6 +1,6 @@
 ﻿namespace ExcelTool
 {
-    partial class KeyConnectEditForm
+    partial class ConnectEditForm
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             BtnLoadNewFile = new Button();
             ComboBoxForLoadedFile = new ComboBox();
             LabelLoadedFile = new Label();
@@ -119,8 +119,8 @@
             // KeyName
             // 
             KeyName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            KeyName.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            KeyName.DefaultCellStyle = dataGridViewCellStyle2;
             KeyName.FillWeight = 160F;
             KeyName.HeaderText = "Key名字";
             KeyName.Name = "KeyName";
@@ -365,7 +365,7 @@
             ComboBoxForSelectKey.TabIndex = 53;
             ComboBoxForSelectKey.SelectedIndexChanged += ComboBoxForSelectKey_SelectedIndexChanged;
             // 
-            // KeyConnectEditForm
+            // ConnectEditForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -391,8 +391,8 @@
             Controls.Add(LabelLoadedFile);
             Controls.Add(ComboBoxForLoadedFile);
             Controls.Add(BtnLoadNewFile);
-            Name = "KeyConnectEditForm";
-            Text = "KeyConnectEditForm";
+            Name = "ConnectEditForm";
+            Text = "ConnectEditForm";
             Load += KeyConnectEditForm_Load;
             ((System.ComponentModel.ISupportInitialize)DataViewForKeyList).EndInit();
             ((System.ComponentModel.ISupportInitialize)DataViewForAction).EndInit();
