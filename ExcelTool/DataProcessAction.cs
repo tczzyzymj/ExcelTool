@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ExcelTool
@@ -357,6 +358,63 @@ namespace ExcelTool
         public override bool HaveDetailEdit()
         {
             return true;
+        }
+
+        public override void OpenDetailEditForm()
+        {
+            base.OpenDetailEditForm();
+            DetailFormForStrFormatAction _form = new DetailFormForStrFormatAction();
+            _form.Init(this);
+            _form.ShowDialog();
+        }
+    }
+
+    [DisplayName("返回匹配列名中下标")]
+    public class ActionReturnMatchKeyContensIndex : NormalActionBase
+    {
+        public int IndexChangeValue = 0;
+
+        protected override List<string> InternalSelfProcessData(List<string> inDataList)
+        {
+            if (MatchKeyNameList.Count != inDataList.Count)
+            {
+                throw new Exception(
+                    $"错误，匹配 KEY名字的数量：[{MatchKeyNameList.Count}] 与 数据数量: [{inDataList.Count}] 不匹配"
+                );
+            }
+
+            var _result = new List<string>();
+
+            Regex regex = new Regex(@"\[(\d+)\]"); // 定义正则表达式模式
+
+            for (int i = 0; i < MatchKeyNameList.Count; ++i)
+            {
+                Match match = regex.Match(MatchKeyNameList[i]); // 进行匹配操作
+
+                if (match.Success)
+                {
+                    if (int.TryParse(match.Groups[1].Value, out var _tempValue))
+                    {
+                        _result.Add((_tempValue + IndexChangeValue).ToString());
+                    }
+                }
+            }
+
+            return _result;
+        }
+
+        public override bool HaveDetailEdit()
+        {
+            return true;
+        }
+
+        public override void OpenDetailEditForm()
+        {
+            base.OpenDetailEditForm();
+
+            ActionReturnMatchKeyIndexDetail _form = new ActionReturnMatchKeyIndexDetail();
+            _form.Init(this);
+            _form.ShowDialog();
         }
     }
 }

@@ -178,6 +178,7 @@
             Controls.Add(DataGridViewForFilterFunc);
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "FilterConfigForm";
             Text = "FilterConfigForm";
             Load += FilterConfigForm_Load;

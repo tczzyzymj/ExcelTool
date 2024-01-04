@@ -1,6 +1,6 @@
 ﻿namespace ExcelTool
 {
-    partial class DetailFormForStrFormatAction
+    partial class ActionReturnMatchKeyIndexDetail
     {
         /// <summary>
         /// Required designer variable.
@@ -28,61 +28,61 @@
         /// </summary>
         private void InitializeComponent()
         {
-            TextBoxForFormat = new TextBox();
-            label5 = new Label();
             BtnFinishConfig = new Button();
+            label5 = new Label();
+            TextBoxForFormat = new TextBox();
             SuspendLayout();
             // 
-            // TextBoxForFormat
+            // BtnFinishConfig
             // 
-            TextBoxForFormat.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxForFormat.Location = new Point(132, 21);
-            TextBoxForFormat.Name = "TextBoxForFormat";
-            TextBoxForFormat.Size = new Size(154, 26);
-            TextBoxForFormat.TabIndex = 38;
+            BtnFinishConfig.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            BtnFinishConfig.Location = new Point(155, 70);
+            BtnFinishConfig.Name = "BtnFinishConfig";
+            BtnFinishConfig.Size = new Size(130, 30);
+            BtnFinishConfig.TabIndex = 43;
+            BtnFinishConfig.Text = "配置完成";
+            BtnFinishConfig.UseVisualStyleBackColor = true;
+            BtnFinishConfig.Click += BtnFinishConfig_Click;
             // 
             // label5
             // 
             label5.AutoSize = true;
             label5.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label5.Location = new Point(12, 23);
+            label5.Location = new Point(12, 19);
             label5.Name = "label5";
             label5.Size = new Size(90, 21);
-            label5.TabIndex = 39;
-            label5.Text = "格式化内容";
+            label5.TabIndex = 42;
+            label5.Text = "下标变化值";
             // 
-            // BtnFinishConfig
+            // TextBoxForFormat
             // 
-            BtnFinishConfig.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            BtnFinishConfig.Location = new Point(156, 89);
-            BtnFinishConfig.Name = "BtnFinishConfig";
-            BtnFinishConfig.Size = new Size(130, 30);
-            BtnFinishConfig.TabIndex = 40;
-            BtnFinishConfig.Text = "配置完成";
-            BtnFinishConfig.UseVisualStyleBackColor = true;
-            BtnFinishConfig.Click += BtnFinishConfig_Click;
+            TextBoxForFormat.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
+            TextBoxForFormat.Location = new Point(131, 17);
+            TextBoxForFormat.Name = "TextBoxForFormat";
+            TextBoxForFormat.Size = new Size(154, 26);
+            TextBoxForFormat.TabIndex = 41;
             // 
-            // DetailFormForStrFormatAction
+            // ActionReturnMatchKeyIndexDetail
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(312, 142);
+            ClientSize = new Size(298, 117);
             Controls.Add(BtnFinishConfig);
             Controls.Add(label5);
             Controls.Add(TextBoxForFormat);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
-            Name = "DetailFormForStrFormatAction";
-            Text = "DetailFormForStrFormatAction";
-            Load += DetailFormForStrFormatAction_Load;
+            Name = "ActionReturnMatchKeyIndexDetail";
+            Text = "ActionReturnMatchKeyIndexDetail";
+            Load += ActionReturnMatchKeyIndexDetail_Load;
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private TextBox TextBoxForFormat;
-        private Label label5;
         private Button BtnFinishConfig;
+        private Label label5;
+        private TextBox TextBoxForFormat;
     }
 }

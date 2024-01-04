@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             BtnLoadNewFile = new Button();
             ComboBoxForLoadedFile = new ComboBox();
             LabelLoadedFile = new Label();
@@ -47,6 +47,14 @@
             label5 = new Label();
             label2 = new Label();
             DataViewForAction = new DataGridView();
+            ActionName = new DataGridViewTextBoxColumn();
+            BindKeyList = new DataGridViewComboBoxColumn();
+            dataGridViewButtonColumn1 = new DataGridViewButtonColumn();
+            ConnectInfoColum = new DataGridViewTextBoxColumn();
+            RemoveBtnColum = new DataGridViewButtonColumn();
+            MoveUpColum = new DataGridViewButtonColumn();
+            MoveDownColum = new DataGridViewButtonColumn();
+            FollowActionColum = new DataGridViewButtonColumn();
             BtnAddAction = new Button();
             label4 = new Label();
             label6 = new Label();
@@ -57,14 +65,6 @@
             ComboBoxForSelectKey = new ComboBox();
             label1 = new Label();
             ComboBoxForReturnType = new ComboBox();
-            ActionName = new DataGridViewTextBoxColumn();
-            BindKeyList = new DataGridViewComboBoxColumn();
-            dataGridViewButtonColumn1 = new DataGridViewButtonColumn();
-            ConnectInfoColum = new DataGridViewTextBoxColumn();
-            RemoveBtnColum = new DataGridViewButtonColumn();
-            MoveUpColum = new DataGridViewButtonColumn();
-            MoveDownColum = new DataGridViewButtonColumn();
-            FollowActionColum = new DataGridViewButtonColumn();
             ((System.ComponentModel.ISupportInitialize)DataViewForKeyList).BeginInit();
             ((System.ComponentModel.ISupportInitialize)DataViewForAction).BeginInit();
             SuspendLayout();
@@ -122,8 +122,8 @@
             // KeyName
             // 
             KeyName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            KeyName.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            KeyName.DefaultCellStyle = dataGridViewCellStyle2;
             KeyName.FillWeight = 160F;
             KeyName.HeaderText = "Key名字";
             KeyName.Name = "KeyName";
@@ -238,6 +238,63 @@
             DataViewForAction.TabIndex = 45;
             DataViewForAction.CellContentClick += DataViewForAction_CellContentClick;
             // 
+            // ActionName
+            // 
+            ActionName.HeaderText = "行为名字";
+            ActionName.Name = "ActionName";
+            ActionName.ReadOnly = true;
+            ActionName.Width = 120;
+            // 
+            // BindKeyList
+            // 
+            BindKeyList.HeaderText = "绑定的Key";
+            BindKeyList.Name = "BindKeyList";
+            BindKeyList.Width = 180;
+            // 
+            // dataGridViewButtonColumn1
+            // 
+            dataGridViewButtonColumn1.FillWeight = 160F;
+            dataGridViewButtonColumn1.HeaderText = "详细配置";
+            dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
+            dataGridViewButtonColumn1.Text = "详细配置";
+            dataGridViewButtonColumn1.ToolTipText = "详细配置";
+            // 
+            // ConnectInfoColum
+            // 
+            ConnectInfoColum.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            ConnectInfoColum.HeaderText = "关联信息";
+            ConnectInfoColum.Name = "ConnectInfoColum";
+            ConnectInfoColum.ReadOnly = true;
+            // 
+            // RemoveBtnColum
+            // 
+            RemoveBtnColum.HeaderText = "移除";
+            RemoveBtnColum.Name = "RemoveBtnColum";
+            RemoveBtnColum.Width = 60;
+            // 
+            // MoveUpColum
+            // 
+            MoveUpColum.HeaderText = "上移";
+            MoveUpColum.Name = "MoveUpColum";
+            MoveUpColum.Text = "上移";
+            MoveUpColum.ToolTipText = "上移";
+            MoveUpColum.Width = 40;
+            // 
+            // MoveDownColum
+            // 
+            MoveDownColum.HeaderText = "下移";
+            MoveDownColum.Name = "MoveDownColum";
+            MoveDownColum.Text = "下移";
+            MoveDownColum.ToolTipText = "下移";
+            MoveDownColum.Width = 40;
+            // 
+            // FollowActionColum
+            // 
+            FollowActionColum.HeaderText = "子行为配置";
+            FollowActionColum.Name = "FollowActionColum";
+            FollowActionColum.Resizable = DataGridViewTriState.True;
+            FollowActionColum.SortMode = DataGridViewColumnSortMode.Automatic;
+            // 
             // BtnAddAction
             // 
             BtnAddAction.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
@@ -339,63 +396,6 @@
             ComboBoxForReturnType.TabIndex = 54;
             ComboBoxForReturnType.SelectedIndexChanged += ComboBoxForReturnType_SelectedIndexChanged;
             // 
-            // ActionName
-            // 
-            ActionName.HeaderText = "行为名字";
-            ActionName.Name = "ActionName";
-            ActionName.ReadOnly = true;
-            ActionName.Width = 120;
-            // 
-            // BindKeyList
-            // 
-            BindKeyList.HeaderText = "绑定的Key";
-            BindKeyList.Name = "BindKeyList";
-            BindKeyList.Width = 180;
-            // 
-            // dataGridViewButtonColumn1
-            // 
-            dataGridViewButtonColumn1.FillWeight = 160F;
-            dataGridViewButtonColumn1.HeaderText = "详细配置";
-            dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
-            dataGridViewButtonColumn1.Text = "详细配置";
-            dataGridViewButtonColumn1.ToolTipText = "详细配置";
-            // 
-            // ConnectInfoColum
-            // 
-            ConnectInfoColum.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            ConnectInfoColum.HeaderText = "关联信息";
-            ConnectInfoColum.Name = "ConnectInfoColum";
-            ConnectInfoColum.ReadOnly = true;
-            // 
-            // RemoveBtnColum
-            // 
-            RemoveBtnColum.HeaderText = "移除";
-            RemoveBtnColum.Name = "RemoveBtnColum";
-            RemoveBtnColum.Width = 60;
-            // 
-            // MoveUpColum
-            // 
-            MoveUpColum.HeaderText = "上移";
-            MoveUpColum.Name = "MoveUpColum";
-            MoveUpColum.Text = "上移";
-            MoveUpColum.ToolTipText = "上移";
-            MoveUpColum.Width = 40;
-            // 
-            // MoveDownColum
-            // 
-            MoveDownColum.HeaderText = "下移";
-            MoveDownColum.Name = "MoveDownColum";
-            MoveDownColum.Text = "下移";
-            MoveDownColum.ToolTipText = "下移";
-            MoveDownColum.Width = 40;
-            // 
-            // FollowActionColum
-            // 
-            FollowActionColum.HeaderText = "子行为配置";
-            FollowActionColum.Name = "FollowActionColum";
-            FollowActionColum.Resizable = DataGridViewTriState.True;
-            FollowActionColum.SortMode = DataGridViewColumnSortMode.Automatic;
-            // 
             // SequenceActionConnectEditForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
@@ -424,6 +424,8 @@
             Controls.Add(LabelLoadedFile);
             Controls.Add(ComboBoxForLoadedFile);
             Controls.Add(BtnLoadNewFile);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "SequenceActionConnectEditForm";
             Text = "SequenceActionConnectEditForm";
             Load += KeyConnectEditForm_Load;

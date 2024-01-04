@@ -388,6 +388,7 @@
             Controls.Add(label1);
             Controls.Add(TextForFilePath);
             FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "ChooseFileConfigForm";
             Text = "ChooseFileConfigForm";
             Load += ChooseFileConfigForm_Load;

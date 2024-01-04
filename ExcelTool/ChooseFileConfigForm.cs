@@ -329,22 +329,8 @@ namespace ExcelTool
 
             DataGridViewForKeyFilter.Rows.Clear();
 
-            if (mFromFileType == LoadFileType.SourceFile)
-            {
-                for (int i = 0; i < mKeyDataList.Count; i++)
-                {
-                    var _filter = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mKeyDataList[i]);
 
-                    DataGridViewForKeyFilter.Rows.Add(
-                        CommonUtil.GetZM(mKeyDataList[i].GetKeyIndexForShow()),
-                        mKeyDataList[i].KeyName,
-                        _filter != null && _filter.Count > 0,
-                        "设置",
-                        false
-                    );
-                }
-            }
-            else if (mFromFileType == LoadFileType.SetSearchKey)
+            if (mFromFileType == LoadFileType.SetSearchKey)
             {
                 for (int i = 0; i < mKeyDataList.Count; i++)
                 {
@@ -361,6 +347,21 @@ namespace ExcelTool
                         _filter != null && _filter.Count > 0,
                         "设置",
                         _showSelect
+                    );
+                }
+            }
+            else
+            {
+                for (int i = 0; i < mKeyDataList.Count; i++)
+                {
+                    var _filter = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mKeyDataList[i]);
+
+                    DataGridViewForKeyFilter.Rows.Add(
+                        CommonUtil.GetZM(mKeyDataList[i].GetKeyIndexForShow()),
+                        mKeyDataList[i].KeyName,
+                        _filter != null && _filter.Count > 0,
+                        "设置",
+                        false
                     );
                 }
             }

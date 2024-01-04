@@ -242,6 +242,8 @@
             Controls.Add(DataViewForAction);
             Controls.Add(label2);
             Controls.Add(BtnFinishConfig);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "NormalActionConnectEditForm";
             Text = "NormalActionConnectEditForm";
             Load += NormalActionConnectEditForm_Load;
