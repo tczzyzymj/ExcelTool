@@ -16,6 +16,9 @@
     <Compile Update="FilterConfigForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="ReturnSpecificValueForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="SequenceActionConnectEditForm.cs">
       <SubType>Form</SubType>
     </Compile>

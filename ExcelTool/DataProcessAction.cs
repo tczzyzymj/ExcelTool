@@ -417,5 +417,30 @@ namespace ExcelTool
             _form.ShowDialog();
         }
     }
+
+    [DisplayName("返回指定字符串")]
+    public class ActionReturnSpecificValue : NormalActionBase
+    {
+        public string TargetValue;
+
+        protected override List<string> InternalSelfProcessData(List<string> inDataList)
+        {
+            return new List<string>() { TargetValue };
+        }
+
+        public override bool HaveDetailEdit()
+        {
+            return true;
+        }
+
+        public override void OpenDetailEditForm()
+        {
+            base.OpenDetailEditForm();
+
+            ReturnSpecificValueForm _form = new ReturnSpecificValueForm();
+            _form.Init(this);
+            _form.ShowDialog();
+        }
+    }
 }
 

@@ -49,7 +49,7 @@ namespace ExcelTool
         public static List<string> ParsRowCellDataToRowStringData(List<CellValueData> inDataList)
         {
             List<string> _result = new List<string>();
-            if (inDataList != null && _result.Count > 0)
+            if (inDataList != null && inDataList.Count > 0)
             {
                 foreach (var _cell in inDataList)
                 {
