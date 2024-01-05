@@ -90,7 +90,7 @@ namespace ExcelTool
             {
                 return true;
             }
-
+            mAllSheetData.Clear();
             var _ownerTable = GetOwnerTable() as CSVFileData;
             if (_ownerTable == null)
             {

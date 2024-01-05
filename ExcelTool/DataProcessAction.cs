@@ -97,6 +97,11 @@ namespace ExcelTool
 
         protected override List<string> OnProcessData(List<string> inDataList)
         {
+            if (ActionSequence.Count < 1)
+            {
+                return inDataList;
+            }
+
             List<string> _resultList = new List<string>();
 
             for (int i = 0; i < ActionSequence.Count; ++i)
@@ -140,11 +145,13 @@ namespace ExcelTool
                     _tempInDataList.Add(inDataList[MatchKeyIndexList[i]]);
                 }
 
-                return InternalSelfProcessData(_tempInDataList);
+                var _tempResult =  InternalSelfProcessData(_tempInDataList);
+                return FollowSequenceAction.ProcessData(_tempResult);
             }
             else
             {
-                return InternalSelfProcessData(inDataList);
+                var _tempResult =  InternalSelfProcessData(inDataList);
+                return FollowSequenceAction.ProcessData(_tempResult);
             }
         }
 
@@ -159,19 +166,7 @@ namespace ExcelTool
     {
         protected override List<string> InternalSelfProcessData(List<string> inDataList)
         {
-            List<string> _resultList = new List<string>();
-            if (inDataList == null || inDataList.Count < 1)
-            {
-                return _resultList;
-            }
-
-            for (int i = 0; i < MatchKeyIndexList.Count; ++i)
-            {
-                var _cell = inDataList[MatchKeyIndexList[i]];
-                _resultList.Add(_cell);
-            }
-
-            return _resultList;
+            return inDataList;
         }
 
         public override bool HaveDetailEdit()
@@ -252,17 +247,17 @@ namespace ExcelTool
     [DisplayName("返回为UEPos")]
     public class ActionReturnAsUEPos : NormalActionBase
     {
-        protected override List<string> InternalSelfProcessData(List<string> rowData)
+        protected override List<string> InternalSelfProcessData(List<string> inRowData)
         {
             List<string> _resultList = new List<string>();
-            if (rowData == null || rowData.Count < 1)
+            if (inRowData == null || inRowData.Count < 1)
             {
                 return _resultList;
             }
 
-            for (int i = 0; i < MatchKeyIndexList.Count; ++i)
+            for (int i = 0; i < inRowData.Count; ++i)
             {
-                var _cellValue = rowData[MatchKeyIndexList[i]];
+                var _cellValue = inRowData[i];
                 float.TryParse(_cellValue, out var _floatValue);
                 var _finalStr = ((int)(_floatValue * 100)).ToString();
                 _resultList.Add(_finalStr);
@@ -279,17 +274,17 @@ namespace ExcelTool
     [DisplayName("返回为UE旋转")]
     public class ActionReturnAsUERotateY : NormalActionBase
     {
-        protected override List<string> InternalSelfProcessData(List<string> rowData)
+        protected override List<string> InternalSelfProcessData(List<string> inRowData)
         {
             List<string> _resultList = new List<string>();
-            if (rowData == null || rowData.Count < 1)
+            if (inRowData == null || inRowData.Count < 1)
             {
                 return _resultList;
             }
 
-            for (int i = 0; i < MatchKeyIndexList.Count; ++i)
+            for (int i = 0; i < inRowData.Count; ++i)
             {
-                var _tempCellValue = rowData[MatchKeyIndexList[i]];
+                var _tempCellValue = inRowData[i];
                 float.TryParse(_tempCellValue, out var _floatValue);
                 var _finalStr = ((int)(180 / 3.1415926 * _floatValue)).ToString();
                 _resultList.Add(_finalStr);
@@ -309,20 +304,20 @@ namespace ExcelTool
     {
         public string FormatStr = string.Empty;
 
-        protected override List<string> InternalSelfProcessData(List<string> rowData)
+        protected override List<string> InternalSelfProcessData(List<string> inRowData)
         {
             List<string> _resultList = new List<string>();
-            if (rowData == null || rowData.Count < 1)
+            if (inRowData == null || inRowData.Count < 1)
             {
                 return _resultList;
             }
 
-            for (int i = 0; i < rowData.Count; ++i)
+            for (int i = 0; i < inRowData.Count; ++i)
             {
                 bool _success = true;
                 try
                 {
-                    _resultList.Add(string.Format(FormatStr, rowData[i]));
+                    _resultList.Add(string.Format(FormatStr, inRowData[i]));
                 }
                 catch (Exception)
                 {
@@ -332,11 +327,11 @@ namespace ExcelTool
                 if (!_success)
                 {
                     var _builder = new StringBuilder();
-                    for (int j = 0; j < rowData.Count; ++j)
+                    for (int j = 0; j < inRowData.Count; ++j)
                     {
-                        _builder.Append(rowData[j]);
+                        _builder.Append(inRowData[j]);
 
-                        if (j < rowData.Count - 1)
+                        if (j < inRowData.Count - 1)
                         {
                             _builder.Append(" , ");
                         }
@@ -421,7 +416,7 @@ namespace ExcelTool
     [DisplayName("返回指定字符串")]
     public class ActionReturnSpecificValue : NormalActionBase
     {
-        public string TargetValue;
+        public string TargetValue = string.Empty;
 
         protected override List<string> InternalSelfProcessData(List<string> inDataList)
         {

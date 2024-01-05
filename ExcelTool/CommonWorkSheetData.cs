@@ -299,6 +299,11 @@ namespace ExcelTool
                 return false;
             }
 
+            if (forceLoad)
+            {
+                mCellData2DList?.Clear();
+            }
+
             if (InternalLoadAllCellData(forceLoad))
             {
                 mHasLoadAllCellData = true;
