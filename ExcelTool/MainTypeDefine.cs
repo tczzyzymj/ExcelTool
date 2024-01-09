@@ -83,6 +83,9 @@ namespace ExcelTool
 
     public enum MultiConditionJudgeType
     {
+        [DisplayName("无")]
+        None,
+
         [DisplayName("或")]
         Or,
 

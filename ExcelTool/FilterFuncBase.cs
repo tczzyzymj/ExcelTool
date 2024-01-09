@@ -22,6 +22,11 @@ namespace ExcelTool
             protected set;
         } = string.Empty;
 
+        /// <summary>
+        /// 和下一个连接的判断类型，是 and 或者 or
+        /// </summary>
+        public MultiConditionJudgeType FilterConnectType = MultiConditionJudgeType.None;
+
         public abstract bool IsMatchFilter(string? content);
 
         public abstract string GetCompareValue();
