@@ -9,11 +9,11 @@ namespace ExcelTool
     // 过滤方法后续可以添加的
     public abstract class FilterFuncBase
     {
-        public MainTypeDefine.FilterCompareWayType CompareWay
+        public MainTypeDefine.FilterCompareWayTypeForNumber CompareWay
         {
             get;
             set;
-        } = MainTypeDefine.FilterCompareWayType.Equal;
+        } = MainTypeDefine.FilterCompareWayTypeForNumber.Equal;
 
         // 都以 string 的方式保存，后续自己去解析
         public string CompareValue
@@ -73,27 +73,27 @@ namespace ExcelTool
 
             switch (CompareWay)
             {
-                case MainTypeDefine.FilterCompareWayType.Equal:
+                case MainTypeDefine.FilterCompareWayTypeForNumber.Equal:
                 {
                     return _parsedValue == mTargetValue;
                 }
-                case MainTypeDefine.FilterCompareWayType.Greater:
+                case MainTypeDefine.FilterCompareWayTypeForNumber.Greater:
                 {
                     return _parsedValue > mTargetValue;
                 }
-                case MainTypeDefine.FilterCompareWayType.Less:
+                case MainTypeDefine.FilterCompareWayTypeForNumber.Less:
                 {
                     return _parsedValue > mTargetValue;
                 }
-                case MainTypeDefine.FilterCompareWayType.GreaterAndEqual:
+                case MainTypeDefine.FilterCompareWayTypeForNumber.GreaterAndEqual:
                 {
                     return _parsedValue >= mTargetValue;
                 }
-                case MainTypeDefine.FilterCompareWayType.LessAndQual:
+                case MainTypeDefine.FilterCompareWayTypeForNumber.LessAndQual:
                 {
                     return _parsedValue <= mTargetValue;
                 }
-                case MainTypeDefine.FilterCompareWayType.NotEqual:
+                case MainTypeDefine.FilterCompareWayTypeForNumber.NotEqual:
                 {
                     return _parsedValue != mTargetValue;
                 }

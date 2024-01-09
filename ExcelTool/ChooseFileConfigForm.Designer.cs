@@ -47,6 +47,7 @@
             CheckColum = new DataGridViewCheckBoxColumn();
             EditFilterBtnColum = new DataGridViewButtonColumn();
             ChooseSearchKey = new DataGridViewCheckBoxColumn();
+            ConfigActionBtnColum = new DataGridViewButtonColumn();
             TextBoxForSearch = new TextBox();
             BtnSearch = new Button();
             BtnReset = new Button();
@@ -58,6 +59,8 @@
             BtnShowHasSetFilter = new Button();
             LabelLoadedFiles = new Label();
             ComboBoxForLoadedFile = new ComboBox();
+            BtnConfigFiltActions = new Button();
+            BtnClearSourceFilterAction = new Button();
             ((System.ComponentModel.ISupportInitialize)DataGridViewForKeyFilter).BeginInit();
             PanelForConfigs.SuspendLayout();
             SuspendLayout();
@@ -203,7 +206,7 @@
             // DataGridViewForKeyFilter
             // 
             DataGridViewForKeyFilter.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            DataGridViewForKeyFilter.Columns.AddRange(new DataGridViewColumn[] { KeyIndex, KeyName, CheckColum, EditFilterBtnColum, ChooseSearchKey });
+            DataGridViewForKeyFilter.Columns.AddRange(new DataGridViewColumn[] { KeyIndex, KeyName, CheckColum, EditFilterBtnColum, ChooseSearchKey, ConfigActionBtnColum });
             DataGridViewForKeyFilter.Location = new Point(15, 225);
             DataGridViewForKeyFilter.Name = "DataGridViewForKeyFilter";
             DataGridViewForKeyFilter.RowTemplate.Height = 25;
@@ -245,6 +248,14 @@
             ChooseSearchKey.Resizable = DataGridViewTriState.True;
             ChooseSearchKey.SortMode = DataGridViewColumnSortMode.Automatic;
             ChooseSearchKey.Width = 60;
+            // 
+            // ConfigActionBtnColum
+            // 
+            ConfigActionBtnColum.HeaderText = "配置行为";
+            ConfigActionBtnColum.Name = "ConfigActionBtnColum";
+            ConfigActionBtnColum.Resizable = DataGridViewTriState.True;
+            ConfigActionBtnColum.SortMode = DataGridViewColumnSortMode.Automatic;
+            ConfigActionBtnColum.Width = 80;
             // 
             // TextBoxForSearch
             // 
@@ -366,11 +377,35 @@
             ComboBoxForLoadedFile.TabIndex = 47;
             ComboBoxForLoadedFile.SelectedIndexChanged += ComboBoxForLoadedFile_SelectedIndexChanged;
             // 
+            // BtnConfigFiltActions
+            // 
+            BtnConfigFiltActions.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            BtnConfigFiltActions.Location = new Point(503, 520);
+            BtnConfigFiltActions.Name = "BtnConfigFiltActions";
+            BtnConfigFiltActions.Size = new Size(130, 30);
+            BtnConfigFiltActions.TabIndex = 49;
+            BtnConfigFiltActions.Text = "配置筛选行为序列";
+            BtnConfigFiltActions.UseVisualStyleBackColor = true;
+            BtnConfigFiltActions.Click += BtnConfigFiltActions_Click;
+            // 
+            // BtnClearSourceFilterAction
+            // 
+            BtnClearSourceFilterAction.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            BtnClearSourceFilterAction.Location = new Point(348, 520);
+            BtnClearSourceFilterAction.Name = "BtnClearSourceFilterAction";
+            BtnClearSourceFilterAction.Size = new Size(130, 30);
+            BtnClearSourceFilterAction.TabIndex = 50;
+            BtnClearSourceFilterAction.Text = "清理筛选行为序列";
+            BtnClearSourceFilterAction.UseVisualStyleBackColor = true;
+            BtnClearSourceFilterAction.Click += BtnClearSourceFilterAction_Click;
+            // 
             // ChooseFileConfigForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(796, 568);
+            Controls.Add(BtnClearSourceFilterAction);
+            Controls.Add(BtnConfigFiltActions);
             Controls.Add(LabelLoadedFiles);
             Controls.Add(ComboBoxForLoadedFile);
             Controls.Add(BtnShowHasSetFilter);
@@ -426,10 +461,13 @@
         private Button BtnShowHasSetFilter;
         private Label LabelLoadedFiles;
         private ComboBox ComboBoxForLoadedFile;
+        private Button BtnConfigFiltActions;
         private DataGridViewTextBoxColumn KeyIndex;
         private DataGridViewTextBoxColumn KeyName;
         private DataGridViewCheckBoxColumn CheckColum;
         private DataGridViewButtonColumn EditFilterBtnColum;
         private DataGridViewCheckBoxColumn ChooseSearchKey;
+        private DataGridViewButtonColumn ConfigActionBtnColum;
+        private Button BtnClearSourceFilterAction;
     }
 }

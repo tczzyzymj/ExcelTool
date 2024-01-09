@@ -129,6 +129,11 @@ namespace ExcelTool
 
         protected override List<string> OnSelfProcessData(List<string> inDataList)
         {
+            if (inDataList.Count < 1)
+            {
+                return new List<string>();
+            }
+
             if (MatchKeyIndexList.Count > 0)
             {
                 List<string> _tempInDataList = new List<string>();
@@ -473,6 +478,37 @@ namespace ExcelTool
         public override bool HaveDetailEdit()
         {
             return true;
+        }
+    }
+
+    [DisplayName("将数据记录为源数据")]
+    public class ActionRecordValueAsSourceData : NormalActionBase
+    {
+        protected override List<string> OnSelfProcessData(List<string> inDataList)
+        {
+            if (inDataList.Count < 1)
+            {
+                return new List<string>();
+            }
+
+            var _tempResult = InternalSelfProcessData(inDataList);
+            return FollowSequenceAction.ProcessData(_tempResult);
+        }
+
+        protected override List<string> InternalSelfProcessData(List<string> inDataList)
+        {
+            List<string> _result = new List<string>();
+            if (inDataList != null && inDataList.Count > 0)
+            {
+                TableDataManager.Ins().SourceFilteredDataList.Add(inDataList);
+            }
+
+            return _result;
+        }
+
+        public override bool HaveDetailEdit()
+        {
+            return false;
         }
     }
 }

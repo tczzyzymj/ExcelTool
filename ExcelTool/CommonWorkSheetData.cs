@@ -121,6 +121,15 @@ namespace ExcelTool
         {
             List<string> _result = new List<string>();
 
+            if (matchValueList.Count == 1)
+            {
+                // 这里做判断，如果只有一个，并且数值为空，或者为0，那么跳过
+                if (string.IsNullOrEmpty(matchValueList[0]) || matchValueList[0].Trim().Equals("0"))
+                {
+                    return _result;
+                }
+            }
+
             var _rowData = GetRowCellDataByTargetKeysAndValus(matchKeyList, matchValueList);
             if (_rowData != null)
             {

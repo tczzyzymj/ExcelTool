@@ -79,10 +79,19 @@ namespace ExcelTool
                 {
                     return TableDataManager.Ins().TryLoadSourceFile(absolutePath);
                 }
+                case LoadFileType.SourceFileFilterAction:
+                {
+                    return TableDataManager.Ins().TryLoadSourceFilterFile(absolutePath);
+                }
                 case LoadFileType.SetSearchKey:
                 case LoadFileType.NormalFile:
                 {
                     return TableDataManager.Ins().TryLoadNormalFile(absolutePath);
+                }
+                default:
+                {
+                    CommonUtil.ShowError("加载文件失败，未处理的类型 : " + mFromFileType.ToString());
+                    break;
                 }
             }
 
@@ -290,7 +299,7 @@ namespace ExcelTool
             }
 
             mChooseSheet = targetSheet;
-            switch (this.mFromFileType)
+            switch (mFromFileType)
             {
                 case LoadFileType.NormalFile:
                 {
@@ -304,6 +313,20 @@ namespace ExcelTool
                 case LoadFileType.ExportFile:
                 {
                     TableDataManager.Ins().SetExportSheet(mChooseSheet);
+                    break;
+                }
+                case LoadFileType.SourceFileFilterAction:
+                {
+                    TableDataManager.Ins().SetSourceSheetForFiltAction(mChooseSheet);
+                    break;
+                }
+                case LoadFileType.SetSearchKey:
+                {
+                    break;
+                }
+                default:
+                {
+                    CommonUtil.ShowError("未处理的类型：" + mFromFileType);
                     break;
                 }
             }
@@ -334,7 +357,7 @@ namespace ExcelTool
             {
                 for (int i = 0; i < mKeyDataList.Count; i++)
                 {
-                    var _filter = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mKeyDataList[i]);
+                    var _filter = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mFromFileType, mKeyDataList[i]);
                     bool _showSelect = false;
                     if (mFromAction != null)
                     {
@@ -354,7 +377,7 @@ namespace ExcelTool
             {
                 for (int i = 0; i < mKeyDataList.Count; i++)
                 {
-                    var _filter = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mKeyDataList[i]);
+                    var _filter = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mFromFileType, mKeyDataList[i]);
 
                     DataGridViewForKeyFilter.Rows.Add(
                         CommonUtil.GetZM(mKeyDataList[i].GetKeyIndexForShow()),
@@ -370,6 +393,7 @@ namespace ExcelTool
         private const int mInexForHasSetFilter = 2;
         private const int mIndexForSetButton = 3; // 设置过滤的按钮
         private const int mIndexForSelectSearchKey = 4; // 查找KEY用的，目前只有 设置跨表查找的时候用到
+        private const int mIndexForConfigAction = 5; // 设置查找行为用
 
         private void DataGridViewForKeyFilter_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -387,6 +411,27 @@ namespace ExcelTool
 
             switch (e.ColumnIndex)
             {
+                case mIndexForConfigAction:
+                {
+                    var _targetKey = mKeyDataList[e.RowIndex];
+                    SequenceActionConnectEditForm _form = new SequenceActionConnectEditForm();
+                    var _map = TableDataManager.Ins().SourceDataFiltActionMap;
+                    if (!_map.TryGetValue(_targetKey, out var _action))
+                    {
+                        _action = new SequenceAction();
+                        _action.WorkSheetData = TableDataManager.Ins().GetSourceSheetForFiltAction();
+                        _map.Add(_targetKey, _action);
+                    }
+
+                    if (!_form.InitData(_action))
+                    {
+                        break;
+                    }
+
+                    _form.ShowDialog();
+
+                    break;
+                }
                 case mInexForHasSetFilter:
                 {
                     break;
@@ -413,15 +458,16 @@ namespace ExcelTool
                 }
                 case mIndexForSetButton:
                 {
+                    var _targetKey = mKeyDataList[e.RowIndex];
+
                     // 编辑过滤类型
                     FilterConfigForm _form = new FilterConfigForm();
-                    var _targetKey = mKeyDataList[e.RowIndex];
-                    _form.InitInfo(e.RowIndex, e.ColumnIndex, _targetKey);
+                    _form.InitInfo(e.RowIndex, e.ColumnIndex, _targetKey, mFromFileType);
                     if (_form.ShowDialog(this) == DialogResult.OK)
                     {
                         var _row = DataGridViewForKeyFilter.Rows;
                         var _cell = _row[e.RowIndex].Cells[mInexForHasSetFilter];
-                        var _filterList = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(_targetKey);
+                        var _filterList = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mFromFileType, _targetKey);
                         _cell.Value = _filterList != null && _filterList.Count > 0;
                     }
 
@@ -467,9 +513,10 @@ namespace ExcelTool
                     DataGridViewForKeyFilter.Columns[mInexForHasSetFilter].Visible = false;
                     DataGridViewForKeyFilter.Columns[mIndexForSetButton].Visible = false;
                     DataGridViewForKeyFilter.Columns[mIndexForSelectSearchKey].Visible = false;
+                    DataGridViewForKeyFilter.Columns[mIndexForConfigAction].Visible = false;
                     LabelLoadedFiles.Visible = false;
                     ComboBoxForLoadedFile.Visible = false;
-
+                    BtnConfigFiltActions.Visible = false;
                     BtnShowHasSetFilter.Visible = false;
 
                     break;
@@ -481,6 +528,19 @@ namespace ExcelTool
                     BtnShowHasSetFilter.Visible = true;
                     _targetFile = TableDataManager.Ins().GetSourceFileData();
                     DataGridViewForKeyFilter.Columns[mIndexForSelectSearchKey].Visible = false;
+                    DataGridViewForKeyFilter.Columns[mIndexForConfigAction].Visible = false;
+                    BtnConfigFiltActions.Visible = true;
+                    break;
+                }
+                case LoadFileType.SourceFileFilterAction:
+                {
+                    LabelLoadedFiles.Visible = false;
+                    ComboBoxForLoadedFile.Visible = false;
+                    BtnShowHasSetFilter.Visible = true;
+                    _targetFile = TableDataManager.Ins().GetSourceFilterActionFileData();
+                    DataGridViewForKeyFilter.Columns[mIndexForSelectSearchKey].Visible = false;
+                    DataGridViewForKeyFilter.Columns[mIndexForConfigAction].Visible = true;
+                    BtnConfigFiltActions.Visible = true;
                     break;
                 }
                 case LoadFileType.NormalFile:
@@ -496,6 +556,8 @@ namespace ExcelTool
                     DataGridViewForKeyFilter.Columns[mInexForHasSetFilter].Visible = false;
                     DataGridViewForKeyFilter.Columns[mIndexForSetButton].Visible = false;
                     DataGridViewForKeyFilter.Columns[mIndexForSelectSearchKey].Visible = false;
+                    DataGridViewForKeyFilter.Columns[mIndexForConfigAction].Visible = false;
+                    BtnConfigFiltActions.Visible = false;
 
                     break;
                 }
@@ -512,7 +574,14 @@ namespace ExcelTool
                     DataGridViewForKeyFilter.Columns[mInexForHasSetFilter].Visible = false;
                     DataGridViewForKeyFilter.Columns[mIndexForSetButton].Visible = false;
                     DataGridViewForKeyFilter.Columns[mIndexForSelectSearchKey].Visible = true;
+                    BtnConfigFiltActions.Visible = false;
+                    DataGridViewForKeyFilter.Columns[mIndexForConfigAction].Visible = false;
 
+                    break;
+                }
+                default:
+                {
+                    CommonUtil.ShowError("未处理的类型：" + mFromFileType);
                     break;
                 }
             }
@@ -629,7 +698,7 @@ namespace ExcelTool
             for (int i = 0; i < this.DataGridViewForKeyFilter.Rows.Count; ++i)
             {
                 var _key = mKeyDataList[i];
-                var _filterFunc = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(_key);
+                var _filterFunc = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mFromFileType, _key);
                 bool _show = _filterFunc != null && _filterFunc.Count > 0;
                 if (_show)
                 {
@@ -658,6 +727,19 @@ namespace ExcelTool
             }
 
             InternalChooseFile(_dataList[_index], false);
+        }
+
+        private void BtnConfigFiltActions_Click(object sender, EventArgs e)
+        {
+            ChooseFileConfigForm _form = new ChooseFileConfigForm();
+            _form.SetInitData(LoadFileType.SourceFileFilterAction, TableDataManager.Ins().GetSourceSheetForFiltAction());
+
+            _form.ShowDialog();
+        }
+
+        private void BtnClearSourceFilterAction_Click(object sender, EventArgs e)
+        {
+            TableDataManager.Ins().SetSourceSheetForFiltAction(null);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace ExcelTool
 {
     public partial class ReturnSpecificValueForm : Form
     {
-        private ActionReturnSpecificValue mFromAction = null;
+        private ActionReturnSpecificValue? mFromAction = null;
 
         public ReturnSpecificValueForm()
         {
@@ -35,13 +35,21 @@ namespace ExcelTool
 
         private void BtnFinishConfig_Click(object sender, EventArgs e)
         {
+            if (mFromAction == null)
+            {
+                CommonUtil.ShowError("错误，传入的 FromAction 为空");
+                return;
+            }
             mFromAction.TargetValue = this.TextBoxForReturnValue.Text;
             this.DialogResult = DialogResult.OK;
         }
 
         private void ReturnSpecificValueForm_Load(object sender, EventArgs e)
         {
-            this.TextBoxForReturnValue.Text = mFromAction.TargetValue;
+            if (mFromAction != null)
+            {
+                this.TextBoxForReturnValue.Text = mFromAction.TargetValue;
+            }
         }
     }
 }

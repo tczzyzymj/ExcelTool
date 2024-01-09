@@ -35,7 +35,7 @@ namespace ExcelTool
             StringValue,
         }
 
-        public enum FilterCompareWayType
+        public enum FilterCompareWayTypeForNumber
         {
             [DisplayName("等于")]
             Equal = 0,
@@ -54,6 +54,18 @@ namespace ExcelTool
 
             [DisplayName("不等于")]
             NotEqual,
+        }
+
+        public enum FilterCompareWayForString
+        {
+            [DisplayName("无")]
+            None,
+
+            [DisplayName("包含(忽略大小写)")]
+            ContainsIgnoreCase,
+
+            [DisplayName("包含(匹配大小写)")]
+            ContainsNoIgnoreCase,
         }
     }
 
@@ -79,6 +91,11 @@ namespace ExcelTool
 
         // 设置查找KEY
         SetSearchKey,
+
+        /// <summary>
+        /// 源文件的筛选行为
+        /// </summary>
+        SourceFileFilterAction,
     }
 
     public enum MultiConditionJudgeType
