@@ -23,7 +23,36 @@ namespace ExcelTool
         public override void ReloadKey()
         {
             base.ReloadKey();
-            InternalInitWithKey(mAllSheetData, true);
+            var absolutePath = GetOwnerTable()?.GetFileAbsulotePath();
+            if (string.IsNullOrEmpty(absolutePath))
+            {
+                return;
+            }
+
+            string[]? _keyArray = null;
+            using (StreamReader sr = new StreamReader(absolutePath))
+            {
+                using (CsvReader _csvReader = new CsvReader(sr, CultureInfo.InvariantCulture))
+                {
+                    for (int i = 0; i <= mKeyStartRowIndex; ++i)
+                    {
+                        _csvReader.Read();
+                    }
+
+                    if (_csvReader.Parser.Record != null)
+                    {
+                        _keyArray = _csvReader.Parser.Record;
+                    }
+                }
+            }
+
+            if (_keyArray == null || _keyArray.Length < 1)
+            {
+                MessageBox.Show($"文件：{absolutePath} ，内容不正确，请检查");
+                return;
+            }
+
+            InternalInitWithKey(_keyArray, true);
         }
 
         public override bool WriteOneData(int rowIndexInSheet, List<string> valueList, bool skipEmptyData)
@@ -139,6 +168,11 @@ namespace ExcelTool
 
                 for (int _colum = _keyStartColum; _colum < _rowArray.Length; ++_colum)
                 {
+                    var _tempKeyDataIndex = _colum - _keyStartColum;
+                    if (_tempKeyDataIndex >= mKeyDataList.Count)
+                    {
+                        break;
+                    }
                     var _newCellData = new CellValueData();
                     _newList.Add(_newCellData);
                     var _value = _rowArray[_colum];

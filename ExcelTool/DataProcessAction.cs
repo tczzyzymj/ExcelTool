@@ -145,12 +145,12 @@ namespace ExcelTool
                     _tempInDataList.Add(inDataList[MatchKeyIndexList[i]]);
                 }
 
-                var _tempResult =  InternalSelfProcessData(_tempInDataList);
+                var _tempResult = InternalSelfProcessData(_tempInDataList);
                 return FollowSequenceAction.ProcessData(_tempResult);
             }
             else
             {
-                var _tempResult =  InternalSelfProcessData(inDataList);
+                var _tempResult = InternalSelfProcessData(inDataList);
                 return FollowSequenceAction.ProcessData(_tempResult);
             }
         }
@@ -435,6 +435,44 @@ namespace ExcelTool
             ReturnSpecificValueForm _form = new ReturnSpecificValueForm();
             _form.Init(this);
             _form.ShowDialog();
+        }
+    }
+
+    [DisplayName("条件返回指定字符串")]
+    public class ActionConditionReturnSpecific : NormalActionBase
+    {
+        public List<List<FilterFuncBase>> FilterFuncList = new List<List<FilterFuncBase>>();
+
+        public List<string> MatchResultList = new List<string>();
+
+        protected override List<string> InternalSelfProcessData(List<string> inDataList)
+        {
+            List<string> _result = new List<string>();
+
+            for (int i = 0; i < MatchKeyIndexList.Count; ++i)
+            {
+                var _filterList = FilterFuncList[i];
+                bool _match = true;
+                foreach (var _pair in _filterList)
+                {
+                    if (!_pair.IsMatchFilter(inDataList[i]))
+                    {
+                        _match = false;
+                        break;
+                    }
+                }
+                if (_match)
+                {
+                    _result.Add(MatchResultList[i]);
+                }
+            }
+
+            return _result;
+        }
+
+        public override bool HaveDetailEdit()
+        {
+            return true;
         }
     }
 }

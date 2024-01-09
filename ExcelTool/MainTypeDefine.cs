@@ -16,24 +16,43 @@ namespace ExcelTool
 
         public enum ExportConflictDealWayType
         {
+            [DisplayName("使用旧数据")]
             UseOldData = 0, // KEY有冲突，使用旧数据
+
+            [DisplayName("使用新数据，空数据跳过")]
             UseNewDataSkipEmptyData, // KEY有冲突，使用新数据，空数据跳过
+
+            [DisplayName("使用新数据全覆盖")]
             UseNewDataOverwriteAll, // KEY有冲突，使用新数据全覆盖
         }
 
         public enum FilterCompareValueType
         {
+            [DisplayName("整数")]
             IntValue,
+
+            [DisplayName("字符串")]
             StringValue,
         }
 
         public enum FilterCompareWayType
         {
+            [DisplayName("等于")]
             Equal = 0,
+
+            [DisplayName("大于")]
             Greater,
+
+            [DisplayName("小于")]
             Less,
+
+            [DisplayName("大于等于")]
             GreaterAndEqual,
+
+            [DisplayName("小于等于")]
             LessAndQual,
+
+            [DisplayName("不等于")]
             NotEqual,
         }
     }
@@ -60,6 +79,15 @@ namespace ExcelTool
 
         // 设置查找KEY
         SetSearchKey,
+    }
+
+    public enum MultiConditionJudgeType
+    {
+        [DisplayName("或")]
+        Or,
+
+        [DisplayName("并且")]
+        And
     }
 
     public class CommonDataForComboBox

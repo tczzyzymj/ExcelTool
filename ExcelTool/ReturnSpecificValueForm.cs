@@ -36,6 +36,7 @@ namespace ExcelTool
         private void BtnFinishConfig_Click(object sender, EventArgs e)
         {
             mFromAction.TargetValue = this.TextBoxForReturnValue.Text;
+            this.DialogResult = DialogResult.OK;
         }
 
         private void ReturnSpecificValueForm_Load(object sender, EventArgs e)
