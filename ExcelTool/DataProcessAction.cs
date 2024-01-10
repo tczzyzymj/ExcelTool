@@ -485,20 +485,25 @@ namespace ExcelTool
         }
     }
 
-    [DisplayName("解析为MonsterID+1返回")]
+    [DisplayName("解析为新MonsterID返回")]
     public class ActionReturnAsMonsterID : NormalActionBase
     {
         protected override List<string> InternalSelfProcessData(List<string> inDataList)
         {
             List<string> _result = new List<string>();
-            var _exportSheet = TableDataManager.Ins().GetExportSheet();
-            if (_exportSheet == null)
+
+            if (inDataList.Count < 2)
             {
-                throw new Exception($"{InternalSelfProcessData} 出错，无法获取 GetExportSheet");
+                return _result;
             }
 
-            _exportSheet.LoadAllCellData(false);
+            string _inDataStr = string.Format("{0}{1}", inDataList[0], inDataList[1]);
 
+            var _resultID = TableDataManager.Ins().GetNextMonsterID(_inDataStr);
+            if (_resultID > 0)
+            {
+                _result.Add(_resultID.ToString());
+            }
             return _result;
         }
 

@@ -206,13 +206,22 @@ namespace ExcelTool
                     {
                         _stringValue = string.Empty;
                     }
+                    var _targetIndex = _colum - _keyStartColum;
+                    if (_targetIndex < 0)
+                    {
+                        throw new Exception($"_colum : [{_colum}] - _keyStartColum : [{_keyStartColum}] < 0 , 请检查");
+                    }
+                    if (_targetIndex >= mKeyDataList.Count)
+                    {
+                        throw new Exception($"_colum : [{_colum}] - _keyStartColum : [{_keyStartColum}] >= mKeyDataList.Count : [{mKeyDataList.Count}], 请检查");
+                    }
                     _newCellData.Init(
                         _stringValue,
                         _row,
                         _colum,
                         _row - _contentStartRow,
                         _colum - _keyStartColum,
-                        mKeyDataList[_colum - _keyStartColum]
+                        mKeyDataList[_targetIndex]
                     );
                 }
             }

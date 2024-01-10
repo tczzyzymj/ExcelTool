@@ -260,7 +260,7 @@ namespace ExcelTool
             var _keyList = mSelectSheet?.GetKeyListData();
             if (_keyList == null || _keyList.Count < 1)
             {
-                CommonUtil.ShowError($"当前选择的sheet:[{_sheetIndex}] 无法获取 Key 数据，请检查！");
+                // 这里有可能第一个的sheet就是没有东西，先不报错了
                 return false;
             }
 

@@ -44,6 +44,8 @@ namespace ExcelTool
 
         public List<List<string>> SourceFilteredDataList = new List<List<string>>(); // 查找行为过后的源数据
 
+        public Dictionary<string, int> MonsterExportIDMap = new Dictionary<string, int>(); // MonsterID专用的，保存的是地图相关的最大值
+
         /// <summary>
         /// 源文件的数据过滤器
         /// </summary>
@@ -86,6 +88,107 @@ namespace ExcelTool
             {
                 InternalSetSortIndex();
             }
+        }
+
+        public int GetNextMonsterID(string mapIDStr)
+        {
+            var _exportSheet = TableDataManager.Ins().GetExportSheet();
+            if (_exportSheet == null)
+            {
+                throw new Exception($"{GetNextMonsterID} 出错，无法获取 GetExportSheet");
+            }
+
+            if (!int.TryParse(mapIDStr, out var _tempCheckValue))
+            {
+                throw new Exception($"{GetNextMonsterID} 出错，传入的值 : {mapIDStr} ，无法解析为 int，请检查!");
+            }
+
+            _exportSheet.LoadAllCellData(false);
+
+            var _keyList = _exportSheet.GetKeyListData();
+            KeyData? _targetKey = null;
+            for (int i = 0; i < _keyList.Count; ++i)
+            {
+                if (_keyList[i].IsMainKey)
+                {
+                    _targetKey = _keyList[i];
+                    break;
+                }
+            }
+
+            if (_targetKey == null)
+            {
+                throw new Exception($"没有找到主 key，请检查");
+            }
+
+            // 如果已经有存储的，那么+1后返回，并再次存储
+            {
+                if (MonsterExportIDMap.TryGetValue(mapIDStr, out var _tempID))
+                {
+                    var _result = _tempID + 1;
+                    MonsterExportIDMap[mapIDStr] = _result;
+                    return _result;
+                }
+            }
+
+            var _allDataList = _exportSheet.GetAllDataList();
+            if (_allDataList == null || _allDataList.Count < 1)
+            {
+                throw new Exception($"导出的总数据为空，请检查");
+            }
+
+            // 没有找到，那么就去遍历一下，获取最大的ID
+            {
+                foreach (var _singleRow in _allDataList)
+                {
+                    // 这里去截取前5位，获得到ID
+                    var _cellStr = _singleRow[_targetKey.KeyIndexInList].GetCellValue();
+                    if (string.IsNullOrEmpty(_cellStr))
+                    {
+                        continue;
+                    }
+
+                    var _finalStr = _cellStr.Substring(0, 5);
+                    if (!string.Equals(_finalStr, mapIDStr))
+                    {
+                        continue;
+                    }
+
+                    if (int.TryParse(_cellStr, out var _monsterID))
+                    {
+                        if (!MonsterExportIDMap.TryGetValue(_finalStr, out var _currentStoreID))
+                        {
+                            MonsterExportIDMap[_finalStr] = _monsterID;
+                        }
+                        else
+                        {
+                            if (_monsterID > _currentStoreID)
+                            {
+                                MonsterExportIDMap[_finalStr] = _monsterID;
+                            }
+                        }
+                    }
+                }
+
+                // 从数据里面找到了
+                if (MonsterExportIDMap.TryGetValue(mapIDStr, out var _tempID))
+                {
+                    var _result = _tempID + 1;
+                    MonsterExportIDMap[mapIDStr] = _result;
+                    return _result;
+                }
+                else
+                {
+                    // 没有找到，那么组装一个新的放进去
+                    var _newValue = string.Format("{0}001", mapIDStr);
+                    int.TryParse(_newValue, out var _newIntValue);
+                    MonsterExportIDMap[mapIDStr] = _newIntValue;
+
+                    return _newIntValue;
+                }
+            }
+
+            throw new Exception($"{GetNextMonsterID} 未找到数据，请检查!");
         }
 
         public List<FilterFuncBase>? GetSourceFileDataFilterFuncByKey(LoadFileType targetType, KeyData? targetKey)
@@ -238,6 +341,7 @@ namespace ExcelTool
                             continue;
                         }
 
+                        // 这里不用去添加了，在 action 里面已经 SourceFilteredDataList.add 了
                         _sequenceAtion.ProcessData(_singleRow);
                     }
                 }
@@ -297,33 +401,36 @@ namespace ExcelTool
                 throw new Exception($"{InternalProcssExportData} 出错，未配置 ExportKeyActionMap，请检查");
             }
 
-            var _currentSheet = TableDataManager.Ins().GetExportSheet();
-            if (_currentSheet == null)
+            var _exportSheet = GetExportSheet();
+            if (_exportSheet == null)
             {
                 throw new Exception($"_exportSheet 为空");
             }
 
-            var _currentKeyList = _currentSheet.GetKeyListData();
+            var _exportSheetKeyListData = _exportSheet.GetKeyListData();
 
-            if (_currentKeyList == null)
+            if (_exportSheetKeyListData == null)
             {
                 throw new Exception($"{InternalProcssExportData} 出错，无法获取当前数据表格的 KeyList，请检查!");
             }
 
-            _currentKeyList.Sort(
-                (a, b) =>
-                {
-                    return (int)a.KeyIndexInList.CompareTo((int)b.KeyIndexInList);
-                }
-            );
-
+            var _sourceSheet = GetSourceSheet();
+            if (_sourceSheet == null)
+            {
+                throw new Exception($"错误，无法获取 _sourceSheet ，请检查");
+            }
+            var _sourceKeyListData= _sourceSheet.GetKeyListData();
             List<int> _mainKeyIndexList = new List<int>();
-            foreach (var _singleKey in _currentKeyList)
+            foreach (var _singleKey in _sourceKeyListData)
             {
                 if (_singleKey.IsMainKey)
                 {
                     _mainKeyIndexList.Add(_singleKey.KeyIndexInList);
                 }
+            }
+            if (_mainKeyIndexList.Count < 1)
+            {
+                throw new Exception($"源数据没有设置主KEY，请检查");
             }
 
             // 这里是去清楚一下写入数据中重复的
@@ -362,7 +469,7 @@ namespace ExcelTool
                 List<string> _writeDataList = new List<string>();
                 _resultList.Add(_writeDataList);
 
-                foreach (var _singleKey in _currentKeyList)
+                foreach (var _singleKey in _exportSheetKeyListData)
                 {
                     if (_singleKey.IsIgnore)
                     {
@@ -472,7 +579,7 @@ namespace ExcelTool
             }
 
             mSourceFilterFile = _tempFile;
-            this.SetSourceSheet(mSourceFilterFile.GetWorkSheetList()[0]);
+            SetSourceSheetForFiltAction(mSourceFilterFile.GetWorkSheetList()[0]);
 
             return mSourceFilterFile;
         }

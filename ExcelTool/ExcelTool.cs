@@ -323,18 +323,11 @@ namespace ExcelTool
                     {
                         _action = new SequenceAction();
                         TableDataManager.Ins().ExportKeyActionMap.Add(_fromKey, _action);
-                        _action.WorkSheetData = TableDataManager.Ins().GetSourceSheet();
                     }
+                    _action.WorkSheetData = TableDataManager.Ins().GetSourceSheet();
                     _form.InitData(_action);
                     if (_form.ShowDialog() == DialogResult.OK)
                     {
-                        // TODO 这里去检测一下，看是否有循环引用
-                        //if (!CommonUtil.IsSafeNoCycleReferenceForKey(_targetKey))
-                        //{
-                        //    _targetKey.ClearNextConnectKey();
-                        //    return;
-                        //}
-
                         InternalRefreshForHasConfigKey();
                     }
 

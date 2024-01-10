@@ -42,12 +42,6 @@
             ComboBoxForSelectSheet = new ComboBox();
             label4 = new Label();
             DataGridViewForKeyFilter = new DataGridView();
-            KeyIndex = new DataGridViewTextBoxColumn();
-            KeyName = new DataGridViewTextBoxColumn();
-            CheckColum = new DataGridViewCheckBoxColumn();
-            EditFilterBtnColum = new DataGridViewButtonColumn();
-            ChooseSearchKey = new DataGridViewCheckBoxColumn();
-            ConfigActionBtnColum = new DataGridViewButtonColumn();
             TextBoxForSearch = new TextBox();
             BtnSearch = new Button();
             BtnReset = new Button();
@@ -61,6 +55,13 @@
             ComboBoxForLoadedFile = new ComboBox();
             BtnConfigFiltActions = new Button();
             BtnClearSourceFilterAction = new Button();
+            KeyIndex = new DataGridViewTextBoxColumn();
+            KeyName = new DataGridViewTextBoxColumn();
+            CheckColum = new DataGridViewCheckBoxColumn();
+            EditFilterBtnColum = new DataGridViewButtonColumn();
+            ChooseSearchKey = new DataGridViewCheckBoxColumn();
+            ConfigActionBtnColum = new DataGridViewButtonColumn();
+            SetMainKeyColum = new DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)DataGridViewForKeyFilter).BeginInit();
             PanelForConfigs.SuspendLayout();
             SuspendLayout();
@@ -206,56 +207,13 @@
             // DataGridViewForKeyFilter
             // 
             DataGridViewForKeyFilter.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            DataGridViewForKeyFilter.Columns.AddRange(new DataGridViewColumn[] { KeyIndex, KeyName, CheckColum, EditFilterBtnColum, ChooseSearchKey, ConfigActionBtnColum });
+            DataGridViewForKeyFilter.Columns.AddRange(new DataGridViewColumn[] { KeyIndex, KeyName, CheckColum, EditFilterBtnColum, ChooseSearchKey, ConfigActionBtnColum, SetMainKeyColum });
             DataGridViewForKeyFilter.Location = new Point(15, 225);
             DataGridViewForKeyFilter.Name = "DataGridViewForKeyFilter";
             DataGridViewForKeyFilter.RowTemplate.Height = 25;
             DataGridViewForKeyFilter.Size = new Size(768, 283);
             DataGridViewForKeyFilter.TabIndex = 36;
             DataGridViewForKeyFilter.CellContentClick += DataGridViewForKeyFilter_CellContentClick;
-            // 
-            // KeyIndex
-            // 
-            KeyIndex.HeaderText = "Key下标";
-            KeyIndex.Name = "KeyIndex";
-            KeyIndex.ReadOnly = true;
-            KeyIndex.Width = 80;
-            // 
-            // KeyName
-            // 
-            KeyName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            KeyName.HeaderText = "Key名字";
-            KeyName.Name = "KeyName";
-            KeyName.ReadOnly = true;
-            // 
-            // CheckColum
-            // 
-            CheckColum.HeaderText = "已设置筛选";
-            CheckColum.Name = "CheckColum";
-            CheckColum.ReadOnly = true;
-            CheckColum.Width = 80;
-            // 
-            // EditFilterBtnColum
-            // 
-            EditFilterBtnColum.HeaderText = "设置过滤方法";
-            EditFilterBtnColum.Name = "EditFilterBtnColum";
-            EditFilterBtnColum.Text = "设置";
-            // 
-            // ChooseSearchKey
-            // 
-            ChooseSearchKey.HeaderText = "选择";
-            ChooseSearchKey.Name = "ChooseSearchKey";
-            ChooseSearchKey.Resizable = DataGridViewTriState.True;
-            ChooseSearchKey.SortMode = DataGridViewColumnSortMode.Automatic;
-            ChooseSearchKey.Width = 60;
-            // 
-            // ConfigActionBtnColum
-            // 
-            ConfigActionBtnColum.HeaderText = "配置行为";
-            ConfigActionBtnColum.Name = "ConfigActionBtnColum";
-            ConfigActionBtnColum.Resizable = DataGridViewTriState.True;
-            ConfigActionBtnColum.SortMode = DataGridViewColumnSortMode.Automatic;
-            ConfigActionBtnColum.Width = 80;
             // 
             // TextBoxForSearch
             // 
@@ -399,6 +357,54 @@
             BtnClearSourceFilterAction.UseVisualStyleBackColor = true;
             BtnClearSourceFilterAction.Click += BtnClearSourceFilterAction_Click;
             // 
+            // KeyIndex
+            // 
+            KeyIndex.HeaderText = "Key下标";
+            KeyIndex.Name = "KeyIndex";
+            KeyIndex.ReadOnly = true;
+            KeyIndex.Width = 80;
+            // 
+            // KeyName
+            // 
+            KeyName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            KeyName.HeaderText = "Key名字";
+            KeyName.Name = "KeyName";
+            KeyName.ReadOnly = true;
+            // 
+            // CheckColum
+            // 
+            CheckColum.HeaderText = "已设置筛选";
+            CheckColum.Name = "CheckColum";
+            CheckColum.ReadOnly = true;
+            CheckColum.Width = 80;
+            // 
+            // EditFilterBtnColum
+            // 
+            EditFilterBtnColum.HeaderText = "设置过滤方法";
+            EditFilterBtnColum.Name = "EditFilterBtnColum";
+            EditFilterBtnColum.Text = "设置";
+            // 
+            // ChooseSearchKey
+            // 
+            ChooseSearchKey.HeaderText = "匹配";
+            ChooseSearchKey.Name = "ChooseSearchKey";
+            ChooseSearchKey.Resizable = DataGridViewTriState.True;
+            ChooseSearchKey.SortMode = DataGridViewColumnSortMode.Automatic;
+            ChooseSearchKey.Width = 60;
+            // 
+            // ConfigActionBtnColum
+            // 
+            ConfigActionBtnColum.HeaderText = "配置行为";
+            ConfigActionBtnColum.Name = "ConfigActionBtnColum";
+            ConfigActionBtnColum.Resizable = DataGridViewTriState.True;
+            ConfigActionBtnColum.SortMode = DataGridViewColumnSortMode.Automatic;
+            ConfigActionBtnColum.Width = 80;
+            // 
+            // SetMainKeyColum
+            // 
+            SetMainKeyColum.HeaderText = "设为主Key";
+            SetMainKeyColum.Name = "SetMainKeyColum";
+            // 
             // ChooseFileConfigForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
@@ -462,12 +468,13 @@
         private Label LabelLoadedFiles;
         private ComboBox ComboBoxForLoadedFile;
         private Button BtnConfigFiltActions;
+        private Button BtnClearSourceFilterAction;
         private DataGridViewTextBoxColumn KeyIndex;
         private DataGridViewTextBoxColumn KeyName;
         private DataGridViewCheckBoxColumn CheckColum;
         private DataGridViewButtonColumn EditFilterBtnColum;
         private DataGridViewCheckBoxColumn ChooseSearchKey;
         private DataGridViewButtonColumn ConfigActionBtnColum;
-        private Button BtnClearSourceFilterAction;
+        private DataGridViewCheckBoxColumn SetMainKeyColum;
     }
 }

@@ -57,7 +57,14 @@ namespace ExcelTool
         {
             if (mCellData2DList == null)
             {
-                throw new Exception("GetListCellDataBySpecificKeysAndValues, mCellData2DList 为空");
+                LoadAllCellData(false);
+            }
+
+            if (mCellData2DList == null)
+            {
+                throw new Exception(
+                    $"{GetRowCellDataByTargetKeysAndValus}, mCellData2DList 为空，sheet：{this.DisplayName},表格：{GetOwnerTable()?.GetFileName(false)} "
+                );
             }
 
             if (matchKeyList == null || matchKeyList.Count < 1)
@@ -175,6 +182,11 @@ namespace ExcelTool
         public void SetContentStartRowIndex(int targetValue)
         {
             mContentStartRowIndex = targetValue;
+        }
+
+        public List<List<CellValueData>>? GetAllDataList()
+        {
+            return mCellData2DList;
         }
 
         public List<List<CellValueData>>? GetFilteredDataList(Dictionary<KeyData, List<FilterFuncBase>> filterDataMap)

@@ -385,7 +385,8 @@ namespace ExcelTool
                         mKeyDataList[i].KeyName,
                         _filter != null && _filter.Count > 0,
                         "设置",
-                        false
+                        false,
+                        "配置行为"
                     );
                 }
             }
@@ -395,6 +396,7 @@ namespace ExcelTool
         private const int mIndexForSetButton = 3; // 设置过滤的按钮
         private const int mIndexForSelectSearchKey = 4; // 查找KEY用的，目前只有 设置跨表查找的时候用到
         private const int mIndexForConfigAction = 5; // 设置查找行为用
+        private const int mSetMainKeyIndex = 6;
 
         private void DataGridViewForKeyFilter_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -431,6 +433,12 @@ namespace ExcelTool
 
                     _form.ShowDialog();
 
+                    break;
+                }
+                case mSetMainKeyIndex:
+                {
+                    bool _isSelect = (bool)this.DataGridViewForKeyFilter.Rows[e.RowIndex].Cells[e.ColumnIndex].EditedFormattedValue;
+                    mKeyDataList[e.RowIndex].IsMainKey = _isSelect;
                     break;
                 }
                 case mInexForHasSetFilter:
@@ -504,7 +512,7 @@ namespace ExcelTool
         private void ChooseFileConfigForm_Load(object sender, EventArgs e)
         {
             FileDataBase? _targetFile = null;
-
+            DataGridViewForKeyFilter.Columns[mSetMainKeyIndex].Visible = false;
             switch (mFromFileType)
             {
                 case LoadFileType.ExportFile:
@@ -515,6 +523,7 @@ namespace ExcelTool
                     DataGridViewForKeyFilter.Columns[mIndexForSetButton].Visible = false;
                     DataGridViewForKeyFilter.Columns[mIndexForSelectSearchKey].Visible = false;
                     DataGridViewForKeyFilter.Columns[mIndexForConfigAction].Visible = false;
+                    DataGridViewForKeyFilter.Columns[mSetMainKeyIndex].Visible = false;
                     LabelLoadedFiles.Visible = false;
                     ComboBoxForLoadedFile.Visible = false;
                     BtnConfigFiltActions.Visible = false;
@@ -528,8 +537,10 @@ namespace ExcelTool
                     ComboBoxForLoadedFile.Visible = false;
                     BtnShowHasSetFilter.Visible = true;
                     _targetFile = TableDataManager.Ins().GetSourceFileData();
-                    DataGridViewForKeyFilter.Columns[mIndexForSelectSearchKey].Visible = false;
+                    DataGridViewForKeyFilter.Columns[mIndexForSelectSearchKey].Visible = true;
                     DataGridViewForKeyFilter.Columns[mIndexForConfigAction].Visible = false;
+                    DataGridViewForKeyFilter.Columns[mIndexForSelectSearchKey].Visible = false;
+                    DataGridViewForKeyFilter.Columns[mSetMainKeyIndex].Visible = true;
                     BtnConfigFiltActions.Visible = true;
                     break;
                 }
@@ -541,7 +552,8 @@ namespace ExcelTool
                     _targetFile = TableDataManager.Ins().GetSourceFilterActionFileData();
                     DataGridViewForKeyFilter.Columns[mIndexForSelectSearchKey].Visible = false;
                     DataGridViewForKeyFilter.Columns[mIndexForConfigAction].Visible = true;
-                    BtnConfigFiltActions.Visible = true;
+                    BtnClearSourceFilterAction.Visible = false;
+                    BtnConfigFiltActions.Visible = false;
                     break;
                 }
                 case LoadFileType.NormalFile:
@@ -576,6 +588,7 @@ namespace ExcelTool
                     DataGridViewForKeyFilter.Columns[mIndexForSetButton].Visible = false;
                     DataGridViewForKeyFilter.Columns[mIndexForSelectSearchKey].Visible = true;
                     BtnConfigFiltActions.Visible = false;
+                    BtnClearSourceFilterAction.Visible = false;
                     DataGridViewForKeyFilter.Columns[mIndexForConfigAction].Visible = false;
 
                     break;
