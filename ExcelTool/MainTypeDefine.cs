@@ -58,14 +58,14 @@ namespace ExcelTool
 
         public enum FilterCompareWayForString
         {
-            [DisplayName("无")]
-            None,
-
             [DisplayName("包含(忽略大小写)")]
-            ContainsIgnoreCase,
+            ContainsIgnoreCase = 0,
 
             [DisplayName("包含(匹配大小写)")]
             ContainsNoIgnoreCase,
+
+            [DisplayName("完全匹配")]
+            CompleteEqual,
         }
     }
 

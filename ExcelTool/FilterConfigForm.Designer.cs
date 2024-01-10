@@ -30,9 +30,6 @@
         {
             label1 = new Label();
             DataGridViewForFilterFunc = new DataGridView();
-            CompareType = new DataGridViewComboBoxColumn();
-            CompareValue = new DataGridViewTextBoxColumn();
-            RemoveBtnColum = new DataGridViewButtonColumn();
             BtnFinishConfig = new Button();
             ComboBoxForCompareType = new ComboBox();
             label2 = new Label();
@@ -41,6 +38,10 @@
             label3 = new Label();
             ComboBoxForValueType = new ComboBox();
             label4 = new Label();
+            CompareValueTypeColum = new DataGridViewTextBoxColumn();
+            CompareType = new DataGridViewTextBoxColumn();
+            CompareValue = new DataGridViewTextBoxColumn();
+            RemoveBtnColum = new DataGridViewButtonColumn();
             ((System.ComponentModel.ISupportInitialize)DataGridViewForFilterFunc).BeginInit();
             SuspendLayout();
             // 
@@ -48,7 +49,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label1.Location = new Point(336, 34);
+            label1.Location = new Point(593, 34);
             label1.Name = "label1";
             label1.Size = new Size(58, 21);
             label1.TabIndex = 8;
@@ -57,7 +58,7 @@
             // DataGridViewForFilterFunc
             // 
             DataGridViewForFilterFunc.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            DataGridViewForFilterFunc.Columns.AddRange(new DataGridViewColumn[] { CompareType, CompareValue, RemoveBtnColum });
+            DataGridViewForFilterFunc.Columns.AddRange(new DataGridViewColumn[] { CompareValueTypeColum, CompareType, CompareValue, RemoveBtnColum });
             DataGridViewForFilterFunc.Location = new Point(12, 74);
             DataGridViewForFilterFunc.Name = "DataGridViewForFilterFunc";
             DataGridViewForFilterFunc.RowTemplate.Height = 25;
@@ -65,23 +66,6 @@
             DataGridViewForFilterFunc.TabIndex = 16;
             DataGridViewForFilterFunc.CellContentClick += DataGridViewForFilterFunc_CellContentClick;
             DataGridViewForFilterFunc.CellValueChanged += DataGridViewForFilterFunc_CellValueChanged;
-            // 
-            // CompareType
-            // 
-            CompareType.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            CompareType.HeaderText = "比较类型";
-            CompareType.Name = "CompareType";
-            // 
-            // CompareValue
-            // 
-            CompareValue.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            CompareValue.HeaderText = "对比值";
-            CompareValue.Name = "CompareValue";
-            // 
-            // RemoveBtnColum
-            // 
-            RemoveBtnColum.HeaderText = "移除按钮";
-            RemoveBtnColum.Name = "RemoveBtnColum";
             // 
             // BtnFinishConfig
             // 
@@ -98,16 +82,17 @@
             // 
             ComboBoxForCompareType.DropDownStyle = ComboBoxStyle.DropDownList;
             ComboBoxForCompareType.FormattingEnabled = true;
-            ComboBoxForCompareType.Location = new Point(172, 33);
+            ComboBoxForCompareType.Location = new Point(413, 32);
             ComboBoxForCompareType.Name = "ComboBoxForCompareType";
-            ComboBoxForCompareType.Size = new Size(121, 25);
+            ComboBoxForCompareType.Size = new Size(164, 25);
             ComboBoxForCompareType.TabIndex = 26;
+            ComboBoxForCompareType.SelectedIndexChanged += ComboBoxForCompareType_SelectedIndexChanged;
             // 
             // label2
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label2.Location = new Point(99, 34);
+            label2.Location = new Point(333, 33);
             label2.Name = "label2";
             label2.Size = new Size(74, 21);
             label2.TabIndex = 25;
@@ -127,10 +112,11 @@
             // TextBoxForCompareValue
             // 
             TextBoxForCompareValue.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxForCompareValue.Location = new Point(394, 31);
+            TextBoxForCompareValue.Location = new Point(651, 31);
             TextBoxForCompareValue.Name = "TextBoxForCompareValue";
             TextBoxForCompareValue.Size = new Size(194, 26);
             TextBoxForCompareValue.TabIndex = 28;
+            TextBoxForCompareValue.TextChanged += TextBoxForCompareValue_TextChanged;
             // 
             // label3
             // 
@@ -146,7 +132,7 @@
             // 
             ComboBoxForValueType.DropDownStyle = ComboBoxStyle.DropDownList;
             ComboBoxForValueType.FormattingEnabled = true;
-            ComboBoxForValueType.Location = new Point(696, 31);
+            ComboBoxForValueType.Location = new Point(182, 31);
             ComboBoxForValueType.Name = "ComboBoxForValueType";
             ComboBoxForValueType.Size = new Size(121, 25);
             ComboBoxForValueType.TabIndex = 31;
@@ -156,11 +142,38 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label4.Location = new Point(632, 33);
+            label4.Location = new Point(118, 33);
             label4.Name = "label4";
             label4.Size = new Size(58, 21);
             label4.TabIndex = 30;
             label4.Text = "值类型";
+            // 
+            // CompareValueTypeColum
+            // 
+            CompareValueTypeColum.HeaderText = "值类型";
+            CompareValueTypeColum.Name = "CompareValueTypeColum";
+            CompareValueTypeColum.Resizable = DataGridViewTriState.True;
+            CompareValueTypeColum.SortMode = DataGridViewColumnSortMode.NotSortable;
+            CompareValueTypeColum.Width = 200;
+            // 
+            // CompareType
+            // 
+            CompareType.HeaderText = "比较方式";
+            CompareType.Name = "CompareType";
+            CompareType.Resizable = DataGridViewTriState.True;
+            CompareType.SortMode = DataGridViewColumnSortMode.NotSortable;
+            CompareType.Width = 200;
+            // 
+            // CompareValue
+            // 
+            CompareValue.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            CompareValue.HeaderText = "对比值";
+            CompareValue.Name = "CompareValue";
+            // 
+            // RemoveBtnColum
+            // 
+            RemoveBtnColum.HeaderText = "移除按钮";
+            RemoveBtnColum.Name = "RemoveBtnColum";
             // 
             // FilterConfigForm
             // 
@@ -199,7 +212,8 @@
         private Label label3;
         private ComboBox ComboBoxForValueType;
         private Label label4;
-        private DataGridViewComboBoxColumn CompareType;
+        private DataGridViewTextBoxColumn CompareValueTypeColum;
+        private DataGridViewTextBoxColumn CompareType;
         private DataGridViewTextBoxColumn CompareValue;
         private DataGridViewButtonColumn RemoveBtnColum;
     }

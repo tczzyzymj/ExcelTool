@@ -29,30 +29,37 @@ namespace ExcelTool
                 return;
             }
 
-            string[]? _keyArray = null;
-            using (StreamReader sr = new StreamReader(absolutePath))
+            try
             {
-                using (CsvReader _csvReader = new CsvReader(sr, CultureInfo.InvariantCulture))
+                string[]? _keyArray = null;
+                using (StreamReader sr = new StreamReader(absolutePath))
                 {
-                    for (int i = 0; i <= mKeyStartRowIndex; ++i)
+                    using (CsvReader _csvReader = new CsvReader(sr, CultureInfo.InvariantCulture))
                     {
-                        _csvReader.Read();
-                    }
+                        for (int i = 0; i <= mKeyStartRowIndex; ++i)
+                        {
+                            _csvReader.Read();
+                        }
 
-                    if (_csvReader.Parser.Record != null)
-                    {
-                        _keyArray = _csvReader.Parser.Record;
+                        if (_csvReader.Parser.Record != null)
+                        {
+                            _keyArray = _csvReader.Parser.Record;
+                        }
                     }
                 }
-            }
 
-            if (_keyArray == null || _keyArray.Length < 1)
+                if (_keyArray == null || _keyArray.Length < 1)
+                {
+                    MessageBox.Show($"文件：{absolutePath} ，内容不正确，请检查");
+                    return;
+                }
+
+                InternalInitWithKey(_keyArray, true);
+            }
+            catch(Exception ex )
             {
-                MessageBox.Show($"文件：{absolutePath} ，内容不正确，请检查");
-                return;
+                MessageBox.Show(ex.ToString());
             }
-
-            InternalInitWithKey(_keyArray, true);
         }
 
         public override bool WriteOneData(int rowIndexInSheet, List<string> valueList, bool skipEmptyData)

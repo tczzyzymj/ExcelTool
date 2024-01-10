@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static ExcelTool.MainTypeDefine;
 
 namespace ExcelTool
 {
@@ -16,10 +17,6 @@ namespace ExcelTool
         private int mRowIndex = 0;
         private int mColumnIndex = 0;
         private KeyData? mKeyData = null;
-
-        private const int mCompareDataColumIndex = 0;
-
-        private const int mCompareValueColumIndex = 1;
         private LoadFileType mFromFileType = LoadFileType.NormalFile;
 
         public FilterConfigForm()
@@ -51,14 +48,7 @@ namespace ExcelTool
                 return;
             }
 
-            if (!Enum.TryParse(typeof(MainTypeDefine.FilterCompareValueType), this.ComboBoxForValueType.SelectedIndex.ToString(), out var _tempCompareValueType))
-            {
-                throw new Exception($"比较值类型：{ComboBoxForValueType.SelectedIndex} 解析失败，无法解析为：FilterCompareValueType 请检查！");
-            }
-            if (!Enum.TryParse(typeof(MainTypeDefine.FilterCompareWayTypeForNumber), this.ComboBoxForCompareType.SelectedIndex.ToString(), out var _tempCompareWayType))
-            {
-                throw new Exception($"比较方式类型：{this.ComboBoxForCompareType.SelectedIndex} 解析失败，无法解析为：FilterCompareWayType 请检查！");
-            }
+            var _tempCompareValueType = (MainTypeDefine.FilterCompareValueType)ComboBoxForValueType.SelectedIndex;
 
             FilterFuncBase? _filterFuncBase = null;
 
@@ -85,14 +75,9 @@ namespace ExcelTool
                 return;
             }
 
-            if (!_filterFuncBase.SetCompareValue(this.TextBoxForCompareValue.Text))
+            if (!_filterFuncBase.SetCompareValue(ComboBoxForCompareType.SelectedIndex, this.TextBoxForCompareValue.Text))
             {
                 return;
-            }
-
-            if (_tempCompareWayType != null)
-            {
-                _filterFuncBase.CompareWay = (MainTypeDefine.FilterCompareWayTypeForNumber)_tempCompareWayType;
             }
 
             var _funcList = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mFromFileType, mKeyData);
@@ -105,22 +90,17 @@ namespace ExcelTool
                 TableDataManager.Ins().AddSourceFileDataFilterFunc(mFromFileType, mKeyData, _filterFuncBase);
             }
 
-            var _addInex = DataGridViewForFilterFunc.Rows.Add(
-                null,
+            DataGridViewForFilterFunc.Rows.Add(
+                ((FilterCompareValueType)_filterFuncBase.GetIntCompareType()).ToString(),
+                _filterFuncBase.GetCompareWayName(),
                 _filterFuncBase.GetCompareValue(),
                 "移除"
             );
-
-            var _tempCellBox = DataGridViewForFilterFunc.Rows[_addInex].Cells[mCompareDataColumIndex] as DataGridViewComboBoxCell;
-            if (_tempCellBox != null)
-            {
-                _tempCellBox.DataSource = Enum.GetNames(typeof(MainTypeDefine.FilterCompareWayTypeForNumber));
-                _tempCellBox.Value = Enum.GetName(
-                    typeof(MainTypeDefine.FilterCompareWayTypeForNumber),
-                    _filterFuncBase.CompareWay
-                );
-            }
         }
+
+        private const int mRemoveIndex = 3; // 移除按钮下标
+        private const int mCompareDataColumIndex = 0; // 比较类型
+        private const int mCompareValueColumIndex = 1; // 比较值
 
         private void DataGridViewForFilterFunc_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -129,7 +109,7 @@ namespace ExcelTool
                 return;
             }
 
-            if (e.ColumnIndex == 2)
+            if (e.ColumnIndex == mRemoveIndex)
             {
                 // 点击移除按钮
                 var _funcList = TableDataManager.Ins().GetSourceFileDataFilterFuncByKey(mFromFileType, mKeyData);
@@ -165,15 +145,6 @@ namespace ExcelTool
 
             switch (e.ColumnIndex)
             {
-                case mCompareDataColumIndex:
-                {
-                    if (Enum.TryParse(typeof(MainTypeDefine.FilterCompareWayTypeForNumber), _cell.EditedFormattedValue.ToString(), out var _enumValue) && _enumValue != null)
-                    {
-                        _funcList[e.RowIndex].CompareWay = (MainTypeDefine.FilterCompareWayTypeForNumber)_enumValue;
-                    }
-
-                    break;
-                }
                 case mCompareValueColumIndex:
                 {
                     if (_cell.EditedFormattedValue != null)
@@ -183,7 +154,7 @@ namespace ExcelTool
                         {
                             _compareValue = string.Empty;
                         }
-                        _funcList[e.RowIndex].SetCompareValue(_compareValue);
+                        _funcList[e.RowIndex].SetCompareValue(_funcList[e.RowIndex].CompareWayIntValue, _compareValue);
                     }
 
                     break;
@@ -228,31 +199,11 @@ namespace ExcelTool
             {
                 for (int i = 0; i < _filterFuncList.Count; ++i)
                 {
-                    ComboBox _newBox = new ComboBox();
-                    _newBox.DataSource = Enum.GetNames(typeof(MainTypeDefine.FilterCompareWayTypeForNumber));
-                    _newBox.SelectedItem = Enum.GetName(
-                        typeof(MainTypeDefine.FilterCompareWayTypeForNumber),
-                        _filterFuncList[i].CompareWay
-                    );
-
                     DataGridViewForFilterFunc.Rows.Add(
-                        null,
+                        ((FilterCompareValueType)_filterFuncList[i].GetIntCompareType()).ToString(),
+                        _filterFuncList[i].GetCompareWayName(),
                         _filterFuncList[i].GetCompareValue(),
                         "移除"
-                    );
-                }
-
-                for (int i = 0; i < DataGridViewForFilterFunc.Rows.Count; ++i)
-                {
-                    var _cell = DataGridViewForFilterFunc.Rows[i].Cells[mCompareDataColumIndex] as DataGridViewComboBoxCell;
-                    if (_cell == null)
-                    {
-                        continue;
-                    }
-                    _cell.DataSource = Enum.GetNames(typeof(MainTypeDefine.FilterCompareWayTypeForNumber));
-                    _cell.Value = Enum.GetName(
-                        typeof(MainTypeDefine.FilterCompareWayTypeForNumber),
-                        _filterFuncList[i].CompareWay
                     );
                 }
             }
@@ -266,7 +217,47 @@ namespace ExcelTool
 
         private void ComboBoxForValueType_SelectedIndexChanged(object sender, EventArgs e)
         {
+            InternalRefreshForCompareWay();
+        }
 
+        private void InternalRefreshForCompareWay()
+        {
+            switch (ComboBoxForValueType.SelectedIndex)
+            {
+                case 0:
+                {
+                    ComboBoxForCompareType.BeginUpdate();
+                    ComboBoxForCompareType.DataSource = Enum.GetNames(typeof(MainTypeDefine.FilterCompareWayTypeForNumber));
+                    ComboBoxForCompareType.SelectedItem = Enum.GetName(
+                        typeof(MainTypeDefine.FilterCompareWayTypeForNumber),
+                        MainTypeDefine.FilterCompareWayTypeForNumber.Equal
+                    );
+
+                    ComboBoxForCompareType.EndUpdate();
+                    break;
+                }
+                case 1:
+                {
+                    ComboBoxForCompareType.BeginUpdate();
+                    ComboBoxForCompareType.DataSource = Enum.GetNames(typeof(MainTypeDefine.FilterCompareWayForString));
+                    ComboBoxForCompareType.SelectedItem = Enum.GetName(
+                        typeof(MainTypeDefine.FilterCompareWayForString),
+                        MainTypeDefine.FilterCompareWayForString.ContainsIgnoreCase
+                    );
+
+                    ComboBoxForCompareType.EndUpdate();
+
+                    break;
+                }
+            }
+        }
+
+        private void ComboBoxForCompareType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void TextBoxForCompareValue_TextChanged(object sender, EventArgs e)
+        {
         }
     }
 }

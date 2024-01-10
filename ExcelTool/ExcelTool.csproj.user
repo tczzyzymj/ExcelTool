@@ -4,6 +4,9 @@
     <Compile Update="ActionReturnMatchKeyIndexDetail.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="ActionReturnWithCondition.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="ChooseFileConfigForm.cs">
       <SubType>Form</SubType>
     </Compile>

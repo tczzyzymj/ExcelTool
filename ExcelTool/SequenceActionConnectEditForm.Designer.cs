@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             BtnLoadNewFile = new Button();
             ComboBoxForLoadedFile = new ComboBox();
             LabelLoadedFile = new Label();
@@ -122,8 +122,8 @@
             // KeyName
             // 
             KeyName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            KeyName.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            KeyName.DefaultCellStyle = dataGridViewCellStyle1;
             KeyName.FillWeight = 160F;
             KeyName.HeaderText = "Key名字";
             KeyName.Name = "KeyName";
@@ -312,15 +312,15 @@
             label4.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label4.Location = new Point(12, 403);
             label4.Name = "label4";
-            label4.Size = new Size(170, 21);
+            label4.Size = new Size(90, 21);
             label4.TabIndex = 48;
-            label4.Text = "已选数据列，注意顺序";
+            label4.Text = "已选数据列";
             // 
             // label6
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label6.Location = new Point(438, 403);
+            label6.Location = new Point(387, 403);
             label6.Name = "label6";
             label6.Size = new Size(42, 21);
             label6.TabIndex = 50;
@@ -331,9 +331,9 @@
             ComboBoxForActionTypeList.DropDownStyle = ComboBoxStyle.DropDownList;
             ComboBoxForActionTypeList.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             ComboBoxForActionTypeList.FormattingEnabled = true;
-            ComboBoxForActionTypeList.Location = new Point(481, 400);
+            ComboBoxForActionTypeList.Location = new Point(435, 400);
             ComboBoxForActionTypeList.Name = "ComboBoxForActionTypeList";
-            ComboBoxForActionTypeList.Size = new Size(138, 29);
+            ComboBoxForActionTypeList.Size = new Size(184, 29);
             ComboBoxForActionTypeList.TabIndex = 49;
             ComboBoxForActionTypeList.SelectedIndexChanged += ComboBoxForActionTypeList_SelectedIndexChanged;
             // 
@@ -369,7 +369,7 @@
             ComboBoxForSelectKey.DropDownStyle = ComboBoxStyle.DropDownList;
             ComboBoxForSelectKey.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             ComboBoxForSelectKey.FormattingEnabled = true;
-            ComboBoxForSelectKey.Location = new Point(188, 400);
+            ComboBoxForSelectKey.Location = new Point(110, 400);
             ComboBoxForSelectKey.Name = "ComboBoxForSelectKey";
             ComboBoxForSelectKey.Size = new Size(224, 29);
             ComboBoxForSelectKey.TabIndex = 53;

@@ -369,7 +369,8 @@ namespace ExcelTool
                         mKeyDataList[i].KeyName,
                         _filter != null && _filter.Count > 0,
                         "设置",
-                        _showSelect
+                        _showSelect,
+                        "配置行为"
                     );
                 }
             }

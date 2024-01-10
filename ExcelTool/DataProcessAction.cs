@@ -446,30 +446,29 @@ namespace ExcelTool
     [DisplayName("条件返回指定字符串")]
     public class ActionConditionReturnSpecific : NormalActionBase
     {
-        public List<List<FilterFuncBase>> FilterFuncList = new List<List<FilterFuncBase>>();
+        public List<FilterFuncBase> FilterFuncList = new List<FilterFuncBase>();
 
-        public List<string> MatchResultList = new List<string>();
+        public string MatchReturnResult = string.Empty;
 
         protected override List<string> InternalSelfProcessData(List<string> inDataList)
         {
             List<string> _result = new List<string>();
 
+            bool _match = true;
             for (int i = 0; i < MatchKeyIndexList.Count; ++i)
             {
-                var _filterList = FilterFuncList[i];
-                bool _match = true;
-                foreach (var _pair in _filterList)
+                var _filterFunc = FilterFuncList[i];
+
+                if (!_filterFunc.IsMatchFilter(inDataList[i]))
                 {
-                    if (!_pair.IsMatchFilter(inDataList[i]))
-                    {
-                        _match = false;
-                        break;
-                    }
+                    _match = false;
+                    break;
                 }
-                if (_match)
-                {
-                    _result.Add(MatchResultList[i]);
-                }
+            }
+
+            if (_match)
+            {
+                _result.Add(MatchReturnResult);
             }
 
             return _result;
@@ -478,6 +477,34 @@ namespace ExcelTool
         public override bool HaveDetailEdit()
         {
             return true;
+        }
+
+        public override void OpenDetailEditForm()
+        {
+            base.OpenDetailEditForm();
+        }
+    }
+
+    [DisplayName("解析为MonsterID+1返回")]
+    public class ActionReturnAsMonsterID : NormalActionBase
+    {
+        protected override List<string> InternalSelfProcessData(List<string> inDataList)
+        {
+            List<string> _result = new List<string>();
+            var _exportSheet = TableDataManager.Ins().GetExportSheet();
+            if (_exportSheet == null)
+            {
+                throw new Exception($"{InternalSelfProcessData} 出错，无法获取 GetExportSheet");
+            }
+
+            _exportSheet.LoadAllCellData(false);
+
+            return _result;
+        }
+
+        public override bool HaveDetailEdit()
+        {
+            return false;
         }
     }
 
