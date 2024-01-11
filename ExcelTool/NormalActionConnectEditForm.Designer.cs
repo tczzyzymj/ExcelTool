@@ -41,8 +41,6 @@
             label6 = new Label();
             ComboBoxForActionTypeList = new ComboBox();
             BtnAddAction = new Button();
-            TextBoxForSearch = new TextBox();
-            label5 = new Label();
             label1 = new Label();
             ComboBoxForReturnType = new ComboBox();
             MultiDataSplitSymbol = new TextBox();
@@ -55,7 +53,7 @@
             DataViewForAction.BackgroundColor = SystemColors.ControlLight;
             DataViewForAction.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             DataViewForAction.Columns.AddRange(new DataGridViewColumn[] { ActionName, dataGridViewButtonColumn1, ConnectInfoColum, RemoveBtnColum, MoveUpColum, MoveDownColum, FollowActionColum });
-            DataViewForAction.Location = new Point(14, 133);
+            DataViewForAction.Location = new Point(14, 92);
             DataViewForAction.Name = "DataViewForAction";
             DataViewForAction.RowTemplate.Height = 25;
             DataViewForAction.Size = new Size(995, 263);
@@ -116,7 +114,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label2.Location = new Point(14, 100);
+            label2.Location = new Point(14, 59);
             label2.Name = "label2";
             label2.Size = new Size(346, 21);
             label2.TabIndex = 47;
@@ -125,7 +123,7 @@
             // BtnFinishConfig
             // 
             BtnFinishConfig.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            BtnFinishConfig.Location = new Point(879, 415);
+            BtnFinishConfig.Location = new Point(879, 374);
             BtnFinishConfig.Name = "BtnFinishConfig";
             BtnFinishConfig.Size = new Size(130, 30);
             BtnFinishConfig.TabIndex = 46;
@@ -137,7 +135,7 @@
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label6.Location = new Point(16, 62);
+            label6.Location = new Point(16, 21);
             label6.Name = "label6";
             label6.Size = new Size(42, 21);
             label6.TabIndex = 53;
@@ -148,16 +146,16 @@
             ComboBoxForActionTypeList.DropDownStyle = ComboBoxStyle.DropDownList;
             ComboBoxForActionTypeList.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             ComboBoxForActionTypeList.FormattingEnabled = true;
-            ComboBoxForActionTypeList.Location = new Point(59, 59);
+            ComboBoxForActionTypeList.Location = new Point(59, 18);
             ComboBoxForActionTypeList.Name = "ComboBoxForActionTypeList";
-            ComboBoxForActionTypeList.Size = new Size(130, 29);
+            ComboBoxForActionTypeList.Size = new Size(241, 29);
             ComboBoxForActionTypeList.TabIndex = 52;
             ComboBoxForActionTypeList.SelectedIndexChanged += ComboBoxForActionTypeList_SelectedIndexChanged;
             // 
             // BtnAddAction
             // 
             BtnAddAction.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            BtnAddAction.Location = new Point(720, 56);
+            BtnAddAction.Location = new Point(765, 15);
             BtnAddAction.Name = "BtnAddAction";
             BtnAddAction.Size = new Size(130, 30);
             BtnAddAction.TabIndex = 51;
@@ -165,29 +163,11 @@
             BtnAddAction.UseVisualStyleBackColor = true;
             BtnAddAction.Click += BtnAddAction_Click;
             // 
-            // TextBoxForSearch
-            // 
-            TextBoxForSearch.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxForSearch.Location = new Point(153, 18);
-            TextBoxForSearch.Name = "TextBoxForSearch";
-            TextBoxForSearch.Size = new Size(489, 26);
-            TextBoxForSearch.TabIndex = 55;
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label5.Location = new Point(14, 20);
-            label5.Name = "label5";
-            label5.Size = new Size(133, 21);
-            label5.TabIndex = 54;
-            label5.Text = "父行为绑定的Key";
-            // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label1.Location = new Point(234, 62);
+            label1.Location = new Point(333, 21);
             label1.Name = "label1";
             label1.Size = new Size(90, 21);
             label1.TabIndex = 57;
@@ -198,7 +178,7 @@
             ComboBoxForReturnType.DropDownStyle = ComboBoxStyle.DropDownList;
             ComboBoxForReturnType.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             ComboBoxForReturnType.FormattingEnabled = true;
-            ComboBoxForReturnType.Location = new Point(327, 59);
+            ComboBoxForReturnType.Location = new Point(426, 18);
             ComboBoxForReturnType.Name = "ComboBoxForReturnType";
             ComboBoxForReturnType.Size = new Size(110, 29);
             ComboBoxForReturnType.TabIndex = 56;
@@ -208,7 +188,7 @@
             // 
             MultiDataSplitSymbol.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             MultiDataSplitSymbol.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
-            MultiDataSplitSymbol.Location = new Point(609, 59);
+            MultiDataSplitSymbol.Location = new Point(677, 18);
             MultiDataSplitSymbol.Name = "MultiDataSplitSymbol";
             MultiDataSplitSymbol.Size = new Size(53, 26);
             MultiDataSplitSymbol.TabIndex = 59;
@@ -219,7 +199,7 @@
             // 
             label7.AutoSize = true;
             label7.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label7.Location = new Point(492, 62);
+            label7.Location = new Point(560, 21);
             label7.Name = "label7";
             label7.Size = new Size(106, 21);
             label7.TabIndex = 58;
@@ -229,13 +209,11 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1019, 458);
+            ClientSize = new Size(1019, 413);
             Controls.Add(MultiDataSplitSymbol);
             Controls.Add(label7);
             Controls.Add(label1);
             Controls.Add(ComboBoxForReturnType);
-            Controls.Add(TextBoxForSearch);
-            Controls.Add(label5);
             Controls.Add(label6);
             Controls.Add(ComboBoxForActionTypeList);
             Controls.Add(BtnAddAction);
@@ -260,8 +238,6 @@
         private Label label6;
         private ComboBox ComboBoxForActionTypeList;
         private Button BtnAddAction;
-        private TextBox TextBoxForSearch;
-        private Label label5;
         private Label label1;
         private ComboBox ComboBoxForReturnType;
         private DataGridViewTextBoxColumn ActionName;

@@ -72,7 +72,7 @@ namespace ExcelTool
             ComboBoxForReturnType.DataSource = null;
             ComboBoxForReturnType.Items.Clear();
             ComboBoxForReturnType.DataSource = mListDataForReturnType;
-            ComboBoxForReturnType.ValueMember = "RealIndex";
+            ComboBoxForReturnType.ValueMember = "RealValue";
             ComboBoxForReturnType.DisplayMember = "DisplayName";
         }
 
