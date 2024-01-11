@@ -209,11 +209,15 @@ namespace ExcelTool
                     var _targetIndex = _colum - _keyStartColum;
                     if (_targetIndex < 0)
                     {
-                        throw new Exception($"_colum : [{_colum}] - _keyStartColum : [{_keyStartColum}] < 0 , 请检查");
+                        throw new Exception(
+                            $"_colum : [{_colum}] - _keyStartColum : [{_keyStartColum}] < 0 , 请检查,sheet:{DisplayName} ， 表格 : {GetOwnerTable()?.GetFileName(false)}"
+                        );
                     }
                     if (_targetIndex >= mKeyDataList.Count)
                     {
-                        throw new Exception($"_colum : [{_colum}] - _keyStartColum : [{_keyStartColum}] >= mKeyDataList.Count : [{mKeyDataList.Count}], 请检查");
+                        throw new Exception(
+                            $"_colum : [{_colum}] - _keyStartColum : [{_keyStartColum}] >= mKeyDataList.Count : [{mKeyDataList.Count}], 请检查，sheet:{DisplayName} ， 表格 : {GetOwnerTable()?.GetFileName(false)}"
+                        );
                     }
                     _newCellData.Init(
                         _stringValue,

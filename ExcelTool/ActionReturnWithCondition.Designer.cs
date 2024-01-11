@@ -37,13 +37,13 @@
             label2 = new Label();
             BtnFinishConfig = new Button();
             DataGridViewForFilterFunc = new DataGridView();
-            label1 = new Label();
-            TextBoxForReturnString = new TextBox();
-            label5 = new Label();
             CompareTypeColum = new DataGridViewTextBoxColumn();
             CompareType = new DataGridViewTextBoxColumn();
             CompareValue = new DataGridViewTextBoxColumn();
             RemoveBtnColum = new DataGridViewButtonColumn();
+            label1 = new Label();
+            TextBoxForReturnString = new TextBox();
+            label5 = new Label();
             ((System.ComponentModel.ISupportInitialize)DataGridViewForFilterFunc).BeginInit();
             SuspendLayout();
             // 
@@ -137,6 +137,33 @@
             DataGridViewForFilterFunc.TabIndex = 33;
             DataGridViewForFilterFunc.CellContentClick += DataGridViewForFilterFunc_CellContentClick;
             // 
+            // CompareTypeColum
+            // 
+            CompareTypeColum.HeaderText = "值类型";
+            CompareTypeColum.Name = "CompareTypeColum";
+            CompareTypeColum.Resizable = DataGridViewTriState.True;
+            CompareTypeColum.SortMode = DataGridViewColumnSortMode.NotSortable;
+            CompareTypeColum.Width = 200;
+            // 
+            // CompareType
+            // 
+            CompareType.HeaderText = "比较方式";
+            CompareType.Name = "CompareType";
+            CompareType.Resizable = DataGridViewTriState.True;
+            CompareType.SortMode = DataGridViewColumnSortMode.NotSortable;
+            CompareType.Width = 200;
+            // 
+            // CompareValue
+            // 
+            CompareValue.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            CompareValue.HeaderText = "对比值";
+            CompareValue.Name = "CompareValue";
+            // 
+            // RemoveBtnColum
+            // 
+            RemoveBtnColum.HeaderText = "移除按钮";
+            RemoveBtnColum.Name = "RemoveBtnColum";
+            // 
             // label1
             // 
             label1.AutoSize = true;
@@ -166,33 +193,6 @@
             label5.TabIndex = 42;
             label5.Text = "返回值";
             // 
-            // CompareTypeColum
-            // 
-            CompareTypeColum.HeaderText = "值类型";
-            CompareTypeColum.Name = "CompareTypeColum";
-            CompareTypeColum.Resizable = DataGridViewTriState.True;
-            CompareTypeColum.SortMode = DataGridViewColumnSortMode.NotSortable;
-            CompareTypeColum.Width = 200;
-            // 
-            // CompareType
-            // 
-            CompareType.HeaderText = "比较方式";
-            CompareType.Name = "CompareType";
-            CompareType.Resizable = DataGridViewTriState.True;
-            CompareType.SortMode = DataGridViewColumnSortMode.NotSortable;
-            CompareType.Width = 200;
-            // 
-            // CompareValue
-            // 
-            CompareValue.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            CompareValue.HeaderText = "对比值";
-            CompareValue.Name = "CompareValue";
-            // 
-            // RemoveBtnColum
-            // 
-            RemoveBtnColum.HeaderText = "移除按钮";
-            RemoveBtnColum.Name = "RemoveBtnColum";
-            // 
             // ActionReturnWithCondition
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
@@ -210,6 +210,8 @@
             Controls.Add(BtnFinishConfig);
             Controls.Add(DataGridViewForFilterFunc);
             Controls.Add(label1);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "ActionReturnWithCondition";
             Text = "ActionReturnWithCondition";
             Load += ActionReturnWithCondition_Load;

@@ -456,6 +456,7 @@ namespace ExcelTool
 
             if (mSelectKeyList.Count < 1)
             {
+                CommonUtil.ShowError("请先选择需要匹配的 Key");
                 return;
             }
 

@@ -70,6 +70,8 @@
             Controls.Add(BtnFinishConfig);
             Controls.Add(label5);
             Controls.Add(TextBoxForReturnValue);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "ReturnSpecificValueForm";
             Text = "ReturnSpecificValueForm";
             Load += ReturnSpecificValueForm_Load;

@@ -181,22 +181,35 @@ namespace ExcelTool
 
             if (string.IsNullOrEmpty(content))
             {
-                throw new Exception($"{IsMatchFilter} 传入的 content 为空，请检查");
+                // throw new Exception($"{IsMatchFilter} 传入的 content 为空，请检查");
+                return false;
             }
 
             switch (CompareWay)
             {
                 case MainTypeDefine.FilterCompareWayForString.ContainsIgnoreCase:
                 {
-                    return CompareValue.ToLower().Contains(content.ToLower());
+                    return content.ToLower().Contains(CompareValue.ToLower());
                 }
                 case MainTypeDefine.FilterCompareWayForString.ContainsNoIgnoreCase:
                 {
-                    return CompareValue.Contains(content);
+                    return content.Contains(CompareValue);
                 }
                 case MainTypeDefine.FilterCompareWayForString.CompleteEqual:
                 {
                     return string.Equals(CompareValue, content);
+                }
+                case FilterCompareWayForString.NotEmpty:
+                {
+                    return !string.IsNullOrEmpty(content);
+                }
+                case FilterCompareWayForString.NotContainsIgnoreCase:
+                {
+                    return !content.ToLower().Contains(CompareValue.ToLower());
+                }
+                case FilterCompareWayForString.NotContainsNoIgnoreCase:
+                {
+                    return !content.Contains(CompareValue);
                 }
                 default:
                 {

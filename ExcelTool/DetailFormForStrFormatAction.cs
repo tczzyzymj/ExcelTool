@@ -40,6 +40,13 @@ namespace ExcelTool
             }
 
             mFromAction.FormatStr = this.TextBoxForFormat.Text;
+            if(string.IsNullOrEmpty(mFromAction.FormatStr) )
+            {
+                CommonUtil.ShowError("错误，格式化字符串内容为空，请检查!");
+                return;
+            }
+
+            this.DialogResult = DialogResult.OK;
         }
 
         private void DetailFormForStrFormatAction_Load(object sender, EventArgs e)

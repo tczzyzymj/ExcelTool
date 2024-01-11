@@ -143,7 +143,7 @@ namespace ExcelTool
                 {
                     // 这里去截取前5位，获得到ID
                     var _cellStr = _singleRow[_targetKey.KeyIndexInList].GetCellValue();
-                    if (string.IsNullOrEmpty(_cellStr))
+                    if (string.IsNullOrEmpty(_cellStr) || _cellStr.Length < 5)
                     {
                         continue;
                     }

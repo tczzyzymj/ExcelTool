@@ -482,6 +482,9 @@ namespace ExcelTool
         public override void OpenDetailEditForm()
         {
             base.OpenDetailEditForm();
+            ActionReturnWithCondition _form = new ActionReturnWithCondition();
+            _form.InitData(this);
+            _form.ShowDialog();
         }
     }
 

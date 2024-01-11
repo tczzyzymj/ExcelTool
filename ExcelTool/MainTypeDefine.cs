@@ -66,6 +66,15 @@ namespace ExcelTool
 
             [DisplayName("完全匹配")]
             CompleteEqual,
+
+            [DisplayName("不为空")]
+            NotEmpty,
+
+            [DisplayName("不包含(忽略大小写)")]
+            NotContainsIgnoreCase,
+
+            [DisplayName("不包含(匹配大小写)")]
+            NotContainsNoIgnoreCase,
         }
     }
 

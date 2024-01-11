@@ -18,6 +18,7 @@ namespace ExcelTool
         public ActionReturnWithCondition()
         {
             InitializeComponent();
+            this.DataGridViewForFilterFunc.AllowUserToAddRows = false;
         }
 
         public void InitData(ActionConditionReturnSpecific fromData)
@@ -27,6 +28,16 @@ namespace ExcelTool
 
         private void BtnFinishConfig_Click(object sender, EventArgs e)
         {
+            if(mFromAction == null)
+            {
+                CommonUtil.ShowError($"{BtnFinishConfig_Click} 错误，mFromAction 为空");
+                return;
+            }
+            if (mFromAction.FilterFuncList.Count < 1)
+            {
+                CommonUtil.ShowError($"没有设置过滤方法，请检查!");
+                return;
+            }
             this.DialogResult = DialogResult.OK;
         }
 
@@ -122,7 +133,7 @@ namespace ExcelTool
                 return;
             }
 
-            mFromAction.MatchReturnResult = this.TextBoxForCompareValue.Text;
+            mFromAction.MatchReturnResult = TextBoxForReturnString.Text;
         }
 
         private void ComboBoxForValueType_SelectedIndexChanged(object sender, EventArgs e)

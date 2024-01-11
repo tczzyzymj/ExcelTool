@@ -370,7 +370,8 @@ namespace ExcelTool
                         _filter != null && _filter.Count > 0,
                         "设置",
                         _showSelect,
-                        "配置行为"
+                        "配置行为",
+                        mKeyDataList[i].IsMainKey
                     );
                 }
             }
@@ -386,7 +387,8 @@ namespace ExcelTool
                         _filter != null && _filter.Count > 0,
                         "设置",
                         false,
-                        "配置行为"
+                        "配置行为",
+                        mKeyDataList[i].IsMainKey
                     );
                 }
             }

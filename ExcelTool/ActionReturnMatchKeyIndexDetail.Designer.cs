@@ -50,16 +50,16 @@
             label5.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label5.Location = new Point(12, 19);
             label5.Name = "label5";
-            label5.Size = new Size(90, 21);
+            label5.Size = new Size(132, 21);
             label5.TabIndex = 42;
-            label5.Text = "下标变化值";
+            label5.Text = "下标变化值(加法)";
             // 
             // TextBoxForFormat
             // 
             TextBoxForFormat.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
-            TextBoxForFormat.Location = new Point(131, 17);
+            TextBoxForFormat.Location = new Point(150, 17);
             TextBoxForFormat.Name = "TextBoxForFormat";
-            TextBoxForFormat.Size = new Size(154, 26);
+            TextBoxForFormat.Size = new Size(135, 26);
             TextBoxForFormat.TabIndex = 41;
             // 
             // ActionReturnMatchKeyIndexDetail
