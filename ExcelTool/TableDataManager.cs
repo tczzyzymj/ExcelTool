@@ -273,7 +273,7 @@ namespace ExcelTool
                 return;
             }
 
-            var _exportSheet = TableDataManager.Ins().GetExportSheet();
+            var _exportSheet = GetExportSheet();
             if (_exportSheet == null)
             {
                 throw new Exception($"_exportSheet 为空");

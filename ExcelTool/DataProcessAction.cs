@@ -1,10 +1,8 @@
-﻿using Microsoft.Extensions.Primitives;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace ExcelTool
 {
@@ -544,6 +542,83 @@ namespace ExcelTool
         public override bool HaveDetailEdit()
         {
             return false;
+        }
+    }
+
+    [DisplayName("截取字符串")]
+    public class ActionSubString : NormalActionBase
+    {
+        public int BeginIndex = 0;
+
+        public int SubLength = 0;
+
+        public bool ThrowExceptionIfError = true;
+
+        protected override List<string> InternalSelfProcessData(List<string> inDataList)
+        {
+            List<string> _result = new List<string>();
+            if (inDataList == null || inDataList.Count < 1)
+            {
+                return _result;
+            }
+
+            for (int i = 0; i < inDataList.Count; ++i)
+            {
+                if (BeginIndex >= inDataList[0].Length)
+                {
+                    if (ThrowExceptionIfError)
+                    {
+                        throw new Exception($"下标超出长度,数据:{inDataList[0]}, 开始下标:{BeginIndex}");
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    if (SubLength > 0)
+                    {
+                        if (BeginIndex + SubLength > inDataList[0].Length)
+                        {
+                            if (ThrowExceptionIfError)
+                            {
+                                throw new Exception($"截取数据超出长度, 数据:{inDataList[0]}, 开始下标 +  长度:{BeginIndex + SubLength}");
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                        }
+
+                        var _tempStr = inDataList[0].Substring(BeginIndex, SubLength);
+                        _result.Add(_tempStr);
+                    }
+                    else
+                    {
+                        var _tempStr = inDataList[0].Substring(BeginIndex);
+                        _result.Add(_tempStr);
+                    }
+                }
+            }
+
+            return _result;
+        }
+
+        public override bool HaveDetailEdit()
+        {
+            return true;
+        }
+
+        public override void OpenDetailEditForm()
+        {
+            base.OpenDetailEditForm();
+
+            ActionSubStringForm _form = new ActionSubStringForm();
+            if (_form.InitData(this))
+            {
+                _form.ShowDialog();
+            }
         }
     }
 }
