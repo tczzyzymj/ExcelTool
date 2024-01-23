@@ -4,3 +4,8 @@
 /ExcelTool/bin
 /ExcelTool/obj
 /TestData
+/ExcelToolRoot/ExcelTool/bin
+/ExcelToolRoot/ExcelTool/obj
+/ExcelToolRoot/.vs
+/ExcelConsole/bin
+/ExcelConsole/obj
