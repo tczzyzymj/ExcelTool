@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace ExcelTool
 {
-    internal class ExcelSheetData : CommonWorkSheetData
+    public class ExcelSheetData : CommonWorkSheetData
     {
         public ExcelSheetData()
         {

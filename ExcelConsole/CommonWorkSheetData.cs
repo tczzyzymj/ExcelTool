@@ -91,6 +91,10 @@ namespace ExcelTool
                 for (int i = 0; i < matchKeyList.Count; ++i)
                 {
                     var _matchKeyIndex = matchKeyList[i];
+                    if (_matchKeyIndex < 0 || _matchKeyIndex >= _rowData.Count)
+                    {
+                        throw new Exception($"越界了，_matchKeyIndex 是：[{_matchKeyIndex}] , 总数是 : [{_rowData.Count}]");
+                    }
                     var _matchKeyCellValue = _rowData[_matchKeyIndex].GetCellValue().Trim();
 
                     foreach (var _matchTargetStr in matchValueList)

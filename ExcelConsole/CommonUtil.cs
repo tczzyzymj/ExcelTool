@@ -23,6 +23,73 @@ namespace ExcelTool
             return _result;
         }
 
+
+        private static int mLevelReferenceTranXIndex = CommonUtil.GetIndexByZM("G") - 1;
+        private static int mLevelReferenceTranYIndex = mLevelReferenceTranXIndex + 1;
+        private static int mLevelReferenceTranZIndex = mLevelReferenceTranYIndex + 1;
+        private static int mLevelReferenceRotateYIndex = mLevelReferenceTranZIndex + 1;
+
+        public static string GetPosInfoByLevelReferenceID(int levelReferenceID, CSVSheetData mFateLevelReferenceCSVSheet, bool errorThrowException)
+        {
+            var _levelReferenceRowDataList = mFateLevelReferenceCSVSheet.GetRowCellDataByTargetKeysAndValus(
+                new List<int> { 0 },
+                new List<string> { levelReferenceID.ToString() }
+            );
+
+            if (_levelReferenceRowDataList == null)
+            {
+                if (errorThrowException)
+                {
+                    throw new Exception($"错误，无法获取 LevelReference 数据，ID是：{levelReferenceID}，请检查");
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+
+            return GetPosByLevelReference(_levelReferenceRowDataList);
+        }
+
+        public static string GetPosByLevelReference(List<CellValueData> targetDataList)
+        {
+            var _posX = ConvertToUEPos(targetDataList[mLevelReferenceTranXIndex].GetCellValue());
+            var _posZ = ConvertToUEPos(targetDataList[mLevelReferenceTranZIndex].GetCellValue());
+            var _posY = ConvertToUEPos(targetDataList[mLevelReferenceTranYIndex].GetCellValue());
+            var _rotY = ConverToUERotate(targetDataList[mLevelReferenceRotateYIndex].GetCellValue());
+
+            string _result = $"{_posX},{_posZ},{_posY},{_rotY}";
+
+            return _result;
+        }
+
+        public static int ConvertToUEPos(string strValue)
+        {
+            var _result = 0;
+
+            if (!float.TryParse(strValue, out var _floatValue))
+            {
+                return _result;
+            }
+
+            _result = ((int)(_floatValue * 100));
+
+            return _result;
+        }
+
+        public static int ConverToUERotate(string strValue)
+        {
+            var _result = 0;
+            if (!float.TryParse(strValue, out var _floatValue))
+            {
+                return _result;
+            }
+
+            _result = ((int)(180 / 3.1415926 * _floatValue));
+
+            return _result;
+        }
+
         public static string ConverListIntToString(List<int> intList, string spliSymbol)
         {
             StringBuilder _sb = new StringBuilder();

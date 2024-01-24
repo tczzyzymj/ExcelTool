@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ExcelTool
 {
-    internal class CSVSheetData : CommonWorkSheetData
+    public class CSVSheetData : CommonWorkSheetData
     {
         public CSVSheetData()
         {

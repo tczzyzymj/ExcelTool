@@ -19,7 +19,8 @@ namespace ExcelConsole
             }
 
             Console.WriteLine($"输入数字：");
-            Console.WriteLine("1 : 处理 Fate 相关的 FateNpc 转化后的 Monster 的等级");
+            Console.WriteLine("1 : 处理 FateGuard 相关的 FateNpc 转化后的 Monster 的等级");
+            Console.WriteLine("2 : 处理端游 FateGuard 导入后 创建物相关");
             Console.WriteLine("请输入:");
             var _keyinfo = Console.ReadKey();
             ProcessBase? _process = null;
@@ -28,6 +29,11 @@ namespace ExcelConsole
                 case '1':
                 {
                     _process = new ProcessForFateGuardNpcToMonsterLevel();
+                    break;
+                }
+                case '2':
+                {
+                    _process = new ProcessForFateMonsterAndReference();
                     break;
                 }
                 default:
@@ -54,7 +60,7 @@ namespace ExcelConsole
                     Console.WriteLine("处理失败，请查看报错");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
