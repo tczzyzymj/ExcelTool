@@ -8,10 +8,8 @@ namespace ExcelConsole
         static void Main(string[] args)
         {
             string currentPath = System.AppDomain.CurrentDomain.BaseDirectory;
-            Console.WriteLine(currentPath);
-
-            var _targetFolder = Path.Combine(currentPath, "../FileFolder");
-            DirectoryInfo targetFolder = new DirectoryInfo(_targetFolder);
+            var _targetFolderPath = Path.Combine(currentPath, "../FileFolder");
+            DirectoryInfo targetFolder = new DirectoryInfo(_targetFolderPath);
             if (!targetFolder.Exists)
             {
                 Console.WriteLine($"错误，{targetFolder} 路径不存在");
@@ -21,6 +19,8 @@ namespace ExcelConsole
             Console.WriteLine($"输入数字：");
             Console.WriteLine("1 : 处理 FateGuard 相关的 FateNpc 转化后的 Monster 的等级");
             Console.WriteLine("2 : 处理端游 FateGuard 导入后 创建物相关");
+            Console.WriteLine("3 : 处理端游 FateGuard 导入后 Npc相关");
+            Console.WriteLine("4 : 处理端游 FateNpc 全部导入 Monster");
             Console.WriteLine("请输入:");
             var _keyinfo = Console.ReadKey();
             ProcessBase? _process = null;
@@ -34,6 +34,16 @@ namespace ExcelConsole
                 case '2':
                 {
                     _process = new ProcessForFateMonsterAndReference();
+                    break;
+                }
+                case '3':
+                {
+                    _process = new ProcessForFateNPCAbout();
+                    break;
+                }
+                case '4':
+                {
+                    _process = new ProcessForFateNpcToMonster();
                     break;
                 }
                 default:

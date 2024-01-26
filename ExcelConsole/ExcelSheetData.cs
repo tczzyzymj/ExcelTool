@@ -63,7 +63,7 @@ namespace ExcelTool
             }
 
             var _targetRowIndex = rowIndexInSheet;
-            if (_targetRowIndex == -1)
+            if (_targetRowIndex < 0)
             {
                 _targetRowIndex = mOriginSheetData.Dimension.Rows + 1;
             }

@@ -13,6 +13,7 @@ namespace ExcelConsole
     {
         public int FateNpcID = 0;
         public int MaxNum = 0;
+        public int MonsterID = 0;
     }
 
     /// <summary>

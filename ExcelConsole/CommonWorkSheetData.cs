@@ -32,6 +32,11 @@ namespace ExcelTool
 
         protected string mSheetName = string.Empty;
 
+        /// <summary>
+        /// 缓存的数据
+        /// </summary>
+        private Dictionary<string, List<CellValueData>> mCacheDataMap = new Dictionary<string, List<CellValueData>>();
+
         public int IndexInListForShow
         {
             get;
@@ -200,7 +205,7 @@ namespace ExcelTool
         /// <summary>
         /// 写入数据
         /// </summary>
-        /// <param name="rowIndexInSheet">-1表示新加一行数据</param>
+        /// <param name="rowIndexInSheet">小于0表示新加一行数据</param>
         /// <param name="inValueList"></param>
         /// <param name="skipEmptyData"></param>
         /// <returns></returns>
@@ -265,6 +270,55 @@ namespace ExcelTool
             return mKeyDataList;
         }
 
+        public void CacheDataByMainKey(bool isForceLoad)
+        {
+            if (isForceLoad)
+            {
+                mCellData2DList?.Clear();
+
+                InternalLoadAllCellData(true);
+            }
+
+            var _allDataList = GetAllDataList();
+            if (_allDataList == null || _allDataList.Count < 1)
+            {
+                throw new Exception("错误，无法获取全部数据，请检查");
+            }
+
+            var _keyDataList = GetKeyListData();
+            int _keyIndex = -1;
+            for (int i = 0; i < _keyDataList.Count; ++i)
+            {
+                if (_keyDataList[i].IsMainKey)
+                {
+                    _keyIndex = i;
+                    break;
+                }
+            }
+
+            if (_keyIndex < 0)
+            {
+                return;
+            }
+
+            for (int i = 0; i < _allDataList.Count; ++i)
+            {
+                var _keyStr = _allDataList[i][_keyIndex].GetCellValue();
+                if (string.IsNullOrEmpty(_keyStr))
+                {
+                    continue;
+                }
+
+                mCacheDataMap.Add(_keyStr, _allDataList[i]);
+            }
+        }
+
+        public List<CellValueData>? GetCacheRowDataListByKeyStr(string keyStr)
+        {
+            mCacheDataMap.TryGetValue(keyStr, out var cellValueDataList);
+            return cellValueDataList;
+        }
+
         public bool LoadAllCellData(bool forceLoad)
         {
             if (mHasLoadAllCellData && !forceLoad)
@@ -280,6 +334,8 @@ namespace ExcelTool
             if (InternalLoadAllCellData(forceLoad))
             {
                 mHasLoadAllCellData = true;
+
+                CacheDataByMainKey(forceLoad);
 
                 return true;
             }

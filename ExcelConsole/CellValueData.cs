@@ -61,7 +61,11 @@ namespace ExcelTool
 
         public string GetCellValue()
         {
-            return mCellValue;
+            if (string.IsNullOrEmpty(mCellValue))
+            {
+                return mCellValue;
+            }
+            return mCellValue.Replace("'", "");
         }
     }
 }
