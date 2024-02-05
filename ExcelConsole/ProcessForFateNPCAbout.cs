@@ -22,8 +22,8 @@ namespace ExcelConsole
         private ExcelFileData mFateNpcExcelFile = null;
         private ExcelSheetData mFateNpcExcelSheet = null;
 
-        private CSVFileData mFateLevelReferenceCSVFile = null;
-        private CSVSheetData mFateLevelReferenceCSVSheet = null;
+        private ExcelFileData mExcelLevelReference = null;
+        private ExcelSheetData mExcelSheetLevelReference = null;
 
         private CSVFileData mFatePopGroupCSVFile = null;
         private CSVSheetData mFatePopGroupCSVSheet = null;
@@ -103,15 +103,20 @@ namespace ExcelConsole
 
             // 加载 LevelReference.csv
             {
-                var _tempPath = Path.Combine(FolderPath, "LevelReference.csv");
-                mFateLevelReferenceCSVFile = new CSVFileData(_tempPath, LoadFileType.NormalFile);
-                mFateLevelReferenceCSVSheet = mFateLevelReferenceCSVFile.GetWorkSheetByIndex(0) as CSVSheetData;
-                if (mFateLevelReferenceCSVSheet == null)
+                var _tempPath = Path.Combine(FolderPath, "LevelReference.xlsx");
+                mExcelLevelReference = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
+                mExcelSheetLevelReference = mExcelLevelReference.GetWorkSheetByIndex(0) as ExcelSheetData;
+                if (mExcelSheetLevelReference == null)
                 {
-                    throw new Exception($"mFateLevelReferenceCSVFile.GetWorkSheetByIndex(0) 获取数据错误，请检查");
+                    throw new Exception($"mExcelLevelReference.GetWorkSheetByIndex(0) 获取数据出错");
                 }
 
-                mFateLevelReferenceCSVSheet.LoadAllCellData(true);
+                mExcelSheetLevelReference.SetKeyStartRowIndex(5);
+                mExcelSheetLevelReference.SetKeyStartColmIndex(2);
+                mExcelSheetLevelReference.SetContentStartRowIndex(10);
+
+                mExcelSheetLevelReference.ReloadKey();
+                mExcelSheetLevelReference.LoadAllCellData(true);
             }
 
             // 加载 G怪物表.xlsx
@@ -286,7 +291,7 @@ namespace ExcelConsole
                 int.TryParse(_fateNpcRowDataList[_idleRangeIndex].GetCellValue(), out var _idleRange);
                 if (_idleRange > 0)
                 {
-                    _fatePopGroupStringDataList[mFatePopGroupIdleRangeIndex] = CommonUtil.GetPosInfoByLevelReferenceID(_idleRange, mFateLevelReferenceCSVSheet, true);
+                    _fatePopGroupStringDataList[mFatePopGroupIdleRangeIndex] = CommonUtil.GetPosInfoByLevelReferenceID(_idleRange, mExcelSheetLevelReference, true);
                 }
                 else
                 {
@@ -297,7 +302,7 @@ namespace ExcelConsole
                 int.TryParse(_fateNpcRowDataList[_depopRangeIndex].GetCellValue(), out var _depopRange);
                 if (_idleRange > 0)
                 {
-                    _fatePopGroupStringDataList[mFatePopGroupDepopRangeIndex] = CommonUtil.GetPosInfoByLevelReferenceID(_depopRange, mFateLevelReferenceCSVSheet, true);
+                    _fatePopGroupStringDataList[mFatePopGroupDepopRangeIndex] = CommonUtil.GetPosInfoByLevelReferenceID(_depopRange, mExcelSheetLevelReference, true);
                 }
                 else
                 {
@@ -322,7 +327,7 @@ namespace ExcelConsole
             int.TryParse(_fateNpcRowDataList[_fateNpcLayoutIDIndex].GetCellValue(), out var _layoutID);
             if (_layoutID > 0)
             {
-                var _tempStr = CommonUtil.GetPosInfoByLevelReferenceID(_layoutID, mFateLevelReferenceCSVSheet, true);
+                var _tempStr = CommonUtil.GetPosInfoByLevelReferenceID(_layoutID, mExcelSheetLevelReference, true, true);
                 if (!string.IsNullOrEmpty(_tempStr))
                 {
                     _fatePopGroupStringDataList[mFatePopGroupPopRangeIndex] = _tempStr;
@@ -334,7 +339,7 @@ namespace ExcelConsole
             int.TryParse(_fateNpcRowDataList[_fateNpcLayoutIDIndex].GetCellValue(), out var _popRange);
             if (_popRange > 0)
             {
-                var _tempStr = CommonUtil.GetPosInfoByLevelReferenceID(_popRange, mFateLevelReferenceCSVSheet, true);
+                var _tempStr = CommonUtil.GetPosInfoByLevelReferenceID(_popRange, mExcelSheetLevelReference, true, true);
                 if (!string.IsNullOrEmpty(_tempStr))
                 {
                     _fatePopGroupStringDataList[mFatePopGroupPopRangeIndex] = _tempStr;

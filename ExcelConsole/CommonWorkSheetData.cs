@@ -104,6 +104,11 @@ namespace ExcelTool
 
                     foreach (var _matchTargetStr in matchValueList)
                     {
+                        if (string.IsNullOrEmpty(_matchTargetStr))
+                        {
+                            continue;
+                        }
+
                         if (string.Equals(_matchKeyCellValue, _matchTargetStr.Trim()))
                         {
                             ++_matchCount;

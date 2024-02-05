@@ -24,12 +24,17 @@ namespace ExcelTool
         }
 
 
-        private static int mLevelReferenceTranXIndex = CommonUtil.GetIndexByZM("G") - 1;
+        private static int mLevelReferenceTranXIndex = CommonUtil.GetIndexByZM("G") - 2;
         private static int mLevelReferenceTranYIndex = mLevelReferenceTranXIndex + 1;
         private static int mLevelReferenceTranZIndex = mLevelReferenceTranYIndex + 1;
         private static int mLevelReferenceRotateYIndex = mLevelReferenceTranZIndex + 1;
 
-        public static string GetPosInfoByLevelReferenceID(int levelReferenceID, CSVSheetData mFateLevelReferenceCSVSheet, bool errorThrowException)
+        public static string GetPosInfoByLevelReferenceID(
+            int levelReferenceID,
+            CSVSheetData mFateLevelReferenceCSVSheet,
+            bool errorThrowException,
+            bool rotateYZero = false
+        )
         {
             var _levelReferenceRowDataList = mFateLevelReferenceCSVSheet.GetRowCellDataByTargetKeysAndValus(
                 new List<int> { 0 },
@@ -48,19 +53,53 @@ namespace ExcelTool
                 }
             }
 
-            return GetPosByLevelReference(_levelReferenceRowDataList);
+            return GetPosByLevelReference(_levelReferenceRowDataList, rotateYZero);
         }
 
-        public static string GetPosByLevelReference(List<CellValueData> targetDataList)
+        public static string GetPosInfoByLevelReferenceID(
+            int levelReferenceID,
+            ExcelSheetData mFateLevelReferenceCSVSheet,
+            bool errorThrowException,
+            bool rotateYZero = false
+        )
+        {
+            var _levelReferenceRowDataList = mFateLevelReferenceCSVSheet.GetRowCellDataByTargetKeysAndValus(
+                new List<int> { 0 },
+                new List<string> { levelReferenceID.ToString() }
+            );
+
+            if (_levelReferenceRowDataList == null)
+            {
+                if (errorThrowException)
+                {
+                    throw new Exception($"错误，无法获取 LevelReference 数据，ID是：{levelReferenceID}，请检查");
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+
+            return GetPosByLevelReference(_levelReferenceRowDataList, rotateYZero);
+        }
+
+        public static string GetPosByLevelReference(List<CellValueData> targetDataList, bool rotateYZero)
         {
             var _posX = ConvertToUEPos(targetDataList[mLevelReferenceTranXIndex].GetCellValue());
             var _posZ = ConvertToUEPos(targetDataList[mLevelReferenceTranZIndex].GetCellValue());
             var _posY = ConvertToUEPos(targetDataList[mLevelReferenceTranYIndex].GetCellValue());
+
             var _rotY = ConverToUERotate(targetDataList[mLevelReferenceRotateYIndex].GetCellValue());
-
-            string _result = $"{_posX},{_posZ},{_posY},{_rotY}";
-
-            return _result;
+            if (rotateYZero)
+            {
+                string _result = $"{_posX},{_posZ},{_posY},0";
+                return _result;
+            }
+            else
+            {
+                string _result = $"{_posX},{_posZ},{_posY},{_rotY}";
+                return _result;
+            }
         }
 
         public static int ConvertToUEPos(string strValue)
