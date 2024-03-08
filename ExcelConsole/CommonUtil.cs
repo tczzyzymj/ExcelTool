@@ -28,15 +28,22 @@ namespace ExcelTool
         private static int mLevelReferenceTranYIndex = mLevelReferenceTranXIndex + 1;
         private static int mLevelReferenceTranZIndex = mLevelReferenceTranYIndex + 1;
         private static int mLevelReferenceRotateYIndex = mLevelReferenceTranZIndex + 1;
+        private static int mLevelRangeOnMapIndex = mLevelReferenceRotateYIndex + 1;
 
         public static string GetPosInfoByLevelReferenceID(
             int levelReferenceID,
-            CSVSheetData mFateLevelReferenceCSVSheet,
+            ExcelSheetData? fateLevelReferenceExcelSheet,
             bool errorThrowException,
-            bool rotateYZero = false
+            bool isTheFourthZero,
+            bool isTheFourthRange // 第四位是否为range，如果不是，那么取Rotate
         )
         {
-            var _levelReferenceRowDataList = mFateLevelReferenceCSVSheet.GetRowCellDataByTargetKeysAndValus(
+            if (fateLevelReferenceExcelSheet == null)
+            {
+                throw new Exception("传入的 ExcelSheetData? fateLevelReferenceExcelSheet 为空，请检查!");
+            }
+
+            var _levelReferenceRowDataList = fateLevelReferenceExcelSheet.GetRowCellDataByTargetKeysAndValus(
                 new List<int> { 0 },
                 new List<string> { levelReferenceID.ToString() }
             );
@@ -53,51 +60,31 @@ namespace ExcelTool
                 }
             }
 
-            return GetPosByLevelReference(_levelReferenceRowDataList, rotateYZero);
+            return InternalGetPosByLevelReferenceRowData(_levelReferenceRowDataList, isTheFourthZero, isTheFourthRange);
         }
 
-        public static string GetPosInfoByLevelReferenceID(
-            int levelReferenceID,
-            ExcelSheetData mFateLevelReferenceCSVSheet,
-            bool errorThrowException,
-            bool rotateYZero = false
-        )
+        private static string InternalGetPosByLevelReferenceRowData(List<CellValueData> rowData, bool isTheFourthZero, bool isTheFourthRange)
         {
-            var _levelReferenceRowDataList = mFateLevelReferenceCSVSheet.GetRowCellDataByTargetKeysAndValus(
-                new List<int> { 0 },
-                new List<string> { levelReferenceID.ToString() }
-            );
+            var _posX = ConvertToUEPos(rowData[mLevelReferenceTranXIndex].GetCellValue());
+            var _posZ = ConvertToUEPos(rowData[mLevelReferenceTranZIndex].GetCellValue());
+            var _posY = ConvertToUEPos(rowData[mLevelReferenceTranYIndex].GetCellValue());
 
-            if (_levelReferenceRowDataList == null)
-            {
-                if (errorThrowException)
-                {
-                    throw new Exception($"错误，无法获取 LevelReference 数据，ID是：{levelReferenceID}，请检查");
-                }
-                else
-                {
-                    return string.Empty;
-                }
-            }
-
-            return GetPosByLevelReference(_levelReferenceRowDataList, rotateYZero);
-        }
-
-        public static string GetPosByLevelReference(List<CellValueData> targetDataList, bool rotateYZero)
-        {
-            var _posX = ConvertToUEPos(targetDataList[mLevelReferenceTranXIndex].GetCellValue());
-            var _posZ = ConvertToUEPos(targetDataList[mLevelReferenceTranZIndex].GetCellValue());
-            var _posY = ConvertToUEPos(targetDataList[mLevelReferenceTranYIndex].GetCellValue());
-
-            var _rotY = ConverToUERotate(targetDataList[mLevelReferenceRotateYIndex].GetCellValue());
-            if (rotateYZero)
+            if (isTheFourthZero)
             {
                 string _result = $"{_posX},{_posZ},{_posY},0";
                 return _result;
             }
+
+            if (isTheFourthRange)
+            {
+                var _theFourthValue = ConvertToUEPos(rowData[mLevelRangeOnMapIndex].GetCellValue());
+                string _result = $"{_posX},{_posZ},{_posY},{_theFourthValue}";
+                return _result;
+            }
             else
             {
-                string _result = $"{_posX},{_posZ},{_posY},{_rotY}";
+                var _theFourthValue = ConverToUERotate(rowData[mLevelReferenceRotateYIndex].GetCellValue());
+                string _result = $"{_posX},{_posZ},{_posY},{_theFourthValue}";
                 return _result;
             }
         }

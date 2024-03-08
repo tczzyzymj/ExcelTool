@@ -11,14 +11,11 @@ namespace ExcelTool
 {
     public abstract class CommonWorkSheetData
     {
-        [JsonProperty]
-        protected int mKeyStartRowIndex = 2; // Key 的概念认为是数据列的名字，其开始的行下标，从1开始，不是0
+        protected int mKeyStartRowIndexInSheet = 2; // Key 的概念认为是数据列的名字，其开始的行下标，从1开始，不是0
 
-        [JsonProperty]
-        protected int mKeyStartColmIndex = 1; // Key 的概念认为是数据列的名字，其开始的列下标，从1开始，不是0
+        protected int mKeyStartColmIndexInSheet = 1; // Key 的概念认为是数据列的名字，其开始的列下标，从1开始，不是0
 
-        [JsonProperty]
-        protected int mContentStartRowIndex = 4; // 内容选中的行下标，从2开始，认为1是KEY不能小于2
+        protected int mContentStartRowIndexInSheet = 4; // 从1开始，不是0
 
         protected bool mHasLoadAllCellData = false;
 
@@ -132,6 +129,19 @@ namespace ExcelTool
         }
 
         /// <summary>
+        /// 这里全部写入
+        /// </summary>
+        public virtual bool SaveSheet()
+        {
+            if (mCellData2DList == null || mCellData2DList.Count < 1)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// 通过对比指定的列的值
         /// </summary>
         /// <param name="matchKeyList"></param>
@@ -168,34 +178,34 @@ namespace ExcelTool
             return mIndexInFileData;
         }
 
-        public int GetKeyStartRowIndex()
+        public int GetKeyStartRowIndexInSheet()
         {
-            return mKeyStartRowIndex;
+            return mKeyStartRowIndexInSheet;
         }
 
-        public void SetKeyStartRowIndex(int targetValue)
+        public void SetKeyStartRowIndexInSheet(int targetValue)
         {
-            mKeyStartRowIndex = targetValue;
+            mKeyStartRowIndexInSheet = targetValue;
         }
 
-        public int GetKeyStartColmIndex()
+        public int GetKeyStartColmIndexInSheet()
         {
-            return mKeyStartColmIndex;
+            return mKeyStartColmIndexInSheet;
         }
 
-        public void SetKeyStartColmIndex(int targetValue)
+        public void SetKeyStartColmIndexInSheet(int targetValue)
         {
-            mKeyStartColmIndex = targetValue;
+            mKeyStartColmIndexInSheet = targetValue;
         }
 
-        public int GetContentStartRowIndex()
+        public int GetContentStartRowIndexInSheet()
         {
-            return mContentStartRowIndex;
+            return mContentStartRowIndexInSheet;
         }
 
-        public void SetContentStartRowIndex(int targetValue)
+        public void SetContentStartRowIndexInSheet(int targetValue)
         {
-            mContentStartRowIndex = targetValue;
+            mContentStartRowIndexInSheet = targetValue;
         }
 
         public List<List<CellValueData>>? GetAllDataList()

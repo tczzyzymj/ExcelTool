@@ -13,9 +13,9 @@ namespace ExcelTool
     {
         public CSVSheetData()
         {
-            mKeyStartRowIndex = 0; // Key 的概念认为是数据列的名字，其开始的行下标，从1开始，不是0
-            mKeyStartColmIndex = 0; // Key 的概念认为是数据列的名字，其开始的列下标，从1开始，不是0
-            mContentStartRowIndex = 3; // 内容选中的行下标，从2开始，认为1是KEY不能小于2
+            mKeyStartRowIndexInSheet = 0; // Key 的概念认为是数据列的名字，其开始的行下标，从1开始，不是0
+            mKeyStartColmIndexInSheet = 0; // Key 的概念认为是数据列的名字，其开始的列下标，从1开始，不是0
+            mContentStartRowIndexInSheet = 3; // 内容选中的行下标，从2开始，认为1是KEY不能小于2
         }
 
         private List<string[]> mAllSheetData = new List<string[]>();
@@ -36,7 +36,7 @@ namespace ExcelTool
                 {
                     using (CsvReader _csvReader = new CsvReader(sr, CultureInfo.InvariantCulture))
                     {
-                        for (int i = 0; i <= mKeyStartRowIndex; ++i)
+                        for (int i = 0; i <= mKeyStartRowIndexInSheet; ++i)
                         {
                             _csvReader.Read();
                         }
@@ -65,20 +65,20 @@ namespace ExcelTool
         public override bool WriteOneData(int rowIndexInSheet, List<string> valueList, bool skipEmptyData)
         {
             throw new Exception("CSV写入功能完善中");
-            if (!base.WriteOneData(rowIndexInSheet, valueList, skipEmptyData))
-            {
-                return false;
-            }
+            //if (!base.WriteOneData(rowIndexInSheet, valueList, skipEmptyData))
+            //{
+            //    return false;
+            //}
 
-            var _keyListData = GetKeyListData();
-            if (_keyListData == null)
-            {
-                CommonUtil.ShowError("WriteData ，但是 KeyList 为空，请检查");
+            //var _keyListData = GetKeyListData();
+            //if (_keyListData == null)
+            //{
+            //    CommonUtil.ShowError("WriteData ，但是 KeyList 为空，请检查");
 
-                return false;
-            }
+            //    return false;
+            //}
 
-            return true;
+            //return true;
         }
 
         protected override bool InternalInitWithKey(object? sheetData, bool isForce)
@@ -107,9 +107,9 @@ namespace ExcelTool
             {
                 var _keyLine = _keyArray;
 
-                for (int _i = GetKeyStartColmIndex(); _i < _keyLine.Length; ++_i)
+                for (int _i = GetKeyStartColmIndexInSheet(); _i < _keyLine.Length; ++_i)
                 {
-                    AddNewKeyData(_i - GetKeyStartColmIndex(), _i, _keyLine[_i]);
+                    AddNewKeyData(_i - GetKeyStartColmIndexInSheet(), _i, _keyLine[_i]);
                 }
             }
 
@@ -134,8 +134,8 @@ namespace ExcelTool
                 return false;
             }
 
-            var _contentStartRow = GetContentStartRowIndex();
-            var _keyStartColum = GetKeyStartColmIndex();
+            var _contentStartRow = GetContentStartRowIndexInSheet();
+            var _keyStartColum = GetKeyStartColmIndexInSheet();
 
             var _filePath = _ownerTable.GetFileAbsulotePath();
 

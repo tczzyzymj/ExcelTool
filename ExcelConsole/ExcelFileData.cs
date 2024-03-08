@@ -28,6 +28,11 @@ namespace ExcelTool
             CloseFile();
         }
 
+        public ExcelPackage? GetExcelPackage()
+        {
+            return mExcelPackage;
+        }
+
         public override void SaveFile()
         {
             mExcelPackage?.Save();

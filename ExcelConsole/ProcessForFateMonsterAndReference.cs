@@ -21,24 +21,24 @@ namespace ExcelConsole
     /// </summary>
     public class ProcessForFateMonsterAndReference : ProcessBase
     {
-        private ExcelFileData mExcelFate = null;
-        private ExcelSheetData mExcelSheetPopGroupInFate = null;
-        private ExcelSheetData mExcelSheetGuardInFate = null;
+        private ExcelFileData? mExcelFate = null;
+        private ExcelSheetData? mExcelSheetFateGuardInFateExcel = null;
+        private ExcelSheetData? mExcelSheetPopGroupInFateExcel = null;
 
-        private ExcelFileData mExcelFateNpc = null;
-        private ExcelSheetData mExcelSheetFateNpc = null;
+        private ExcelFileData? mExcelFateNpc = null;
+        private ExcelSheetData? mExcelSheetFateNpc = null;
 
-        private ExcelFileData mExcelMonster = null;
-        private ExcelSheetData mExcelSheetMonster = null;
+        private ExcelFileData? mExcelMonster = null;
+        private ExcelSheetData? mExcelSheetMonster = null;
 
-        private CSVFileData mCSVFateGuard = null;
-        private CSVSheetData mCSVSheetFateGuard = null;
+        private CSVFileData? mCSVFateGuard = null;
+        private CSVSheetData? mCSVSheetFateGuard = null;
 
-        private CSVFileData mCSVFatePopGroup = null;
-        private CSVSheetData mCSVSheetFatePopGroup = null;
+        private CSVFileData? mCSVFatePopGroup = null;
+        private CSVSheetData? mCSVSheetFatePopGroup = null;
 
-        private ExcelFileData mExcelLevelReference = null;
-        private ExcelSheetData mExcelSheetLevelReference = null;
+        private ExcelFileData? mExcelLevelReference = null;
+        private ExcelSheetData? mExcelSheetLevelReference = null;
 
         private static int mMonsterIDIndex = CommonUtil.GetIndexByZM("F") - 1;
         private static int mMonsterFateNpcIDIndex = CommonUtil.GetIndexByZM("I") - 1;
@@ -66,10 +66,17 @@ namespace ExcelConsole
                 return string.Empty;
             }
 
+            if (mExcelSheetLevelReference == null)
+            {
+                return string.Empty;
+            }
+
             return CommonUtil.GetPosInfoByLevelReferenceID(
                 _layouerID,
                 mExcelSheetLevelReference,
-                true
+                true,
+                false,
+                false
             );
         }
 
@@ -82,14 +89,14 @@ namespace ExcelConsole
 
                 // 重新加载一下 key
                 {
-                    mExcelSheetGuardInFate = mExcelFate.GetWorkSheetByIndex(6) as ExcelSheetData;
-                    if (mExcelSheetGuardInFate == null)
+                    mExcelSheetPopGroupInFateExcel = mExcelFate.GetWorkSheetByIndex(6) as ExcelSheetData;
+                    if (mExcelSheetPopGroupInFateExcel == null)
                     {
                         throw new Exception("无法获取 mFateFile.GetWorkSheetByIndex(6)");
                     }
 
                     {
-                        var _keyListData = mExcelSheetGuardInFate.GetKeyListData();
+                        var _keyListData = mExcelSheetPopGroupInFateExcel.GetKeyListData();
                         for (int i = 0; i < _keyListData.Count; ++i)
                         {
                             _keyListData[i].IsMainKey = false;
@@ -97,23 +104,23 @@ namespace ExcelConsole
 
                         _keyListData[0].IsMainKey = true;
                     }
-                    mExcelSheetGuardInFate.LoadAllCellData(true);
+                    mExcelSheetPopGroupInFateExcel.LoadAllCellData(true);
 
-                    mExcelSheetPopGroupInFate = mExcelFate.GetWorkSheetByIndex(13) as ExcelSheetData;
-                    if (mExcelSheetPopGroupInFate == null)
+                    mExcelSheetFateGuardInFateExcel = mExcelFate.GetWorkSheetByIndex(13) as ExcelSheetData;
+                    if (mExcelSheetFateGuardInFateExcel == null)
                     {
                         throw new Exception("mFateFile.GetWorkSheetByIndex(13)");
                     }
 
                     {
-                        var _keyList = mExcelSheetPopGroupInFate.GetKeyListData();
+                        var _keyList = mExcelSheetFateGuardInFateExcel.GetKeyListData();
                         for (int i = 0; i < _keyList.Count; ++i)
                         {
                             _keyList[i].IsMainKey = false;
                         }
                         _keyList[0].IsMainKey = true;
                     }
-                    mExcelSheetPopGroupInFate.LoadAllCellData(true);
+                    mExcelSheetFateGuardInFateExcel.LoadAllCellData(true);
                 }
             }
 
@@ -140,9 +147,9 @@ namespace ExcelConsole
                     throw new Exception($"mExcelLevelReference.GetWorkSheetByIndex(0) 获取数据出错");
                 }
 
-                mExcelSheetLevelReference.SetKeyStartRowIndex(5);
-                mExcelSheetLevelReference.SetKeyStartColmIndex(2);
-                mExcelSheetLevelReference.SetContentStartRowIndex(10);
+                mExcelSheetLevelReference.SetKeyStartRowIndexInSheet(5);
+                mExcelSheetLevelReference.SetKeyStartColmIndexInSheet(2);
+                mExcelSheetLevelReference.SetContentStartRowIndexInSheet(10);
 
                 mExcelSheetLevelReference.ReloadKey();
                 mExcelSheetLevelReference.LoadAllCellData(true);
@@ -158,9 +165,9 @@ namespace ExcelConsole
                     throw new Exception("获取数据失败， mFateMonsterExcelFile.GetWorkSheetByIndex(1)");
                 }
 
-                mExcelSheetMonster.SetKeyStartRowIndex(1);
-                mExcelSheetMonster.SetKeyStartColmIndex(1);
-                mExcelSheetMonster.SetContentStartRowIndex(4);
+                mExcelSheetMonster.SetKeyStartRowIndexInSheet(1);
+                mExcelSheetMonster.SetKeyStartColmIndexInSheet(1);
+                mExcelSheetMonster.SetContentStartRowIndexInSheet(4);
 
                 mExcelSheetMonster.ReloadKey();
                 mExcelSheetMonster.LoadAllCellData(true);
@@ -189,9 +196,9 @@ namespace ExcelConsole
                 {
                     throw new Exception($"无法获取 mFateNpcExcelFile.GetWorkSheetByIndex(0)");
                 }
-                mExcelSheetFateNpc.SetKeyStartRowIndex(1);
-                mExcelSheetFateNpc.SetKeyStartColmIndex(1);
-                mExcelSheetFateNpc.SetContentStartRowIndex(4);
+                mExcelSheetFateNpc.SetKeyStartRowIndexInSheet(1);
+                mExcelSheetFateNpc.SetKeyStartColmIndexInSheet(1);
+                mExcelSheetFateNpc.SetContentStartRowIndexInSheet(4);
                 mExcelSheetFateNpc.ReloadKey();
                 mExcelSheetFateNpc.LoadAllCellData(true);
             }
@@ -211,13 +218,21 @@ namespace ExcelConsole
             {
                 var _guardIDIndex = CommonUtil.GetIndexByZM("C") - 1;
                 var _fateIDIndex = CommonUtil.GetIndexByZM("A") - 1;
-                var _fateExcelGuardSheetAllDataList = mExcelSheetPopGroupInFate.GetAllDataList();
+                var _fateExcelGuardSheetAllDataList = mExcelSheetFateGuardInFateExcel?.GetAllDataList();
                 if (_fateExcelGuardSheetAllDataList == null)
                 {
                     throw new Exception($"mFateGuardExcelSheet.GetAllDataList() 错误，无法获取数据");
                 }
-                var _fateGuardCSVKeyListData = mCSVSheetFateGuard.GetKeyListData();
-                var _fatePopGroupCSVKeyListData = mCSVSheetFatePopGroup.GetKeyListData();
+                var _fateGuardCSVKeyListData = mCSVSheetFateGuard?.GetKeyListData();
+                if (_fateGuardCSVKeyListData == null)
+                {
+                    throw new Exception("mCSVSheetFateGuard?.GetKeyListData(); 为空，请检查!");
+                }
+                var _fatePopGroupCSVKeyListData = mCSVSheetFatePopGroup?.GetKeyListData();
+                if (_fatePopGroupCSVKeyListData == null)
+                {
+                    throw new Exception("mCSVSheetFatePopGroup?.GetKeyListData(); 为空，请检查!");
+                }
                 foreach (var _singleRowDataForFateGuard in _fateExcelGuardSheetAllDataList)
                 {
                     int.TryParse(_singleRowDataForFateGuard[_guardIDIndex].GetCellValue(), out var _guardID);
@@ -246,7 +261,7 @@ namespace ExcelConsole
                     _fateGuardDataMap.Add(_fateID, _fateGuardNPCDataList);
 
                     // 获取 FateGuard.csv 的目标数据
-                    var _targetFateGuardRowData = mCSVSheetFateGuard.GetRowCellDataByTargetKeysAndValus(
+                    var _targetFateGuardRowData = mCSVSheetFateGuard?.GetRowCellDataByTargetKeysAndValus(
                         new List<int> { 0 },
                         new List<string> { _guardID.ToString() }
                     );
@@ -266,7 +281,7 @@ namespace ExcelConsole
                             continue;
                         }
 
-                        var _tempRowData = mCSVSheetFatePopGroup.GetRowCellDataByTargetKeysAndValus(new List<int> { 0 }, new List<string> { _popGroupID.ToString() });
+                        var _tempRowData = mCSVSheetFatePopGroup?.GetRowCellDataByTargetKeysAndValus(new List<int> { 0 }, new List<string> { _popGroupID.ToString() });
                         if (_tempRowData == null)
                         {
                             continue;
@@ -376,7 +391,7 @@ namespace ExcelConsole
 
                 foreach (var _pair in _fateMonsterToNpcDataMap)
                 {
-                    var _fatePopGroupCellDataList = mExcelSheetGuardInFate.GetRowCellDataByTargetKeysAndValus(
+                    var _fatePopGroupCellDataList = mExcelSheetPopGroupInFateExcel?.GetRowCellDataByTargetKeysAndValus(
                         new List<int> { CommonUtil.GetIndexByZM("A") - 1 },
                         new List<string> { _pair.Key.ToString() }
                     );
@@ -398,7 +413,7 @@ namespace ExcelConsole
                     {
                         var _fateNPCID = _pair.Value[i].FateNpcID;
 
-                        var _fateNpcRowCellData = this.mExcelSheetFateNpc.GetRowCellDataByTargetKeysAndValus(
+                        var _fateNpcRowCellData = mExcelSheetFateNpc?.GetRowCellDataByTargetKeysAndValus(
                              new List<int> { mFateNpcIDIndex },
                              new List<string> { _fateNPCID.ToString() }
                         );
@@ -409,7 +424,7 @@ namespace ExcelConsole
                         }
 
                         // 通过 FateNpcID 查找 Monter 表
-                        var _monsterData = mExcelSheetMonster.GetRowCellDataByTargetKeysAndValus(
+                        var _monsterData = mExcelSheetMonster?.GetRowCellDataByTargetKeysAndValus(
                             new List<int> { mMonsterFateNpcIDIndex },
                             new List<string> { _fateNPCID.ToString() }
                         );
@@ -445,6 +460,8 @@ namespace ExcelConsole
                                 _fatePopGroupStringDataList[_fatePopGroupIdleRangeIndex + i * 7] = CommonUtil.GetPosInfoByLevelReferenceID(
                                     _idleRangeID,
                                     mExcelSheetLevelReference,
+                                    true,
+                                    false,
                                     true
                                 );
                             }
@@ -462,6 +479,8 @@ namespace ExcelConsole
                                 _fatePopGroupStringDataList[_fatePopGroupDepopRangeIndex + i * 7] = CommonUtil.GetPosInfoByLevelReferenceID(
                                     _depopRangeID,
                                     mExcelSheetLevelReference,
+                                    true,
+                                    false,
                                     true
                                 );
                             }
@@ -477,11 +496,11 @@ namespace ExcelConsole
 
                 foreach (var _pair in _writeDataMap)
                 {
-                    mExcelSheetGuardInFate.WriteOneData(_pair.Key, _pair.Value, true);
+                    mExcelSheetPopGroupInFateExcel?.WriteOneData(_pair.Key, _pair.Value, true);
                 }
             }
 
-            mExcelFate.SaveFile();
+            mExcelFate?.SaveFile();
 
             return true;
         }
@@ -496,6 +515,8 @@ namespace ExcelConsole
                     _fatePopGroupStringDataList[_fatePopGroupPopRangeIndex + index * 7] = CommonUtil.GetPosInfoByLevelReferenceID(
                         _targetID,
                         mExcelSheetLevelReference,
+                        true,
+                        false,
                         true
                     );
 

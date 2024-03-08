@@ -12,9 +12,9 @@ namespace ExcelTool
     {
         public ExcelSheetData()
         {
-            mKeyStartRowIndex = 2; // Key 的概念认为是数据列的名字，其开始的行下标，从1开始，不是0
-            mKeyStartColmIndex = 1; // Key 的概念认为是数据列的名字，其开始的列下标，从1开始，不是0
-            mContentStartRowIndex = 4; // 内容选中的行下标，从2开始，认为1是KEY不能小于2
+            mKeyStartRowIndexInSheet = 2; // Key 的概念认为是数据列的名字，其开始的行下标，从1开始，不是0
+            mKeyStartColmIndexInSheet = 1; // Key 的概念认为是数据列的名字，其开始的列下标，从1开始，不是0
+            mContentStartRowIndexInSheet = 4; // 内容选中的行下标，从2开始，认为1是KEY不能小于2
         }
 
         protected ExcelWorksheet? mOriginSheetData = null; // 原始数据
@@ -38,11 +38,37 @@ namespace ExcelTool
                 throw new Exception($"{CleanAllContent} 出错，_ownerTable 为空");
             }
 
-            var _contentStartIndex = GetContentStartRowIndex();
+            var _contentStartIndex = GetContentStartRowIndexInSheet();
 
             mOriginSheetData.DeleteRow(_contentStartIndex, mOriginSheetData.Dimension.Rows);
         }
 
+        public override bool SaveSheet()
+        {
+            if (mCellData2DList == null || mCellData2DList.Count < 1)
+            {
+                return false;
+            }
+
+            if (mOriginSheetData == null)
+            {
+                CommonUtil.ShowError("ExcelSheetData.WriteData ，但是 ExcelWorksheet 数据为空，请检查");
+                return false;
+            }
+
+            foreach (var _rowData in mCellData2DList)
+            {
+                for (int i = 0; i < _rowData.Count; ++i)
+                {
+                    mOriginSheetData.Cells[
+                        _rowData[0].GetCellRowIndexInSheet(),
+                        _rowData[i].GetCellColumnIndexInSheet()
+                    ].Value = _rowData[i].GetCellValue();
+                }
+            }
+
+            return true;
+        }
         public override bool WriteOneData(int rowIndexInSheet, List<string> inValueList, bool skipEmptyData)
         {
             if (!base.WriteOneData(rowIndexInSheet, inValueList, skipEmptyData))
@@ -133,9 +159,9 @@ namespace ExcelTool
                 return false;
             }
 
-            var _rowIndex = GetKeyStartRowIndex();
+            var _rowIndex = GetKeyStartRowIndexInSheet();
 
-            for (int _colm = GetKeyStartColmIndex(); _colm <= mOriginSheetData.Dimension.Columns; ++_colm)
+            for (int _colm = GetKeyStartColmIndexInSheet(); _colm <= mOriginSheetData.Dimension.Columns; ++_colm)
             {
                 var _tempValue = mOriginSheetData.Cells[_rowIndex, _colm].Value;
                 if (_tempValue == null)
@@ -148,7 +174,7 @@ namespace ExcelTool
                     continue;
                 }
 
-                AddNewKeyData(_colm - GetKeyStartColmIndex(), _colm, _finalStr);
+                AddNewKeyData(_colm - GetKeyStartColmIndexInSheet(), _colm, _finalStr);
             }
 
             mHasInitKey = true;
@@ -177,8 +203,8 @@ namespace ExcelTool
 
             mCellData2DList?.Clear();
 
-            var _contentStartRow = GetContentStartRowIndex();
-            var _keyStartColum = GetKeyStartColmIndex();
+            var _contentStartRow = GetContentStartRowIndexInSheet();
+            var _keyStartColum = GetKeyStartColmIndexInSheet();
 
 
             var _capcity = 0;

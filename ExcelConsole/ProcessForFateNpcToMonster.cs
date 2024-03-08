@@ -10,29 +10,29 @@ namespace ExcelConsole
 {
     public class ProcessForFateNpcToMonster : ProcessBase
     {
-        private ExcelFileData mExcelFateNpc = null;
-        private ExcelSheetData mExcelSheetFateNpc = null;
+        private ExcelFileData? mExcelFateNpc = null;
+        private ExcelSheetData? mExcelSheetFateNpc = null;
 
-        private ExcelFileData mExcelMonster = null;
-        private ExcelSheetData mExcelSheetMonster = null;
+        private ExcelFileData? mExcelMonster = null;
+        private ExcelSheetData? mExcelSheetMonster = null;
 
-        private ExcelFileData mExcelLevelReference = null;
-        private ExcelSheetData mExcelSheetLevelReference = null;
+        private ExcelFileData? mExcelLevelReference = null;
+        private ExcelSheetData? mExcelSheetLevelReference = null;
 
-        private ExcelFileData mExcelMap = null;
-        private ExcelSheetData mExcelSheetMap = null;
+        private ExcelFileData? mExcelMap = null;
+        private ExcelSheetData? mExcelSheetMap = null;
 
-        private ExcelFileData mExcelMapBNpcID = null;
-        private ExcelSheetData mExcelSheetMapBNpcID = null;
+        private ExcelFileData? mExcelMapBNpcID = null;
+        private ExcelSheetData? mExcelSheetMapBNpcID = null;
 
-        private ExcelFileData mExcelBNpcName = null;
-        private ExcelSheetData mExcelSheetBNpcName = null;
+        private ExcelFileData? mExcelBNpcName = null;
+        private ExcelSheetData? mExcelSheetBNpcName = null;
 
-        private ExcelFileData mExcelBNpcBase = null;
-        private ExcelSheetData mExcelSheetBNpcBase = null;
+        private ExcelFileData? mExcelBNpcBase = null;
+        private ExcelSheetData? mExcelSheetBNpcBase = null;
 
-        private ExcelFileData mExcelEObj = null;
-        private ExcelSheetData mExcelSheetEObj = null;
+        private ExcelFileData? mExcelEObj = null;
+        private ExcelSheetData? mExcelSheetEObj = null;
 
         private class FateNpcToMonsterData
         {
@@ -72,12 +72,12 @@ namespace ExcelConsole
                 mExcelSheetEObj = mExcelEObj.GetWorkSheetByIndex(0) as ExcelSheetData;
                 if (mExcelSheetEObj == null)
                 {
-                    throw new Exception($"mExcelFateNpc.GetWorkSheetByIndex(0) 获取数据出错");
+                    throw new Exception($"mExcelEObj.GetWorkSheetByIndex(0) 获取数据出错");
                 }
 
-                mExcelSheetEObj.SetKeyStartRowIndex(5);
-                mExcelSheetEObj.SetKeyStartColmIndex(2);
-                mExcelSheetEObj.SetContentStartRowIndex(10);
+                mExcelSheetEObj.SetKeyStartRowIndexInSheet(5);
+                mExcelSheetEObj.SetKeyStartColmIndexInSheet(2);
+                mExcelSheetEObj.SetContentStartRowIndexInSheet(10);
 
                 mExcelSheetEObj.ReloadKey();
                 var _allKeyDataList = mExcelSheetEObj.GetKeyListData();
@@ -90,15 +90,15 @@ namespace ExcelConsole
             {
                 var _tempPath = Path.Combine(FolderPath, "FateNpc.xlsx");
                 mExcelFateNpc = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
-                mExcelSheetFateNpc = mExcelFateNpc.GetWorkSheetByIndex(0) as ExcelSheetData;
+                mExcelSheetFateNpc = mExcelFateNpc?.GetWorkSheetByIndex(0) as ExcelSheetData;
                 if (mExcelSheetFateNpc == null)
                 {
                     throw new Exception($"mExcelFateNpc.GetWorkSheetByIndex(0) 获取数据出错");
                 }
 
-                mExcelSheetFateNpc.SetKeyStartRowIndex(5);
-                mExcelSheetFateNpc.SetKeyStartColmIndex(2);
-                mExcelSheetFateNpc.SetContentStartRowIndex(11);
+                mExcelSheetFateNpc.SetKeyStartRowIndexInSheet(5);
+                mExcelSheetFateNpc.SetKeyStartColmIndexInSheet(2);
+                mExcelSheetFateNpc.SetContentStartRowIndexInSheet(11);
 
                 mExcelSheetFateNpc.ReloadKey();
                 var _allKeyDataList = mExcelSheetFateNpc.GetKeyListData();
@@ -117,9 +117,9 @@ namespace ExcelConsole
                     throw new Exception($"mExcelFateNpc.GetWorkSheetByIndex(0) 获取数据出错");
                 }
 
-                mExcelSheetBNpcBase.SetKeyStartRowIndex(5);
-                mExcelSheetBNpcBase.SetKeyStartColmIndex(2);
-                mExcelSheetBNpcBase.SetContentStartRowIndex(11);
+                mExcelSheetBNpcBase.SetKeyStartRowIndexInSheet(5);
+                mExcelSheetBNpcBase.SetKeyStartColmIndexInSheet(2);
+                mExcelSheetBNpcBase.SetContentStartRowIndexInSheet(11);
 
                 mExcelSheetBNpcBase.ReloadKey();
                 var _allKeyDataList = mExcelSheetBNpcBase.GetKeyListData();
@@ -138,7 +138,7 @@ namespace ExcelConsole
                     throw new Exception($"mExcelMonster.GetWorkSheetByIndex(1) 获取数据出错");
                 }
 
-                mExcelSheetMonster.SetKeyStartRowIndex(1);
+                mExcelSheetMonster.SetKeyStartRowIndexInSheet(1);
                 mExcelSheetMonster.ReloadKey();
 
                 var _allKeyDataList = mExcelSheetMonster.GetKeyListData();
@@ -157,9 +157,9 @@ namespace ExcelConsole
                     throw new Exception($"mExcelLevelReference.GetWorkSheetByIndex(0) 获取数据出错");
                 }
 
-                mExcelSheetLevelReference.SetKeyStartRowIndex(5);
-                mExcelSheetLevelReference.SetKeyStartColmIndex(2);
-                mExcelSheetLevelReference.SetContentStartRowIndex(10);
+                mExcelSheetLevelReference.SetKeyStartRowIndexInSheet(5);
+                mExcelSheetLevelReference.SetKeyStartColmIndexInSheet(2);
+                mExcelSheetLevelReference.SetContentStartRowIndexInSheet(10);
 
                 mExcelSheetLevelReference.ReloadKey();
                 mExcelSheetLevelReference.LoadAllCellData(true);
@@ -175,9 +175,9 @@ namespace ExcelConsole
                     throw new Exception($"mExcelMap.GetWorkSheetByIndex(0) 获取数据出错");
                 }
 
-                mExcelSheetMap.SetKeyStartRowIndex(5);
-                mExcelSheetMap.SetKeyStartColmIndex(2);
-                mExcelSheetMap.SetContentStartRowIndex(10);
+                mExcelSheetMap.SetKeyStartRowIndexInSheet(5);
+                mExcelSheetMap.SetKeyStartColmIndexInSheet(2);
+                mExcelSheetMap.SetContentStartRowIndexInSheet(10);
 
                 mExcelSheetMap.ReloadKey();
                 mExcelSheetMap.LoadAllCellData(true);
@@ -193,9 +193,9 @@ namespace ExcelConsole
                     throw new Exception($"mExcelFateNpc.GetWorkSheetByIndex(0) 获取数据出错");
                 }
 
-                mExcelSheetMapBNpcID.SetKeyStartRowIndex(1);
-                mExcelSheetMapBNpcID.SetKeyStartColmIndex(1);
-                mExcelSheetMapBNpcID.SetContentStartRowIndex(2);
+                mExcelSheetMapBNpcID.SetKeyStartRowIndexInSheet(1);
+                mExcelSheetMapBNpcID.SetKeyStartColmIndexInSheet(1);
+                mExcelSheetMapBNpcID.SetContentStartRowIndexInSheet(2);
 
                 mExcelSheetMapBNpcID.ReloadKey();
                 mExcelSheetMapBNpcID.LoadAllCellData(true);
@@ -211,9 +211,9 @@ namespace ExcelConsole
                     throw new Exception($"mExcelBNpcName.GetWorkSheetByIndex(0) 获取数据出错");
                 }
 
-                mExcelSheetBNpcName.SetKeyStartRowIndex(5);
-                mExcelSheetBNpcName.SetKeyStartColmIndex(2);
-                mExcelSheetBNpcName.SetContentStartRowIndex(11);
+                mExcelSheetBNpcName.SetKeyStartRowIndexInSheet(5);
+                mExcelSheetBNpcName.SetKeyStartColmIndexInSheet(2);
+                mExcelSheetBNpcName.SetContentStartRowIndexInSheet(11);
 
                 mExcelSheetBNpcName.ReloadKey();
                 mExcelSheetBNpcName.LoadAllCellData(true);
@@ -253,9 +253,10 @@ namespace ExcelConsole
         {
             InternalLoadFile();
 
-            var _allDataList = mExcelSheetFateNpc.GetAllDataList();
+            var _allDataList = mExcelSheetFateNpc?.GetAllDataList();
 
-            if (_allDataList == null || _allDataList.Count == 0)
+            if (mExcelSheetFateNpc == null || mExcelSheetFateNpc == null || mExcelSheetEObj == null ||
+                _allDataList == null || _allDataList.Count == 0)
             {
                 throw new Exception($"mExcelSheetFateNpc.GetAllDataList() 出错，数量无效");
             }
@@ -281,7 +282,7 @@ namespace ExcelConsole
                         continue;
                     }
 
-                    var _targetFateNpcRowDataList = mExcelSheetFateNpc.GetRowCellDataByTargetKeysAndValus(
+                    var _targetFateNpcRowDataList = mExcelSheetFateNpc?.GetRowCellDataByTargetKeysAndValus(
                         new List<int> { 2 },
                         new List<string> { _tempBaseNpcStr }
                     );
@@ -300,21 +301,21 @@ namespace ExcelConsole
                     }
                 }
 
-                var _targetLevelRefRowDataList = mExcelSheetLevelReference.GetRowCellDataByTargetKeysAndValus(
+                var _targetLevelRefRowDataList = mExcelSheetLevelReference?.GetRowCellDataByTargetKeysAndValus(
                     new List<int> { mIndexOfLevelRefKeyDev },
                     new List<string> { _levelRefStr }
                 );
 
                 if (_targetLevelRefRowDataList == null || _targetLevelRefRowDataList.Count < 1)
                 {
-                    _targetLevelRefRowDataList = mExcelSheetLevelReference.GetRowCellDataByTargetKeysAndValus(
+                    _targetLevelRefRowDataList = mExcelSheetLevelReference?.GetRowCellDataByTargetKeysAndValus(
                         new List<int> { mIndexOfLevelRefKeyAlias },
                         new List<string> { _levelRefStr }
                     );
 
                     if (_targetLevelRefRowDataList == null || _targetLevelRefRowDataList.Count < 1)
                     {
-                        _targetLevelRefRowDataList = mExcelSheetLevelReference.GetRowCellDataByTargetKeysAndValus(
+                        _targetLevelRefRowDataList = mExcelSheetLevelReference?.GetRowCellDataByTargetKeysAndValus(
                             new List<int> { mIndexOfLevelRefKeyAlias },
                             new List<string> { _levelRefStr }
                         );
@@ -353,7 +354,7 @@ namespace ExcelConsole
                 var _overrideFateNpcStr = _singleFateNpcDataList[4].GetCellValue();
                 if (!string.IsNullOrEmpty(_overrideFateNpcStr))
                 {
-                    var _tempOverrideFateNpcDataList = mExcelSheetFateNpc.GetRowCellDataByTargetKeysAndValus(
+                    var _tempOverrideFateNpcDataList = mExcelSheetFateNpc?.GetRowCellDataByTargetKeysAndValus(
                         new List<int> { 2 },
                         new List<string> { _overrideFateNpcStr }
                     );
@@ -387,7 +388,7 @@ namespace ExcelConsole
                         }
                         else
                         {
-                            var _tempBNpcBaseDataList = mExcelSheetBNpcBase.GetRowCellDataByTargetKeysAndValus(
+                            var _tempBNpcBaseDataList = mExcelSheetBNpcBase?.GetRowCellDataByTargetKeysAndValus(
                                 new List<int> { 3 },
                                 new List<string> { _tempBaseIDStr }
                             );
@@ -425,7 +426,7 @@ namespace ExcelConsole
                 _newFateNpcToMonsterData.MapID = _mapID;
 
                 // 去 Map.xlsx 查找一下
-                var _targetMapRowDataList = mExcelSheetMap.GetRowCellDataByTargetKeysAndValus(
+                var _targetMapRowDataList = mExcelSheetMap?.GetRowCellDataByTargetKeysAndValus(
                     new List<int> { 0 },
                     new List<string> { _mapIDStr }
                 );
@@ -442,7 +443,7 @@ namespace ExcelConsole
                 }
 
                 // 去 MapBNpcID 表 查找一下
-                var _targetMapBNpcIDRowDataList = mExcelSheetMapBNpcID.GetRowCellDataByTargetKeysAndValus(
+                var _targetMapBNpcIDRowDataList = mExcelSheetMapBNpcID?.GetRowCellDataByTargetKeysAndValus(
                     new List<int> { 0 },
                     new List<string> { _pathStr }
                 );
@@ -469,8 +470,12 @@ namespace ExcelConsole
             Dictionary<int, List<string>> _writeDataMap = new Dictionary<int, List<string>>();
 
             int _newIndex = -1;
-
-            var _templateRowData = mExcelSheetMonster.GetAllDataList()[0];
+            var _tempAllDataList = mExcelSheetMonster?.GetAllDataList();
+            if (_tempAllDataList == null)
+            {
+                throw new Exception("mExcelSheetMonster?.GetAllDataList(); 为空，请检查!");
+            }
+            var _templateRowData = _tempAllDataList[0];
 
             List<string> _templateDataList = new List<string>();
 
@@ -496,8 +501,8 @@ namespace ExcelConsole
             foreach (var _pair in _fateNpcDataMap)
             {
                 int _targetIndex = 0;
-                List<string> _finalStrList = null;
-                var _targetRowDataList = mExcelSheetMonster.GetCacheRowDataListByKeyStr(_pair.Key.ToString());
+                List<string> _finalStrList = new List<string>();
+                var _targetRowDataList = mExcelSheetMonster?.GetCacheRowDataListByKeyStr(_pair.Key.ToString());
                 if (_targetRowDataList == null || _targetRowDataList.Count < 1)
                 {
                     // 新数据
@@ -552,10 +557,10 @@ namespace ExcelConsole
 
             foreach (var _pair in _writeDataMap)
             {
-                mExcelSheetMonster.WriteOneData(_pair.Key, _pair.Value, true);
+                mExcelSheetMonster?.WriteOneData(_pair.Key, _pair.Value, true);
             }
 
-            mExcelMonster.SaveFile();
+            mExcelMonster?.SaveFile();
 
             return true;
         }
@@ -563,7 +568,7 @@ namespace ExcelConsole
         // 写入名字
         private void InternalLoadFateNpcBaseIDAndName(int fateNpcKey, FateNpcToMonsterData targetData, Dictionary<int, FateNpcToMonsterData> totalData)
         {
-            var _cachedFateNpcData = mExcelSheetFateNpc.GetCacheRowDataListByKeyStr(fateNpcKey.ToString());
+            var _cachedFateNpcData = mExcelSheetFateNpc?.GetCacheRowDataListByKeyStr(fateNpcKey.ToString());
             if (_cachedFateNpcData == null || _cachedFateNpcData.Count < 1)
             {
                 throw new Exception($"无法获取缓存的数据，FateNpc : [{fateNpcKey}]");
@@ -594,7 +599,7 @@ namespace ExcelConsole
 
             if (targetData.IsEObj)
             {
-                var _targetEObjDataList = mExcelSheetEObj.GetCacheRowDataListByKeyStr(targetData.BNpcID.ToString());
+                var _targetEObjDataList = mExcelSheetEObj?.GetCacheRowDataListByKeyStr(targetData.BNpcID.ToString());
                 if (_targetEObjDataList == null || _targetEObjDataList.Count < 1)
                 {
                     throw new Exception($"无法获取  Eobj 数据，ID是：[{targetData.BNpcID}] , FateNpc : [{fateNpcKey}]");
@@ -609,7 +614,7 @@ namespace ExcelConsole
             if (!string.IsNullOrEmpty(_bNPCNameMappingStr))
             {
                 // 这里看下 BaseID 是否已经有了，如果有了， 那么去 BaseID 看看
-                var _targetRowDataList = mExcelSheetBNpcName.GetRowCellDataByTargetKeysAndValus(
+                var _targetRowDataList = mExcelSheetBNpcName?.GetRowCellDataByTargetKeysAndValus(
                     new List<int> { 4 },
                     new List<string> { _bNPCNameMappingStr }
                 );
@@ -630,7 +635,7 @@ namespace ExcelConsole
                 return;
             }
 
-            var _cacheBNpcDataList = mExcelSheetBNpcBase.GetCacheRowDataListByKeyStr(targetData.BNpcID.ToString());
+            var _cacheBNpcDataList = mExcelSheetBNpcBase?.GetCacheRowDataListByKeyStr(targetData.BNpcID.ToString());
             if (_cacheBNpcDataList == null || _cacheBNpcDataList.Count < 1)
             {
                 throw new Exception($"无法获取 BNpcBase 数据，ID是  : [{targetData.BNpcID}] , FateNpc : [{fateNpcKey}]");
@@ -640,7 +645,7 @@ namespace ExcelConsole
 
             if (!string.IsNullOrEmpty(_tempBNpcNameStr))
             {
-                var _targetRowDataList = mExcelSheetBNpcName.GetRowCellDataByTargetKeysAndValus(
+                var _targetRowDataList = mExcelSheetBNpcName?.GetRowCellDataByTargetKeysAndValus(
                     new List<int> { 4 },
                     new List<string> { _tempBNpcNameStr }
                 );

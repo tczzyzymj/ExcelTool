@@ -9,24 +9,24 @@ namespace ExcelConsole
 {
     public class ProcessForFateNPCAbout : ProcessBase
     {
-        private CSVFileData mFateCSVFile = null;
-        private CSVSheetData mFateCSVSheet = null;
+        private CSVFileData? mFateCSVFile = null;
+        private CSVSheetData? mFateCSVSheet = null;
 
-        private ExcelFileData mFateExcelFile = null;
-        private ExcelSheetData mFatePopGroupExcelSheet = null;
-        private ExcelSheetData mFateGuardExcelSheet = null;
+        private ExcelFileData? mFateExcelFile = null;
+        private ExcelSheetData? mFatePopGroupExcelSheet = null;
+        private ExcelSheetData? mFateGuardExcelSheet = null;
 
-        private ExcelFileData mFateMonsterExcelFile = null;
-        private ExcelSheetData mFateMonsterExcelSheet = null;
+        private ExcelFileData? mFateMonsterExcelFile = null;
+        private ExcelSheetData? mFateMonsterExcelSheet = null;
 
-        private ExcelFileData mFateNpcExcelFile = null;
-        private ExcelSheetData mFateNpcExcelSheet = null;
+        private ExcelFileData? mFateNpcExcelFile = null;
+        private ExcelSheetData? mFateNpcExcelSheet = null;
 
-        private ExcelFileData mExcelLevelReference = null;
-        private ExcelSheetData mExcelSheetLevelReference = null;
+        private ExcelFileData? mExcelLevelReference = null;
+        private ExcelSheetData? mExcelSheetLevelReference = null;
 
-        private CSVFileData mFatePopGroupCSVFile = null;
-        private CSVSheetData mFatePopGroupCSVSheet = null;
+        private CSVFileData? mFatePopGroupCSVFile = null;
+        private CSVSheetData? mFatePopGroupCSVSheet = null;
 
         private static int mNpcResID = CommonUtil.GetIndexByZM("DM") - 1;
 
@@ -111,9 +111,9 @@ namespace ExcelConsole
                     throw new Exception($"mExcelLevelReference.GetWorkSheetByIndex(0) 获取数据出错");
                 }
 
-                mExcelSheetLevelReference.SetKeyStartRowIndex(5);
-                mExcelSheetLevelReference.SetKeyStartColmIndex(2);
-                mExcelSheetLevelReference.SetContentStartRowIndex(10);
+                mExcelSheetLevelReference.SetKeyStartRowIndexInSheet(5);
+                mExcelSheetLevelReference.SetKeyStartColmIndexInSheet(2);
+                mExcelSheetLevelReference.SetContentStartRowIndexInSheet(10);
 
                 mExcelSheetLevelReference.ReloadKey();
                 mExcelSheetLevelReference.LoadAllCellData(true);
@@ -129,9 +129,9 @@ namespace ExcelConsole
                     throw new Exception("获取数据失败， mFateMonsterExcelFile.GetWorkSheetByIndex(1)");
                 }
 
-                mFateMonsterExcelSheet.SetKeyStartRowIndex(1);
-                mFateMonsterExcelSheet.SetKeyStartColmIndex(1);
-                mFateMonsterExcelSheet.SetContentStartRowIndex(4);
+                mFateMonsterExcelSheet.SetKeyStartRowIndexInSheet(1);
+                mFateMonsterExcelSheet.SetKeyStartColmIndexInSheet(1);
+                mFateMonsterExcelSheet.SetContentStartRowIndexInSheet(4);
 
                 mFateMonsterExcelSheet.ReloadKey();
                 mFateMonsterExcelSheet.LoadAllCellData(true);
@@ -155,7 +155,7 @@ namespace ExcelConsole
         {
             InternalLoadFile();
 
-            var _allFateCSVDataList = mFateGuardExcelSheet.GetAllDataList();
+            var _allFateCSVDataList = mFateGuardExcelSheet?.GetAllDataList();
             if (_allFateCSVDataList == null || _allFateCSVDataList.Count < 1)
             {
                 throw new Exception($"mFateCSVSheet.GetAllDataList() 错误，请检查");
@@ -180,7 +180,7 @@ namespace ExcelConsole
 
             foreach (var _fateID in _fateIDList)
             {
-                var _targetFateRowDataList = mFateCSVSheet.GetRowCellDataByTargetKeysAndValus(
+                var _targetFateRowDataList = mFateCSVSheet?.GetRowCellDataByTargetKeysAndValus(
                     new List<int> { 0 },
                     new List<string> { _fateID.ToString() }
                 );
@@ -202,7 +202,7 @@ namespace ExcelConsole
                     continue;
                 }
 
-                var _fatePopGroupRowDataList = mFatePopGroupCSVSheet.GetRowCellDataByTargetKeysAndValus(
+                var _fatePopGroupRowDataList = mFatePopGroupCSVSheet?.GetRowCellDataByTargetKeysAndValus(
                     new List<int> { 0 },
                     new List<string> { _starterGroupID.ToString() }
                 );
@@ -231,7 +231,7 @@ namespace ExcelConsole
 
             foreach (var _pair in _fateNpcDataMap)
             {
-                var _targetRowDataList = mFateMonsterExcelSheet.GetRowCellDataByTargetKeysAndValus(
+                var _targetRowDataList = mFateMonsterExcelSheet?.GetRowCellDataByTargetKeysAndValus(
                     new List<int> { 8 },
                     new List<string> { _pair.Value.FateNpcID.ToString() }
                 );
@@ -259,7 +259,7 @@ namespace ExcelConsole
 
             foreach (var _pair in _fateNpcDataMap)
             {
-                var _fatePopGroupRowDataList = mFatePopGroupExcelSheet.GetRowCellDataByTargetKeysAndValus(
+                var _fatePopGroupRowDataList = mFatePopGroupExcelSheet?.GetRowCellDataByTargetKeysAndValus(
                     new List<int> { 0 },
                     new List<string> { _pair.Key.ToString() }
                 );
@@ -275,7 +275,7 @@ namespace ExcelConsole
                 _fatePopGroupStringDataList[_npcResIDIndex + 1] = "1"; // 最小数量
                 _fatePopGroupStringDataList[_npcResIDIndex + 2] = _pair.Value.MaxNum.ToString(); // 最大数量
 
-                var _fateNpcRowDataList = mFateNpcExcelSheet.GetRowCellDataByTargetKeysAndValus(
+                var _fateNpcRowDataList = mFateNpcExcelSheet?.GetRowCellDataByTargetKeysAndValus(
                     new List<int> { 0 },
                     new List<string> { _pair.Value.FateNpcID.ToString() }
                 );
@@ -291,7 +291,9 @@ namespace ExcelConsole
                 int.TryParse(_fateNpcRowDataList[_idleRangeIndex].GetCellValue(), out var _idleRange);
                 if (_idleRange > 0)
                 {
-                    _fatePopGroupStringDataList[mFatePopGroupIdleRangeIndex] = CommonUtil.GetPosInfoByLevelReferenceID(_idleRange, mExcelSheetLevelReference, true);
+                    _fatePopGroupStringDataList[mFatePopGroupIdleRangeIndex] = CommonUtil.GetPosInfoByLevelReferenceID(
+                        _idleRange, mExcelSheetLevelReference, true, false, true
+                    );
                 }
                 else
                 {
@@ -302,7 +304,9 @@ namespace ExcelConsole
                 int.TryParse(_fateNpcRowDataList[_depopRangeIndex].GetCellValue(), out var _depopRange);
                 if (_idleRange > 0)
                 {
-                    _fatePopGroupStringDataList[mFatePopGroupDepopRangeIndex] = CommonUtil.GetPosInfoByLevelReferenceID(_depopRange, mExcelSheetLevelReference, true);
+                    _fatePopGroupStringDataList[mFatePopGroupDepopRangeIndex] = CommonUtil.GetPosInfoByLevelReferenceID(
+                        _depopRange, mExcelSheetLevelReference, true, false, true
+                    );
                 }
                 else
                 {
@@ -314,10 +318,10 @@ namespace ExcelConsole
 
             foreach (var _pair in _writeDataMap)
             {
-                mFatePopGroupExcelSheet.WriteOneData(_pair.Key, _pair.Value, true);
+                mFatePopGroupExcelSheet?.WriteOneData(_pair.Key, _pair.Value, true);
             }
 
-            mFateExcelFile.SaveFile();
+            mFateExcelFile?.SaveFile();
 
             return true;
         }
@@ -327,7 +331,7 @@ namespace ExcelConsole
             int.TryParse(_fateNpcRowDataList[_fateNpcLayoutIDIndex].GetCellValue(), out var _layoutID);
             if (_layoutID > 0)
             {
-                var _tempStr = CommonUtil.GetPosInfoByLevelReferenceID(_layoutID, mExcelSheetLevelReference, true, true);
+                var _tempStr = CommonUtil.GetPosInfoByLevelReferenceID(_layoutID, mExcelSheetLevelReference, true, true, false);
                 if (!string.IsNullOrEmpty(_tempStr))
                 {
                     _fatePopGroupStringDataList[mFatePopGroupPopRangeIndex] = _tempStr;
@@ -339,7 +343,7 @@ namespace ExcelConsole
             int.TryParse(_fateNpcRowDataList[_fateNpcLayoutIDIndex].GetCellValue(), out var _popRange);
             if (_popRange > 0)
             {
-                var _tempStr = CommonUtil.GetPosInfoByLevelReferenceID(_popRange, mExcelSheetLevelReference, true, true);
+                var _tempStr = CommonUtil.GetPosInfoByLevelReferenceID(_popRange, mExcelSheetLevelReference, true, true, false);
                 if (!string.IsNullOrEmpty(_tempStr))
                 {
                     _fatePopGroupStringDataList[mFatePopGroupPopRangeIndex] = _tempStr;

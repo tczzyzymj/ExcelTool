@@ -21,6 +21,9 @@ namespace ExcelConsole
             Console.WriteLine("2 : 处理端游 FateGuard 导入后 创建物相关");
             Console.WriteLine("3 : 处理端游 FateGuard 导入后 Npc相关");
             Console.WriteLine("4 : 处理端游 FateNpc 全部导入 Monster");
+            Console.WriteLine("5 : 处理 Monster RandomPos 列名字");
+            Console.WriteLine("6 : 处理 Monster 的 RandomPopRange 数据");
+            Console.WriteLine("7 : 处理 Monster ID 映射 FateNpcID");
             Console.WriteLine("请输入:");
             var _keyinfo = Console.ReadKey();
             ProcessBase? _process = null;
@@ -46,6 +49,21 @@ namespace ExcelConsole
                     _process = new ProcessForFateNpcToMonster();
                     break;
                 }
+                case '5':
+                {
+                    _process = new ProcessForCreateNewColumForFatePopGroup();
+                    break;
+                }
+                case '6':
+                {
+                    _process = new ProcessForFatePopGroupRandomPopPos();
+                    break;
+                }
+                case '7':
+                {
+                    _process = new ProcessForUseNewMonsterID();
+                    break;
+                }
                 default:
                 {
                     throw new Exception("输入了错误的内容：" + _keyinfo.KeyChar);
@@ -57,7 +75,7 @@ namespace ExcelConsole
                 throw new Exception("错误，没有对应的处理方法");
             }
 
-            _process.FolderPath = targetFolder.FullName;
+            _process.FolderPath = Path.Combine(targetFolder.FullName, $"{_keyinfo.KeyChar}");
             Console.WriteLine();
             try
             {
