@@ -24,6 +24,8 @@ namespace ExcelConsole
             Console.WriteLine("5 : 处理 Monster RandomPos 列名字");
             Console.WriteLine("6 : 处理 Monster 的 RandomPopRange 数据");
             Console.WriteLine("7 : 处理 Monster ID 映射 FateNpcID");
+            Console.WriteLine("8 : 导出 FateArrayNpcYell 表");
+            Console.WriteLine("9 : 处理 Monster 的 FateID");
             Console.WriteLine("请输入:");
             var _keyinfo = Console.ReadKey();
             ProcessBase? _process = null;
@@ -62,6 +64,16 @@ namespace ExcelConsole
                 case '7':
                 {
                     _process = new ProcessForUseNewMonsterID();
+                    break;
+                }
+                case '8':
+                {
+                    _process = new ProcessForExportNpcYellArray();
+                    break;
+                }
+                case '9':
+                {
+                    _process = new ProcessForMonsterFateID();
                     break;
                 }
                 default:

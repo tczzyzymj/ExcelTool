@@ -65,7 +65,15 @@ namespace ExcelTool
             {
                 return mCellValue;
             }
-            return mCellValue.Replace("'", "");
+
+            if (mCellValue[0].Equals("'"))
+            {
+                return mCellValue.Replace("'", "");
+            }
+            else
+            {
+                return mCellValue;
+            }
         }
 
         public void WriteCellValue(string targetStr)
