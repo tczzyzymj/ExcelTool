@@ -1,39 +1,20 @@
 ﻿using ExcelTool;
-using OfficeOpenXml;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExcelConsole
 {
     public class ProcessForExportNpcYellArray : ProcessBase
     {
-        private class FateArrayNpcYellData
-        {
-            public int ID;
-            public int YellInterval; // 最小间隔
-            public int YellIntervalMax; // 最大间隔
-            public List<int> NpcYellIDList = new List<int>();
-        }
-
-        private ExcelFileData? mExcelFateArrayNpcYell;
-        private ExcelSheetData? mExcelSheetFateArrayNpcYell;
-
-        private ExcelFileData? mExcelNpcYell;
-        private ExcelSheetData? mExcelSheetNpcYell;
-
-        private ExcelFileData? mExporFile = null;
-
         public static int mMaxYellCount = 8;
-
-        private List<FateArrayNpcYellData> mWriteDataList = new List<FateArrayNpcYellData>();
-
         private static int mIDIndex = CommonUtil.GetIndexByZM("B") - 2;
+        private static int mYellFirstIndex = CommonUtil.GetIndexByZM("G") - 2;
         private static int mYellIntervalIndex = CommonUtil.GetIndexByZM("E") - 2;
         private static int mYellIntervalMaxIndex = CommonUtil.GetIndexByZM("F") - 2;
-        private static int mYellFirstIndex = CommonUtil.GetIndexByZM("G") - 2;
+        private ExcelFileData? mExcelFateArrayNpcYell;
+        private ExcelFileData? mExcelNpcYell;
+        private ExcelSheetData? mExcelSheetFateArrayNpcYell;
+        private ExcelSheetData? mExcelSheetNpcYell;
+        private ExcelFileData? mExporFile = null;
+        private List<FateArrayNpcYellData> mWriteDataList = new List<FateArrayNpcYellData>();
 
         public override bool Process()
         {
@@ -78,7 +59,7 @@ namespace ExcelConsole
 
                     mExcelSheetNpcYell.LoadAllCellData(true);
                 }
-                //end 
+                //end
 
                 // 导出目标表
                 {
@@ -171,6 +152,14 @@ namespace ExcelConsole
             mExporFile?.SaveFile();
 
             return true;
+        }
+
+        private class FateArrayNpcYellData
+        {
+            public int ID;
+            public List<int> NpcYellIDList = new List<int>();
+            public int YellInterval; // 最小间隔
+            public int YellIntervalMax; // 最大间隔
         }
     }
 }

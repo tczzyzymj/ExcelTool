@@ -1,93 +1,67 @@
 ﻿using ExcelTool;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExcelConsole
 {
     public class FateNpcData
     {
+        public int BaseID;
+        public string DepopRangePosInfo;
         public int FateNpcID;
 
-        public int MonsterID;
-
-        public int BaseID;
-
-        public string PopRangePosInfo;
-
-        public string LogInfo;
-
-        public int MinCount = 1;
-        public int MaxCount = 1;
-
         public string IdleRangePosInfo;
-
-        public string DepopRangePosInfo;
+        public string LogInfo;
+        public int MaxCount = 1;
+        public int MinCount = 1;
+        public int MonsterID;
+        public string PopRangePosInfo;
     }
 
     public class ProcessForUseNewMonsterID : ProcessBase
     {
-        private ExcelFileData? mExcelFateNpc = null;
-        private ExcelSheetData? mExcelSheetFateNpc = null;
-
-        private ExcelFileData? mExcelMonster = null;
-        private ExcelSheetData? mExcelSheetMonster = null;
-
-        private ExcelFileData? mExcelFate = null;
-        private ExcelSheetData? mExcelSheetPopGroupInFateExcel = null;
-
-        private ExcelFileData? mExcelFateOrigin = null;
-        private ExcelSheetData? mExcelSheetFateOrigin = null;
-
-        private ExcelFileData? mExcelFatePopGropOrigin = null;
-        private ExcelSheetData? mExcelSheetFatePopGroupOrigin = null;
-
-        private ExcelFileData? mExcelLevelReference = null;
-        private ExcelSheetData? mExcelSheetLevelReference = null;
-
-        private CSVFileData? mCSVFatePopGroup = null;
-        private CSVSheetData? mCSVSheetFatePopGroup = null;
-
-
-        private ExcelFileData? mExcelCompare = null;
-
-        private static int mFatePopGroupFirstMonsterIDStartIndex = CommonUtil.GetIndexByZM("E") - 1;
-        private static int mFatePopGroupFirstMonsterBaseIDIndex = CommonUtil.GetIndexByZM("F") - 1;
-        private static int mFatePopGroupFirstMonsterPosStartIndex = CommonUtil.GetIndexByZM("I") - 1;
-        private static int mFatePopGroupFirstMonsteMinrCountIndex = CommonUtil.GetIndexByZM("G") - 1;
-        private static int mFatePopGroupFirstMonsterFirstMaxCountIndex = CommonUtil.GetIndexByZM("H") - 1;
-        private static int mFatePopGroupFirstMonsterIdleRangeIndex = CommonUtil.GetIndexByZM("R") - 1;
-        private static int mFatePopGroupFirstMonsterDepopRangeIndex = CommonUtil.GetIndexByZM("S") - 1;
-
-        private static int mFatePopGroupFirstNpcIDIndex = CommonUtil.GetIndexByZM("IK") - 1;
-        private static int mFatePopGroupFirstNpcPopRangeIndex = CommonUtil.GetIndexByZM("IN") - 1;
-        private static int mFatePopGroupFirstNpcMinNumIndex = CommonUtil.GetIndexByZM("IL") - 1;
-        private static int mFatePopGroupFirstNpcMaxNumIndex = CommonUtil.GetIndexByZM("IM") - 1;
-        private static int mFatePopGroupFirstNpcIdleRangeIndex = CommonUtil.GetIndexByZM("IO") - 1;
-        private static int mFatePopGroupFirstNpcDepopRangeIndex = CommonUtil.GetIndexByZM("IP") - 1;
-
-        private static int mFateOriginPopRange00Index = CommonUtil.GetIndexByZM("BE") - 2;
-        private static int mFateOriginAllyIndex = CommonUtil.GetIndexByZM("BQ") - 2;
-
+        private static int mFateNpcDepopRangeIndex = CommonUtil.GetIndexByZM("O") - 1;
+        private static int mFateNpcIdleRangeIndex = CommonUtil.GetIndexByZM("N") - 1;
         private static int mFateNpcLayoutIDIndex = CommonUtil.GetIndexByZM("D") - 1;
         private static int mFateNpcPopRangeIndex = CommonUtil.GetIndexByZM("E") - 1;
         private static int mFateNpcRandomPopRange00Index = CommonUtil.GetIndexByZM("F") - 1;
-        private static int mFateNpcIdleRangeIndex = CommonUtil.GetIndexByZM("N") - 1;
-        private static int mFateNpcDepopRangeIndex = CommonUtil.GetIndexByZM("O") - 1;
-
-        private static int mMonsterFateNpcIdIndex = CommonUtil.GetIndexByZM("I") - 1;
-        private static int mMonsterLevelColumIndex = CommonUtil.GetIndexByZM("E") - 1;
-        private static int mMonsterAttrIDColumIndex = CommonUtil.GetIndexByZM("AR") - 1;
+        private static int mFateOriginAllyIndex = CommonUtil.GetIndexByZM("BQ") - 2;
+        private static int mFateOriginPopRange00Index = CommonUtil.GetIndexByZM("BE") - 2;
+        private static int mFatePopGroupFirstMonsteMinrCountIndex = CommonUtil.GetIndexByZM("G") - 1;
+        private static int mFatePopGroupFirstMonsterBaseIDIndex = CommonUtil.GetIndexByZM("F") - 1;
+        private static int mFatePopGroupFirstMonsterDepopRangeIndex = CommonUtil.GetIndexByZM("S") - 1;
+        private static int mFatePopGroupFirstMonsterFirstMaxCountIndex = CommonUtil.GetIndexByZM("H") - 1;
+        private static int mFatePopGroupFirstMonsterIdleRangeIndex = CommonUtil.GetIndexByZM("R") - 1;
+        private static int mFatePopGroupFirstMonsterIDStartIndex = CommonUtil.GetIndexByZM("E") - 1;
+        private static int mFatePopGroupFirstMonsterPosStartIndex = CommonUtil.GetIndexByZM("I") - 1;
+        private static int mFatePopGroupFirstNpcDepopRangeIndex = CommonUtil.GetIndexByZM("IP") - 1;
+        private static int mFatePopGroupFirstNpcIDIndex = CommonUtil.GetIndexByZM("IK") - 1;
+        private static int mFatePopGroupFirstNpcIdleRangeIndex = CommonUtil.GetIndexByZM("IO") - 1;
+        private static int mFatePopGroupFirstNpcMaxNumIndex = CommonUtil.GetIndexByZM("IM") - 1;
+        private static int mFatePopGroupFirstNpcMinNumIndex = CommonUtil.GetIndexByZM("IL") - 1;
+        private static int mFatePopGroupFirstNpcPopRangeIndex = CommonUtil.GetIndexByZM("IN") - 1;
+        private static int mGuardParamIndex = CommonUtil.GetIndexByZM("BX") - 1;
         private static int mMonsterAITableIDIndex = CommonUtil.GetIndexByZM("BC") - 1;
-        private static int mMonsterNameIndex = CommonUtil.GetIndexByZM("G") - 1;
-        private static int mMonsterIDIndex = CommonUtil.GetIndexByZM("F") - 1;
+        private static int mMonsterAttrIDColumIndex = CommonUtil.GetIndexByZM("AR") - 1;
         private static int mMonsterBaseIDIndex = CommonUtil.GetIndexByZM("D") - 1;
         private static int mMonsterFateIDIndex = CommonUtil.GetIndexByZM("B") - 1;
-
-        private static int mGuardParamIndex = CommonUtil.GetIndexByZM("BX") - 1;
-
+        private static int mMonsterFateNpcIdIndex = CommonUtil.GetIndexByZM("I") - 1;
+        private static int mMonsterIDIndex = CommonUtil.GetIndexByZM("F") - 1;
+        private static int mMonsterLevelColumIndex = CommonUtil.GetIndexByZM("E") - 1;
+        private static int mMonsterNameIndex = CommonUtil.GetIndexByZM("G") - 1;
+        private CSVFileData? mCSVFatePopGroup = null;
+        private CSVSheetData? mCSVSheetFatePopGroup = null;
+        private ExcelFileData? mExcelCompare = null;
+        private ExcelFileData? mExcelFate = null;
+        private ExcelFileData? mExcelFateNpc = null;
+        private ExcelFileData? mExcelFateOrigin = null;
+        private ExcelFileData? mExcelFatePopGropOrigin = null;
+        private ExcelFileData? mExcelLevelReference = null;
+        private ExcelFileData? mExcelMonster = null;
+        private ExcelSheetData? mExcelSheetFateNpc = null;
+        private ExcelSheetData? mExcelSheetFateOrigin = null;
+        private ExcelSheetData? mExcelSheetFatePopGroupOrigin = null;
+        private ExcelSheetData? mExcelSheetLevelReference = null;
+        private ExcelSheetData? mExcelSheetMonster = null;
+        private ExcelSheetData? mExcelSheetPopGroupInFateExcel = null;
         private bool mTest = false;
 
         public override bool Process()
@@ -388,7 +362,6 @@ namespace ExcelConsole
                     var _tempNpcMonsterList = new List<FateNpcData>();
                     _newNpcMonsterListDataMap.Add(_targetFateID, _tempNpcMonsterList);
 
-
                     // 这里是 怪物的
                     for (int _tempIndex = 0; _tempIndex < 12; ++_tempIndex)
                     {
@@ -468,7 +441,6 @@ namespace ExcelConsole
                                 {
                                     break;
                                 }
-
                             } while (false);
 
                             if (_levelReferenceID <= 0)
@@ -612,7 +584,6 @@ namespace ExcelConsole
                                 {
                                     break;
                                 }
-
                             } while (false);
 
                             if (_popLevelRefID <= 0)
@@ -674,7 +645,6 @@ namespace ExcelConsole
                                 }
                             }
                         }
-
                     } while (false);
                 }
 

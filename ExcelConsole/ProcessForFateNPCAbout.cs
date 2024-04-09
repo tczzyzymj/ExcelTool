@@ -1,156 +1,26 @@
 ﻿using ExcelTool;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExcelConsole
 {
     public class ProcessForFateNPCAbout : ProcessBase
     {
-        private CSVFileData? mFateCSVFile = null;
-        private CSVSheetData? mFateCSVSheet = null;
-
-        private ExcelFileData? mFateExcelFile = null;
-        private ExcelSheetData? mFatePopGroupExcelSheet = null;
-        private ExcelSheetData? mFateGuardExcelSheet = null;
-
-        private ExcelFileData? mFateMonsterExcelFile = null;
-        private ExcelSheetData? mFateMonsterExcelSheet = null;
-
-        private ExcelFileData? mFateNpcExcelFile = null;
-        private ExcelSheetData? mFateNpcExcelSheet = null;
-
+        private static int mFatePopGroupDepopRangeIndex = CommonUtil.GetIndexByZM("DR") - 1;
+        private static int mFatePopGroupIdleRangeIndex = CommonUtil.GetIndexByZM("DQ") - 1;
+        private static int mFatePopGroupPopRangeIndex = CommonUtil.GetIndexByZM("DP") - 1;
+        private static int mNpcResID = CommonUtil.GetIndexByZM("DM") - 1;
         private ExcelFileData? mExcelLevelReference = null;
         private ExcelSheetData? mExcelSheetLevelReference = null;
-
+        private CSVFileData? mFateCSVFile = null;
+        private CSVSheetData? mFateCSVSheet = null;
+        private ExcelFileData? mFateExcelFile = null;
+        private ExcelSheetData? mFateGuardExcelSheet = null;
+        private ExcelFileData? mFateMonsterExcelFile = null;
+        private ExcelSheetData? mFateMonsterExcelSheet = null;
+        private ExcelFileData? mFateNpcExcelFile = null;
+        private ExcelSheetData? mFateNpcExcelSheet = null;
         private CSVFileData? mFatePopGroupCSVFile = null;
         private CSVSheetData? mFatePopGroupCSVSheet = null;
-
-        private static int mNpcResID = CommonUtil.GetIndexByZM("DM") - 1;
-
-        private static int mFatePopGroupPopRangeIndex = CommonUtil.GetIndexByZM("DP") - 1;
-        private static int mFatePopGroupIdleRangeIndex = CommonUtil.GetIndexByZM("DQ") - 1;
-        private static int mFatePopGroupDepopRangeIndex = CommonUtil.GetIndexByZM("DR") - 1;
-
-        private void InternalLoadFile()
-        {
-            // 加载 FATE表.xlsx
-            {
-                var _tempPath = Path.Combine(FolderPath, "FATE表.xlsx");
-                mFateExcelFile = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
-
-                mFatePopGroupExcelSheet = mFateExcelFile.GetWorkSheetByIndex(6) as ExcelSheetData;
-                if (mFatePopGroupExcelSheet == null)
-                {
-                    throw new Exception("无法获取 mFateFile.GetWorkSheetByIndex(6)");
-                }
-
-                {
-                    var _keyListData = mFatePopGroupExcelSheet.GetKeyListData();
-                    for (int i = 0; i < _keyListData.Count; ++i)
-                    {
-                        _keyListData[i].IsMainKey = false;
-                    }
-
-                    _keyListData[0].IsMainKey = true;
-                }
-                mFatePopGroupExcelSheet.LoadAllCellData(true);
-
-                mFateGuardExcelSheet = mFateExcelFile.GetWorkSheetByIndex(13) as ExcelSheetData;
-                if (mFateGuardExcelSheet == null)
-                {
-                    throw new Exception("mFateFile.GetWorkSheetByIndex(13)");
-                }
-
-                {
-                    var _keyList = mFateGuardExcelSheet.GetKeyListData();
-                    for (int i = 0; i < _keyList.Count; ++i)
-                    {
-                        _keyList[i].IsMainKey = false;
-                    }
-                    _keyList[0].IsMainKey = true;
-                }
-                mFateGuardExcelSheet.LoadAllCellData(true);
-            }
-
-            // 加载 FatePopGroup.csv
-            {
-                var _tempPath = Path.Combine(FolderPath, "FatePopGroup.csv");
-                mFatePopGroupCSVFile = new CSVFileData(_tempPath, LoadFileType.NormalFile);
-                mFatePopGroupCSVSheet = mFatePopGroupCSVFile.GetWorkSheetByIndex(0) as CSVSheetData;
-
-                if (mFatePopGroupCSVSheet == null)
-                {
-                    throw new Exception("无法获取 mFatePopGroupCSVFile.GetWorkSheetByIndex(0)");
-                }
-                mFatePopGroupCSVSheet.LoadAllCellData(true);
-            }
-
-            // 加载 FateNpc.xlsx 文件
-            {
-                var _tempPath = Path.Combine(FolderPath, "FateNpc.xlsx");
-                mFateNpcExcelFile = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
-                mFateNpcExcelSheet = mFateNpcExcelFile.GetWorkSheetByIndex(0) as ExcelSheetData;
-
-                if (mFateNpcExcelSheet == null)
-                {
-                    throw new Exception($"无法获取 mFateNpcExcelFile.GetWorkSheetByIndex(0)");
-                }
-                mFateNpcExcelSheet.LoadAllCellData(true);
-            }
-
-            // 加载 LevelReference.csv
-            {
-                var _tempPath = Path.Combine(FolderPath, "LevelReference.xlsx");
-                mExcelLevelReference = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
-                mExcelSheetLevelReference = mExcelLevelReference.GetWorkSheetByIndex(0) as ExcelSheetData;
-                if (mExcelSheetLevelReference == null)
-                {
-                    throw new Exception($"mExcelLevelReference.GetWorkSheetByIndex(0) 获取数据出错");
-                }
-
-                mExcelSheetLevelReference.SetKeyStartRowIndexInSheet(5);
-                mExcelSheetLevelReference.SetKeyStartColmIndexInSheet(2);
-                mExcelSheetLevelReference.SetContentStartRowIndexInSheet(10);
-
-                mExcelSheetLevelReference.ReloadKey();
-                mExcelSheetLevelReference.LoadAllCellData(true);
-            }
-
-            // 加载 G怪物表.xlsx
-            {
-                var _tempPath = Path.Combine(FolderPath, "G怪物表.xlsx");
-                mFateMonsterExcelFile = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
-                mFateMonsterExcelSheet = mFateMonsterExcelFile.GetWorkSheetByIndex(1) as ExcelSheetData;
-                if (mFateMonsterExcelSheet == null)
-                {
-                    throw new Exception("获取数据失败， mFateMonsterExcelFile.GetWorkSheetByIndex(1)");
-                }
-
-                mFateMonsterExcelSheet.SetKeyStartRowIndexInSheet(1);
-                mFateMonsterExcelSheet.SetKeyStartColmIndexInSheet(1);
-                mFateMonsterExcelSheet.SetContentStartRowIndexInSheet(4);
-
-                mFateMonsterExcelSheet.ReloadKey();
-                mFateMonsterExcelSheet.LoadAllCellData(true);
-            }
-
-            // 加载 FateCSV
-            {
-                var _tempPath = Path.Combine(FolderPath, "Fate.csv");
-                mFateCSVFile = new CSVFileData(_tempPath, LoadFileType.NormalFile);
-                mFateCSVSheet = mFateCSVFile.GetWorkSheetByIndex(0) as CSVSheetData;
-                if (mFateCSVSheet == null)
-                {
-                    throw new Exception($" mFateCSVFile.GetWorkSheetByIndex(0) 获取数据错误");
-                }
-
-                mFateCSVSheet.LoadAllCellData(true);
-            }
-        }
-
+        private ExcelSheetData? mFatePopGroupExcelSheet = null;
         public override bool Process()
         {
             InternalLoadFile();
@@ -326,6 +196,122 @@ namespace ExcelConsole
             return true;
         }
 
+        private void InternalLoadFile()
+        {
+            // 加载 FATE表.xlsx
+            {
+                var _tempPath = Path.Combine(FolderPath, "FATE表.xlsx");
+                mFateExcelFile = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
+
+                mFatePopGroupExcelSheet = mFateExcelFile.GetWorkSheetByIndex(6) as ExcelSheetData;
+                if (mFatePopGroupExcelSheet == null)
+                {
+                    throw new Exception("无法获取 mFateFile.GetWorkSheetByIndex(6)");
+                }
+
+                {
+                    var _keyListData = mFatePopGroupExcelSheet.GetKeyListData();
+                    for (int i = 0; i < _keyListData.Count; ++i)
+                    {
+                        _keyListData[i].IsMainKey = false;
+                    }
+
+                    _keyListData[0].IsMainKey = true;
+                }
+                mFatePopGroupExcelSheet.LoadAllCellData(true);
+
+                mFateGuardExcelSheet = mFateExcelFile.GetWorkSheetByIndex(13) as ExcelSheetData;
+                if (mFateGuardExcelSheet == null)
+                {
+                    throw new Exception("mFateFile.GetWorkSheetByIndex(13)");
+                }
+
+                {
+                    var _keyList = mFateGuardExcelSheet.GetKeyListData();
+                    for (int i = 0; i < _keyList.Count; ++i)
+                    {
+                        _keyList[i].IsMainKey = false;
+                    }
+                    _keyList[0].IsMainKey = true;
+                }
+                mFateGuardExcelSheet.LoadAllCellData(true);
+            }
+
+            // 加载 FatePopGroup.csv
+            {
+                var _tempPath = Path.Combine(FolderPath, "FatePopGroup.csv");
+                mFatePopGroupCSVFile = new CSVFileData(_tempPath, LoadFileType.NormalFile);
+                mFatePopGroupCSVSheet = mFatePopGroupCSVFile.GetWorkSheetByIndex(0) as CSVSheetData;
+
+                if (mFatePopGroupCSVSheet == null)
+                {
+                    throw new Exception("无法获取 mFatePopGroupCSVFile.GetWorkSheetByIndex(0)");
+                }
+                mFatePopGroupCSVSheet.LoadAllCellData(true);
+            }
+
+            // 加载 FateNpc.xlsx 文件
+            {
+                var _tempPath = Path.Combine(FolderPath, "FateNpc.xlsx");
+                mFateNpcExcelFile = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
+                mFateNpcExcelSheet = mFateNpcExcelFile.GetWorkSheetByIndex(0) as ExcelSheetData;
+
+                if (mFateNpcExcelSheet == null)
+                {
+                    throw new Exception($"无法获取 mFateNpcExcelFile.GetWorkSheetByIndex(0)");
+                }
+                mFateNpcExcelSheet.LoadAllCellData(true);
+            }
+
+            // 加载 LevelReference.csv
+            {
+                var _tempPath = Path.Combine(FolderPath, "LevelReference.xlsx");
+                mExcelLevelReference = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
+                mExcelSheetLevelReference = mExcelLevelReference.GetWorkSheetByIndex(0) as ExcelSheetData;
+                if (mExcelSheetLevelReference == null)
+                {
+                    throw new Exception($"mExcelLevelReference.GetWorkSheetByIndex(0) 获取数据出错");
+                }
+
+                mExcelSheetLevelReference.SetKeyStartRowIndexInSheet(5);
+                mExcelSheetLevelReference.SetKeyStartColmIndexInSheet(2);
+                mExcelSheetLevelReference.SetContentStartRowIndexInSheet(10);
+
+                mExcelSheetLevelReference.ReloadKey();
+                mExcelSheetLevelReference.LoadAllCellData(true);
+            }
+
+            // 加载 G怪物表.xlsx
+            {
+                var _tempPath = Path.Combine(FolderPath, "G怪物表.xlsx");
+                mFateMonsterExcelFile = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
+                mFateMonsterExcelSheet = mFateMonsterExcelFile.GetWorkSheetByIndex(1) as ExcelSheetData;
+                if (mFateMonsterExcelSheet == null)
+                {
+                    throw new Exception("获取数据失败， mFateMonsterExcelFile.GetWorkSheetByIndex(1)");
+                }
+
+                mFateMonsterExcelSheet.SetKeyStartRowIndexInSheet(1);
+                mFateMonsterExcelSheet.SetKeyStartColmIndexInSheet(1);
+                mFateMonsterExcelSheet.SetContentStartRowIndexInSheet(4);
+
+                mFateMonsterExcelSheet.ReloadKey();
+                mFateMonsterExcelSheet.LoadAllCellData(true);
+            }
+
+            // 加载 FateCSV
+            {
+                var _tempPath = Path.Combine(FolderPath, "Fate.csv");
+                mFateCSVFile = new CSVFileData(_tempPath, LoadFileType.NormalFile);
+                mFateCSVSheet = mFateCSVFile.GetWorkSheetByIndex(0) as CSVSheetData;
+                if (mFateCSVSheet == null)
+                {
+                    throw new Exception($" mFateCSVFile.GetWorkSheetByIndex(0) 获取数据错误");
+                }
+
+                mFateCSVSheet.LoadAllCellData(true);
+            }
+        }
         private void InternalProcessForFateNpcPosInfo(List<CellValueData> _fateNpcRowDataList, List<string> _fatePopGroupStringDataList, int _fateNpcLayoutIDIndex)
         {
             int.TryParse(_fateNpcRowDataList[_fateNpcLayoutIDIndex].GetCellValue(), out var _layoutID);

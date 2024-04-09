@@ -1,11 +1,15 @@
-﻿using ExcelTool;
-using OfficeOpenXml;
-
-namespace ExcelConsole
+﻿namespace ExcelConsole
 {
+    public abstract class ProcessBase
+    {
+        public string FolderPath = string.Empty;
+
+        public abstract bool Process();
+    }
+
     internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             string currentPath = System.AppDomain.CurrentDomain.BaseDirectory;
             var _targetFolderPath = Path.Combine(currentPath, "../FileFolder");
@@ -26,59 +30,65 @@ namespace ExcelConsole
             Console.WriteLine("7 : 处理 Monster ID 映射 FateNpcID");
             Console.WriteLine("8 : 导出 FateArrayNpcYell 表");
             Console.WriteLine("9 : 处理 Monster 的 FateID");
+            Console.WriteLine("9 : 处理 护送Fate 的 NpcID");
             Console.WriteLine("请输入:");
-            var _keyinfo = Console.ReadKey();
+            string? _keyinfo = Console.ReadLine();
+            int.TryParse(_keyinfo, out int _inputKey);
             ProcessBase? _process = null;
-            switch (_keyinfo.KeyChar)
+            switch (_inputKey)
             {
-                case '1':
+                case 1:
                 {
                     _process = new ProcessForFateGuardNpcToMonsterLevel();
                     break;
                 }
-                case '2':
+                case 2:
                 {
                     _process = new ProcessForFateMonsterAndReference();
                     break;
                 }
-                case '3':
+                case 3:
                 {
                     _process = new ProcessForFateNPCAbout();
                     break;
                 }
-                case '4':
+                case 4:
                 {
                     _process = new ProcessForFateNpcToMonster();
                     break;
                 }
-                case '5':
+                case 5:
                 {
                     _process = new ProcessForCreateNewColumForFatePopGroup();
                     break;
                 }
-                case '6':
+                case 6:
                 {
                     _process = new ProcessForFatePopGroupRandomPopPos();
                     break;
                 }
-                case '7':
+                case 7:
                 {
                     _process = new ProcessForUseNewMonsterID();
                     break;
                 }
-                case '8':
+                case 8:
                 {
                     _process = new ProcessForExportNpcYellArray();
                     break;
                 }
-                case '9':
+                case 9:
                 {
                     _process = new ProcessForMonsterFateID();
                     break;
                 }
+                case 10:
+                {
+                    break;
+                }
                 default:
                 {
-                    throw new Exception("输入了错误的内容：" + _keyinfo.KeyChar);
+                    throw new Exception("输入了错误的内容：" + _keyinfo);
                 }
             }
 
@@ -87,7 +97,7 @@ namespace ExcelConsole
                 throw new Exception("错误，没有对应的处理方法");
             }
 
-            _process.FolderPath = Path.Combine(targetFolder.FullName, $"{_keyinfo.KeyChar}");
+            _process.FolderPath = Path.Combine(targetFolder.FullName, $"{_keyinfo}");
             Console.WriteLine();
             try
             {
@@ -106,12 +116,5 @@ namespace ExcelConsole
             }
             Console.ReadKey();
         }
-    }
-
-    public abstract class ProcessBase
-    {
-        public string FolderPath = string.Empty;
-
-        public abstract bool Process();
     }
 }
