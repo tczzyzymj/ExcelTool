@@ -48,7 +48,7 @@ namespace ExcelTool
 
         protected bool mHasInit = false;
 
-        public bool DoLoadFile(string absolutePath, LoadFileType fileType)
+        protected bool DoLoadFile(string absolutePath, LoadFileType fileType)
         {
             if (!File.Exists(absolutePath))
             {
@@ -127,7 +127,7 @@ namespace ExcelTool
                                 }
 
                                 // 检测冲突
-                                var _rowData = _currentSheet.GetRowCellDataByTargetKeysAndValus(_mainKeyIndexList, _theKeyCompareValue);
+                                var _rowData = _currentSheet.GetRowCellDataByTargetKeysAndValues(_mainKeyIndexList, _theKeyCompareValue);
                                 if (_rowData != null && _rowData.Count > 0)
                                 {
                                     // 有冲突
@@ -153,7 +153,7 @@ namespace ExcelTool
                                 }
 
                                 // 检测冲突
-                                var _rowData = _currentSheet.GetRowCellDataByTargetKeysAndValus(_mainKeyIndexList, _theKeyCompareValue);
+                                var _rowData = _currentSheet.GetRowCellDataByTargetKeysAndValues(_mainKeyIndexList, _theKeyCompareValue);
                                 if (_rowData != null && _rowData.Count > 0)
                                 {
                                     // 有冲突
@@ -179,7 +179,7 @@ namespace ExcelTool
                                 }
 
                                 // 检测冲突
-                                var _rowData = _currentSheet.GetRowCellDataByTargetKeysAndValus(_mainKeyIndexList, _theKeyCompareValue);
+                                var _rowData = _currentSheet.GetRowCellDataByTargetKeysAndValues(_mainKeyIndexList, _theKeyCompareValue);
                                 if (_rowData != null && _rowData.Count > 0)
                                 {
                                     continue;
@@ -254,6 +254,6 @@ namespace ExcelTool
             }
         }
 
-        public abstract bool InternalLoadFile(string absolutePath);
+        protected abstract bool InternalLoadFile(string absolutePath);
     }
 }

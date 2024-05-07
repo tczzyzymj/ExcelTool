@@ -1,78 +1,75 @@
 ﻿using ExcelTool;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
 
 namespace ExcelConsole
 {
     public class ProcessForFateNpcToMonster : ProcessBase
     {
-        private ExcelFileData? mExcelFateNpc = null;
-        private ExcelSheetData? mExcelSheetFateNpc = null;
+        private ExcelFileData?  mExcelFateNpc;
+        private ExcelSheetData? mExcelSheetFateNpc;
 
-        private ExcelFileData? mExcelMonster = null;
-        private ExcelSheetData? mExcelSheetMonster = null;
+        private ExcelFileData?  mExcelMonster;
+        private ExcelSheetData? mExcelSheetMonster;
 
-        private ExcelFileData? mExcelLevelReference = null;
-        private ExcelSheetData? mExcelSheetLevelReference = null;
+        private ExcelFileData?  mExcelLevelReference;
+        private ExcelSheetData? mExcelSheetLevelReference;
 
-        private ExcelFileData? mExcelMap = null;
-        private ExcelSheetData? mExcelSheetMap = null;
+        private ExcelFileData?  mExcelMap;
+        private ExcelSheetData? mExcelSheetMap;
 
-        private ExcelFileData? mExcelMapBNpcID = null;
-        private ExcelSheetData? mExcelSheetMapBNpcID = null;
+        private ExcelFileData?  mExcelMapBNpcID;
+        private ExcelSheetData? mExcelSheetMapBNpcID;
 
-        private ExcelFileData? mExcelBNpcName = null;
-        private ExcelSheetData? mExcelSheetBNpcName = null;
+        private ExcelFileData?  mExcelBNpcName;
+        private ExcelSheetData? mExcelSheetBNpcName;
 
-        private ExcelFileData? mExcelBNpcBase = null;
-        private ExcelSheetData? mExcelSheetBNpcBase = null;
+        private ExcelFileData?  mExcelBNpcBase;
+        private ExcelSheetData? mExcelSheetBNpcBase;
 
-        private ExcelFileData? mExcelEObj = null;
-        private ExcelSheetData? mExcelSheetEObj = null;
+        private ExcelFileData?  mExcelEObj;
+        private ExcelSheetData? mExcelSheetEObj;
 
         private class FateNpcToMonsterData
         {
-            public int LevelReferenceID = 0;
-            public int MapID = 0;
-            public int BNpcID = 0;
-            public string SEMapID = string.Empty;
-            public string BigMapName = string.Empty;
-            public string SmallMapName = string.Empty;
-            public string MonsterIDKeyStr = string.Empty; // FM地图大区 + FM地图子区
-            public string FateNpcName = string.Empty;
-            public string CampStr = string.Empty; // 阵营字符串
+            public          int    LevelReferenceID;
+            public          int    MapID;
+            public          int    BNpcID;
+            public          string SEMapID         = string.Empty;
+            public          string BigMapName      = string.Empty;
+            public          string SmallMapName    = string.Empty;
+            public          string MonsterIDKeyStr = string.Empty; // FM地图大区 + FM地图子区
+            public          string FateNpcName     = string.Empty;
+            public readonly string CampStr         = string.Empty; // 阵营字符串
 
-            public int OverrideBNpcID = 0; // 继承的 BNpcID
+            public int OverrideBNpcID; // 继承的 BNpcID
 
-            public bool IsEObj = false;
+            public bool IsEObj;
         }
 
         private void InternalLoadFile()
         {
             {
-                string currentPath = System.AppDomain.CurrentDomain.BaseDirectory;
-                var _tempPath = Path.Combine(currentPath, "../FileFolder");
+                string currentPath = AppDomain.CurrentDomain.BaseDirectory;
+                string _tempPath   = Path.Combine(currentPath, "../FileFolder");
                 FolderPath = Path.Combine(_tempPath, "ExportMonster");
                 DirectoryInfo _tempFileInfo = new DirectoryInfo(FolderPath);
+
                 if (!_tempFileInfo.Exists)
                 {
                     Console.WriteLine($"错误，{_tempFileInfo} 路径不存在");
+
                     return;
                 }
             }
 
             // 加载 EObj
             {
-                var _tempPath = Path.Combine(FolderPath, "EObj.xlsx");
-                mExcelEObj = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
+                string _tempPath = Path.Combine(FolderPath, "EObj.xlsx");
+                mExcelEObj      = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
                 mExcelSheetEObj = mExcelEObj.GetWorkSheetByIndex(0) as ExcelSheetData;
+
                 if (mExcelSheetEObj == null)
                 {
-                    throw new Exception($"mExcelEObj.GetWorkSheetByIndex(0) 获取数据出错");
+                    throw new Exception("mExcelEObj.GetWorkSheetByIndex(0) 获取数据出错");
                 }
 
                 mExcelSheetEObj.SetKeyStartRowIndexInSheet(5);
@@ -80,7 +77,7 @@ namespace ExcelConsole
                 mExcelSheetEObj.SetContentStartRowIndexInSheet(10);
 
                 mExcelSheetEObj.ReloadKey();
-                var _allKeyDataList = mExcelSheetEObj.GetKeyListData();
+                List<KeyData> _allKeyDataList = mExcelSheetEObj.GetKeyListData();
                 _allKeyDataList[0].IsMainKey = true;
 
                 mExcelSheetEObj.LoadAllCellData(true);
@@ -88,12 +85,13 @@ namespace ExcelConsole
 
             // 加载 FateNpc
             {
-                var _tempPath = Path.Combine(FolderPath, "FateNpc.xlsx");
-                mExcelFateNpc = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
+                string _tempPath = Path.Combine(FolderPath, "FateNpc.xlsx");
+                mExcelFateNpc      = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
                 mExcelSheetFateNpc = mExcelFateNpc?.GetWorkSheetByIndex(0) as ExcelSheetData;
+
                 if (mExcelSheetFateNpc == null)
                 {
-                    throw new Exception($"mExcelFateNpc.GetWorkSheetByIndex(0) 获取数据出错");
+                    throw new Exception("mExcelFateNpc.GetWorkSheetByIndex(0) 获取数据出错");
                 }
 
                 mExcelSheetFateNpc.SetKeyStartRowIndexInSheet(5);
@@ -101,7 +99,7 @@ namespace ExcelConsole
                 mExcelSheetFateNpc.SetContentStartRowIndexInSheet(11);
 
                 mExcelSheetFateNpc.ReloadKey();
-                var _allKeyDataList = mExcelSheetFateNpc.GetKeyListData();
+                List<KeyData> _allKeyDataList = mExcelSheetFateNpc.GetKeyListData();
                 _allKeyDataList[0].IsMainKey = true;
 
                 mExcelSheetFateNpc.LoadAllCellData(true);
@@ -109,12 +107,13 @@ namespace ExcelConsole
 
             // 加载 BNpcBase 表
             {
-                var _tempPath = Path.Combine(FolderPath, "BNpcBase.xlsx");
-                mExcelBNpcBase = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
+                string _tempPath = Path.Combine(FolderPath, "BNpcBase.xlsx");
+                mExcelBNpcBase      = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
                 mExcelSheetBNpcBase = mExcelBNpcBase.GetWorkSheetByIndex(0) as ExcelSheetData;
+
                 if (mExcelSheetBNpcBase == null)
                 {
-                    throw new Exception($"mExcelFateNpc.GetWorkSheetByIndex(0) 获取数据出错");
+                    throw new Exception("mExcelFateNpc.GetWorkSheetByIndex(0) 获取数据出错");
                 }
 
                 mExcelSheetBNpcBase.SetKeyStartRowIndexInSheet(5);
@@ -122,7 +121,7 @@ namespace ExcelConsole
                 mExcelSheetBNpcBase.SetContentStartRowIndexInSheet(11);
 
                 mExcelSheetBNpcBase.ReloadKey();
-                var _allKeyDataList = mExcelSheetBNpcBase.GetKeyListData();
+                List<KeyData> _allKeyDataList = mExcelSheetBNpcBase.GetKeyListData();
                 _allKeyDataList[0].IsMainKey = true;
 
                 mExcelSheetBNpcBase.LoadAllCellData(true);
@@ -130,31 +129,33 @@ namespace ExcelConsole
 
             // 加载 Monster
             {
-                var _tempPath = Path.Combine(FolderPath, "G怪物表.xlsx");
-                mExcelMonster = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
+                string _tempPath = Path.Combine(FolderPath, "G怪物表.xlsx");
+                mExcelMonster      = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
                 mExcelSheetMonster = mExcelMonster.GetWorkSheetByIndex(1) as ExcelSheetData;
+
                 if (mExcelSheetMonster == null)
                 {
-                    throw new Exception($"mExcelMonster.GetWorkSheetByIndex(1) 获取数据出错");
+                    throw new Exception("mExcelMonster.GetWorkSheetByIndex(1) 获取数据出错");
                 }
 
                 mExcelSheetMonster.SetKeyStartRowIndexInSheet(1);
                 mExcelSheetMonster.ReloadKey();
 
-                var _allKeyDataList = mExcelSheetMonster.GetKeyListData();
-                _allKeyDataList[CommonUtil.GetIndexByZM("I") - 1].IsMainKey = true;
+                List<KeyData> _allKeyDataList = mExcelSheetMonster.GetKeyListData();
+                _allKeyDataList[CommonUtil.GetIndexByZm("I", 1)].IsMainKey = true;
 
                 mExcelSheetMonster.LoadAllCellData(true);
             }
 
             // 加载 LevelReference
             {
-                var _tempPath = Path.Combine(FolderPath, "LevelReference.xlsx");
-                mExcelLevelReference = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
+                string _tempPath = Path.Combine(FolderPath, "LevelReference.xlsx");
+                mExcelLevelReference      = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
                 mExcelSheetLevelReference = mExcelLevelReference.GetWorkSheetByIndex(0) as ExcelSheetData;
+
                 if (mExcelSheetLevelReference == null)
                 {
-                    throw new Exception($"mExcelLevelReference.GetWorkSheetByIndex(0) 获取数据出错");
+                    throw new Exception("mExcelLevelReference.GetWorkSheetByIndex(0) 获取数据出错");
                 }
 
                 mExcelSheetLevelReference.SetKeyStartRowIndexInSheet(5);
@@ -167,12 +168,13 @@ namespace ExcelConsole
 
             // 加载 Map
             {
-                var _tempPath = Path.Combine(FolderPath, "Map.xlsx");
-                mExcelMap = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
+                string _tempPath = Path.Combine(FolderPath, "Map.xlsx");
+                mExcelMap      = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
                 mExcelSheetMap = mExcelMap.GetWorkSheetByIndex(0) as ExcelSheetData;
+
                 if (mExcelSheetMap == null)
                 {
-                    throw new Exception($"mExcelMap.GetWorkSheetByIndex(0) 获取数据出错");
+                    throw new Exception("mExcelMap.GetWorkSheetByIndex(0) 获取数据出错");
                 }
 
                 mExcelSheetMap.SetKeyStartRowIndexInSheet(5);
@@ -185,12 +187,13 @@ namespace ExcelConsole
 
             // 加载 MapBNpcID
             {
-                var _tempPath = Path.Combine(FolderPath, "MapBnpcid.xlsx");
-                mExcelMapBNpcID = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
+                string _tempPath = Path.Combine(FolderPath, "MapBnpcid.xlsx");
+                mExcelMapBNpcID      = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
                 mExcelSheetMapBNpcID = mExcelMapBNpcID.GetWorkSheetByIndex(1) as ExcelSheetData;
+
                 if (mExcelSheetMapBNpcID == null)
                 {
-                    throw new Exception($"mExcelFateNpc.GetWorkSheetByIndex(0) 获取数据出错");
+                    throw new Exception("mExcelFateNpc.GetWorkSheetByIndex(0) 获取数据出错");
                 }
 
                 mExcelSheetMapBNpcID.SetKeyStartRowIndexInSheet(1);
@@ -203,12 +206,13 @@ namespace ExcelConsole
 
             // 加载 BNpcName
             {
-                var _tempPath = Path.Combine(FolderPath, "BNpcName.xlsx");
-                mExcelBNpcName = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
+                string _tempPath = Path.Combine(FolderPath, "BNpcName.xlsx");
+                mExcelBNpcName      = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
                 mExcelSheetBNpcName = mExcelBNpcName.GetWorkSheetByIndex(0) as ExcelSheetData;
+
                 if (mExcelSheetBNpcName == null)
                 {
-                    throw new Exception($"mExcelBNpcName.GetWorkSheetByIndex(0) 获取数据出错");
+                    throw new Exception("mExcelBNpcName.GetWorkSheetByIndex(0) 获取数据出错");
                 }
 
                 mExcelSheetBNpcName.SetKeyStartRowIndexInSheet(5);
@@ -220,69 +224,71 @@ namespace ExcelConsole
             }
         }
 
-        private static int mIndexOfMonsterCampID = CommonUtil.GetIndexByZM("AS") - 1;
+        private static readonly int mIndexOfMonsterCampID = CommonUtil.GetIndexByZm("AS", 1);
 
-        private static int mIndexOffset = 2;
+        private static readonly int mIndexOffset = 2;
 
-        private static int mIndexOfFateNpcID = CommonUtil.GetIndexByZM("B") - mIndexOffset; // -2 是因为 KEY 是从 B 列开始的
-        private static int mIndexOfFateNpcBaseID = CommonUtil.GetIndexByZM("J") - mIndexOffset;
-        private static int mIndexOfFateNpcLayoutID = CommonUtil.GetIndexByZM("K") - mIndexOffset;
-        private static int mIndexOfFateNpcPopRange = CommonUtil.GetIndexByZM("AA") - mIndexOffset;
-        private static int mIndexOfFateNpcBaseNpc = CommonUtil.GetIndexByZM("F") - mIndexOffset;
-        private static int mIndexOfFatenpcKeyDevCode = CommonUtil.GetIndexByZM("D") - mIndexOffset;
-
-        private static int mIndexOfLevelRefKeyDev = CommonUtil.GetIndexByZM("D") - mIndexOffset;
-        private static int mIndexOfLevelRefKeyAlias = CommonUtil.GetIndexByZM("C") - mIndexOffset;
-        private static int mIndexOfLevelRefKey = CommonUtil.GetIndexByZM("B") - mIndexOffset;
-        private static int mIndexOfLevelRefIsEObj = CommonUtil.GetIndexByZM("M") - mIndexOffset;
-        private static int mIndexOfLevelRefBaseID = CommonUtil.GetIndexByZM("N") - mIndexOffset;
-        private static int mIndexOfLevelRefMapID = CommonUtil.GetIndexByZM("O") - mIndexOffset;
-
-        private static int mIndexOfMapPath = CommonUtil.GetIndexByZM("L") - mIndexOffset;
-
-        private static int _fateNpcIndexOfName = CommonUtil.GetIndexByZM("I") - mIndexOffset;
-        private static int _fateNpcTextIndex = CommonUtil.GetIndexByZM("L") - mIndexOffset;
-        private static int _eobjNameIndex = CommonUtil.GetIndexByZM("AD") - mIndexOffset;
-
-        private static int mIndexOfFateNpcEntrType = CommonUtil.GetIndexByZM("H") - mIndexOffset;
+        private static readonly int mIndexOfFateNpcID         = CommonUtil.GetIndexByZm("B", mIndexOffset); // -2 是因为 KEY 是从 B 列开始的
+        private static readonly int mIndexOfFateNpcBaseID     = CommonUtil.GetIndexByZm("J", mIndexOffset);
+        private static readonly int mIndexOfFateNpcLayoutID   = CommonUtil.GetIndexByZm("K", mIndexOffset);
+        private static readonly int mIndexOfFateNpcPopRange   = CommonUtil.GetIndexByZm("AA", mIndexOffset);
+        private static readonly int mIndexOfFateNpcBaseNpc    = CommonUtil.GetIndexByZm("F", mIndexOffset);
+        private static          int mIndexOfFatenpcKeyDevCode = CommonUtil.GetIndexByZm("D", mIndexOffset);
+        private static readonly int mIndexOfLevelRefKeyDev    = CommonUtil.GetIndexByZm("D", mIndexOffset);
+        private static readonly int mIndexOfLevelRefKeyAlias  = CommonUtil.GetIndexByZm("C", mIndexOffset);
+        private static readonly int mIndexOfLevelRefKey       = CommonUtil.GetIndexByZm("B", mIndexOffset);
+        private static readonly int mIndexOfLevelRefIsEObj    = CommonUtil.GetIndexByZm("M", mIndexOffset);
+        private static readonly int mIndexOfLevelRefBaseID    = CommonUtil.GetIndexByZm("N", mIndexOffset);
+        private static readonly int mIndexOfLevelRefMapID     = CommonUtil.GetIndexByZm("O", mIndexOffset);
+        private static readonly int mIndexOfMapPath           = CommonUtil.GetIndexByZm("L", mIndexOffset);
+        private static readonly int mFateNpcIndexOfName       = CommonUtil.GetIndexByZm("I", mIndexOffset);
+        private static readonly int mFateNpcTextIndex         = CommonUtil.GetIndexByZm("L", mIndexOffset);
+        private static readonly int mEobjNameIndex            = CommonUtil.GetIndexByZm("AD", mIndexOffset);
+        private static readonly int mIndexOfFateNpcEntrType   = CommonUtil.GetIndexByZm("H", mIndexOffset);
 
         // G怪物表
-        private static int mIndexOfMonsterFateNpcID = CommonUtil.GetIndexByZM("I") - 1;
+        private static int mIndexOfMonsterFateNpcID = CommonUtil.GetIndexByZm("I", 1);
 
         public override bool Process()
         {
             InternalLoadFile();
 
-            var _allDataList = mExcelSheetFateNpc?.GetAllDataList();
+            List<List<CellValueData>>? _allDataList = mExcelSheetFateNpc?.GetAllDataList();
 
-            if (mExcelSheetFateNpc == null || mExcelSheetFateNpc == null || mExcelSheetEObj == null ||
-                _allDataList == null || _allDataList.Count == 0)
+            if ((mExcelSheetFateNpc == null) ||
+                (mExcelSheetFateNpc == null) ||
+                (mExcelSheetEObj    == null) ||
+                (_allDataList       == null) ||
+                (_allDataList.Count == 0))
             {
-                throw new Exception($"mExcelSheetFateNpc.GetAllDataList() 出错，数量无效");
+                throw new Exception("mExcelSheetFateNpc.GetAllDataList() 出错，数量无效");
             }
 
             Dictionary<int, FateNpcToMonsterData> _fateNpcDataMap = new Dictionary<int, FateNpcToMonsterData>();
 
-            foreach (var _singleFateNpcDataList in _allDataList)
+            foreach (List<CellValueData> _singleFateNpcDataList in _allDataList)
             {
-                if (!int.TryParse(_singleFateNpcDataList[mIndexOfFateNpcID].GetCellValue(), out var _fateNpcID) || _fateNpcID <= 0)
+                if (!int.TryParse(_singleFateNpcDataList[mIndexOfFateNpcID].GetCellValue(), out int _fateNpcID) || (_fateNpcID <= 0))
                 {
                     continue;
                 }
 
                 // 先找一下LayoutID
-                var _levelRefStr = InternalGetLevelReferenceID(_singleFateNpcDataList);
+                string _levelRefStr = InternalGetLevelReferenceID(_singleFateNpcDataList);
+
                 if (string.IsNullOrEmpty(_levelRefStr))
                 {
                     // 这里去看一下，是否有继承的NPC
-                    var _tempBaseNpcStr = _singleFateNpcDataList[mIndexOfFateNpcBaseNpc].GetCellValue();
+                    string _tempBaseNpcStr = _singleFateNpcDataList[mIndexOfFateNpcBaseNpc].GetCellValue();
+
                     if (string.IsNullOrEmpty(_tempBaseNpcStr))
                     {
                         CommonUtil.ShowError($"FateNpc : [{_fateNpcID}] 无法找到出生点, LevelReference 为空，且没有继承 FateNpc , 请检查");
+
                         continue;
                     }
 
-                    var _targetFateNpcRowDataList = mExcelSheetFateNpc?.GetRowCellDataByTargetKeysAndValus(
+                    List<CellValueData>? _targetFateNpcRowDataList = mExcelSheetFateNpc?.GetRowCellDataByTargetKeysAndValues(
                         new List<int> { 2 },
                         new List<string> { _tempBaseNpcStr }
                     );
@@ -297,25 +303,26 @@ namespace ExcelConsole
                     if (string.IsNullOrEmpty(_levelRefStr))
                     {
                         CommonUtil.ShowError($"FateNpc : [{_fateNpcID}] 的继承 FateNpc : [{_tempBaseNpcStr}] 没有出生信息，请检查");
+
                         continue;
                     }
                 }
 
-                var _targetLevelRefRowDataList = mExcelSheetLevelReference?.GetRowCellDataByTargetKeysAndValus(
+                List<CellValueData>? _targetLevelRefRowDataList = mExcelSheetLevelReference?.GetRowCellDataByTargetKeysAndValues(
                     new List<int> { mIndexOfLevelRefKeyDev },
                     new List<string> { _levelRefStr }
                 );
 
-                if (_targetLevelRefRowDataList == null || _targetLevelRefRowDataList.Count < 1)
+                if ((_targetLevelRefRowDataList == null) || (_targetLevelRefRowDataList.Count < 1))
                 {
-                    _targetLevelRefRowDataList = mExcelSheetLevelReference?.GetRowCellDataByTargetKeysAndValus(
+                    _targetLevelRefRowDataList = mExcelSheetLevelReference?.GetRowCellDataByTargetKeysAndValues(
                         new List<int> { mIndexOfLevelRefKeyAlias },
                         new List<string> { _levelRefStr }
                     );
 
-                    if (_targetLevelRefRowDataList == null || _targetLevelRefRowDataList.Count < 1)
+                    if ((_targetLevelRefRowDataList == null) || (_targetLevelRefRowDataList.Count < 1))
                     {
-                        _targetLevelRefRowDataList = mExcelSheetLevelReference?.GetRowCellDataByTargetKeysAndValus(
+                        _targetLevelRefRowDataList = mExcelSheetLevelReference?.GetRowCellDataByTargetKeysAndValues(
                             new List<int> { mIndexOfLevelRefKeyAlias },
                             new List<string> { _levelRefStr }
                         );
@@ -325,19 +332,21 @@ namespace ExcelConsole
                 }
 
                 // 获取 level reference id 
-                var _levelRefIDStr = _targetLevelRefRowDataList[mIndexOfLevelRefKey].GetCellValue();
-                if (!int.TryParse(_levelRefIDStr, out var _levelRefID) || _levelRefID <= 0)
+                string _levelRefIDStr = _targetLevelRefRowDataList[mIndexOfLevelRefKey].GetCellValue();
+
+                if (!int.TryParse(_levelRefIDStr, out int _levelRefID) || (_levelRefID <= 0))
                 {
                     throw new Exception($"无法获取 LevelReferenceID , keyDev 是：[{_levelRefStr}]");
                 }
 
-                var _newFateNpcToMonsterData = new FateNpcToMonsterData();
+                FateNpcToMonsterData _newFateNpcToMonsterData = new FateNpcToMonsterData();
                 _fateNpcDataMap.Add(_fateNpcID, _newFateNpcToMonsterData);
 
                 // 写入阵营相关  敵
 
                 // 看是不是 eobj
-                var _typeNameStr = _targetLevelRefRowDataList[mIndexOfLevelRefIsEObj].GetCellValue();
+                string _typeNameStr = _targetLevelRefRowDataList[mIndexOfLevelRefIsEObj].GetCellValue();
+
                 if (!string.IsNullOrEmpty(_typeNameStr) && _typeNameStr.ToLower().Contains("eventobj"))
                 {
                     _newFateNpcToMonsterData.IsEObj = true;
@@ -345,21 +354,23 @@ namespace ExcelConsole
 
                 _newFateNpcToMonsterData.LevelReferenceID = _levelRefID;
 
-                var _tempTypeStr = _singleFateNpcDataList[mIndexOfFateNpcEntrType].GetCellValue();
+                string _tempTypeStr = _singleFateNpcDataList[mIndexOfFateNpcEntrType].GetCellValue();
+
                 if (!string.IsNullOrEmpty(_tempTypeStr) && _tempTypeStr.ToLower().Contains("eobj"))
                 {
                     _newFateNpcToMonsterData.IsEObj = true;
                 }
 
-                var _overrideFateNpcStr = _singleFateNpcDataList[4].GetCellValue();
+                string _overrideFateNpcStr = _singleFateNpcDataList[4].GetCellValue();
+
                 if (!string.IsNullOrEmpty(_overrideFateNpcStr))
                 {
-                    var _tempOverrideFateNpcDataList = mExcelSheetFateNpc?.GetRowCellDataByTargetKeysAndValus(
+                    List<CellValueData>? _tempOverrideFateNpcDataList = mExcelSheetFateNpc?.GetRowCellDataByTargetKeysAndValues(
                         new List<int> { 2 },
                         new List<string> { _overrideFateNpcStr }
                     );
 
-                    if (_tempOverrideFateNpcDataList == null || _tempOverrideFateNpcDataList.Count < 1)
+                    if ((_tempOverrideFateNpcDataList == null) || (_tempOverrideFateNpcDataList.Count < 1))
                     {
                         throw new Exception($"无法获取 FateNpc 数据，KeyDev 是 : [{_overrideFateNpcStr}]");
                     }
@@ -370,16 +381,18 @@ namespace ExcelConsole
                 // 这里写入一下 BaseID
                 {
                     // 先在 FateNpc 表里面看看 J 列的BaseID 是否有
-                    var _tempBaseIDStr = _singleFateNpcDataList[mIndexOfFateNpcBaseID].GetCellValue();
+                    string _tempBaseIDStr = _singleFateNpcDataList[mIndexOfFateNpcBaseID].GetCellValue();
+
                     if (!string.IsNullOrEmpty(_tempBaseIDStr))
                     {
                         if (_newFateNpcToMonsterData.IsEObj)
                         {
-                            var _targetEObjDataList = mExcelSheetEObj.GetRowCellDataByTargetKeysAndValus(
+                            List<CellValueData>? _targetEObjDataList = mExcelSheetEObj.GetRowCellDataByTargetKeysAndValues(
                                 new List<int> { 4 },
                                 new List<string> { _tempBaseIDStr }
                             );
-                            if (_targetEObjDataList == null || _targetEObjDataList.Count < 1)
+
+                            if ((_targetEObjDataList == null) || (_targetEObjDataList.Count < 1))
                             {
                                 throw new Exception($"无法获取 EObj 数据，IDMappingStr 是 : [{_tempBaseIDStr}] , FateNpc : [{_fateNpcID}]");
                             }
@@ -388,12 +401,12 @@ namespace ExcelConsole
                         }
                         else
                         {
-                            var _tempBNpcBaseDataList = mExcelSheetBNpcBase?.GetRowCellDataByTargetKeysAndValus(
+                            List<CellValueData>? _tempBNpcBaseDataList = mExcelSheetBNpcBase?.GetRowCellDataByTargetKeysAndValues(
                                 new List<int> { 3 },
                                 new List<string> { _tempBaseIDStr }
                             );
 
-                            if (_tempBNpcBaseDataList == null || _tempBNpcBaseDataList.Count < 1)
+                            if ((_tempBNpcBaseDataList == null) || (_tempBNpcBaseDataList.Count < 1))
                             {
                                 throw new Exception($"无法获取 BNpcBase 数据，ID是：[{_tempBaseIDStr}] , FateNpc : [{_fateNpcID}]");
                             }
@@ -406,7 +419,8 @@ namespace ExcelConsole
                         // 如果没有，那么去 LevelReference 表里面看 N 列是否有
                         if (_newFateNpcToMonsterData.BNpcID <= 0)
                         {
-                            if (int.TryParse(_targetLevelRefRowDataList[mIndexOfLevelRefBaseID].GetCellValue(), out var _baseID) && _baseID > 0)
+                            if (int.TryParse(_targetLevelRefRowDataList[mIndexOfLevelRefBaseID].GetCellValue(), out int _baseID) &&
+                                (_baseID > 0))
                             {
                                 _newFateNpcToMonsterData.BNpcID = _baseID;
                             }
@@ -415,18 +429,20 @@ namespace ExcelConsole
                 }
 
                 // 获取 map id
-                var _mapIDStr = _targetLevelRefRowDataList[mIndexOfLevelRefMapID].GetCellValue();
-                if (!int.TryParse(_mapIDStr, out var _mapID) || _mapID <= 0)
+                string _mapIDStr = _targetLevelRefRowDataList[mIndexOfLevelRefMapID].GetCellValue();
+
+                if (!int.TryParse(_mapIDStr, out int _mapID) || (_mapID <= 0))
                 {
                     Console.WriteLine($"FateNpc: [{_fateNpcID}] -> LevelReference : [{_levelRefID}] , 没有地图ID");
                     _fateNpcDataMap.Remove(_fateNpcID);
+
                     continue;
                 }
 
                 _newFateNpcToMonsterData.MapID = _mapID;
 
                 // 去 Map.xlsx 查找一下
-                var _targetMapRowDataList = mExcelSheetMap?.GetRowCellDataByTargetKeysAndValus(
+                List<CellValueData>? _targetMapRowDataList = mExcelSheetMap?.GetRowCellDataByTargetKeysAndValues(
                     new List<int> { 0 },
                     new List<string> { _mapIDStr }
                 );
@@ -436,46 +452,49 @@ namespace ExcelConsole
                     throw new Exception($"无法找到 Map 数据，ID是：[{_mapIDStr}]");
                 }
 
-                var _pathStr = _targetMapRowDataList[mIndexOfMapPath].GetCellValue();
+                string _pathStr = _targetMapRowDataList[mIndexOfMapPath].GetCellValue();
+
                 if (string.IsNullOrEmpty(_pathStr))
                 {
-                    throw new Exception($"Map 数据出错 , Path 数据为空");
+                    throw new Exception("Map 数据出错 , Path 数据为空");
                 }
 
                 // 去 MapBNpcID 表 查找一下
-                var _targetMapBNpcIDRowDataList = mExcelSheetMapBNpcID?.GetRowCellDataByTargetKeysAndValus(
+                List<CellValueData>? _targetMapBNpcIDRowDataList = mExcelSheetMapBNpcID?.GetRowCellDataByTargetKeysAndValues(
                     new List<int> { 0 },
                     new List<string> { _pathStr }
                 );
 
-                if (_targetMapBNpcIDRowDataList == null || _targetMapBNpcIDRowDataList.Count < 1)
+                if ((_targetMapBNpcIDRowDataList == null) || (_targetMapBNpcIDRowDataList.Count < 1))
                 {
-                    throw new Exception(
-                        $"mExcelSheetMapBNpcID.GetRowCellDataByTargetKeysAndValus 错误，SE地图ID : {_pathStr}"
-                    );
+                    throw new Exception($"mExcelSheetMapBNpcID.GetRowCellDataByTargetKeysAndValues 错误，SE地图ID : {_pathStr}");
                 }
-                _newFateNpcToMonsterData.SEMapID = _pathStr;
-                _newFateNpcToMonsterData.BigMapName = _targetMapBNpcIDRowDataList[1].GetCellValue();
+
+                _newFateNpcToMonsterData.SEMapID      = _pathStr;
+                _newFateNpcToMonsterData.BigMapName   = _targetMapBNpcIDRowDataList[1].GetCellValue();
                 _newFateNpcToMonsterData.SmallMapName = _targetMapBNpcIDRowDataList[3].GetCellValue();
+
                 _newFateNpcToMonsterData.MonsterIDKeyStr = _targetMapBNpcIDRowDataList[2].GetCellValue() +
-                    _targetMapBNpcIDRowDataList[4].GetCellValue();
+                                                           _targetMapBNpcIDRowDataList[4].GetCellValue();
             }
 
             // 这里再去获取一下 FateNpcName :  Name , FateNpcBaseID
-            foreach (var _pair in _fateNpcDataMap)
+            foreach (KeyValuePair<int, FateNpcToMonsterData> _pair in _fateNpcDataMap)
             {
                 InternalLoadFateNpcBaseIDAndName(_pair.Key, _pair.Value, _fateNpcDataMap);
             }
 
             Dictionary<int, List<string>> _writeDataMap = new Dictionary<int, List<string>>();
 
-            int _newIndex = -1;
-            var _tempAllDataList = mExcelSheetMonster?.GetAllDataList();
+            int                        _newIndex        = -1;
+            List<List<CellValueData>>? _tempAllDataList = mExcelSheetMonster?.GetAllDataList();
+
             if (_tempAllDataList == null)
             {
                 throw new Exception("mExcelSheetMonster?.GetAllDataList(); 为空，请检查!");
             }
-            var _templateRowData = _tempAllDataList[0];
+
+            List<CellValueData> _templateRowData = _tempAllDataList[0];
 
             List<string> _templateDataList = new List<string>();
 
@@ -484,26 +503,24 @@ namespace ExcelConsole
                 _templateDataList.Add(string.Empty);
             }
 
-            var _profileIndex = CommonUtil.GetIndexByZM("N") - 1;
-            var _nameIndex = CommonUtil.GetIndexByZM("G") - 1;
-            var _synacTarget = CommonUtil.GetIndexByZM("AT") - 1;
-            var _keepBodyIndex = CommonUtil.GetIndexByZM("AX") - 1;
-            var _rotateSpeedIndex = CommonUtil.GetIndexByZM("BA") - 1;
-            var _minRoateIndex = CommonUtil.GetIndexByZM("BB") - 1;
-
-            var _visionRadius = CommonUtil.GetIndexByZM("BF") - 1;
-
-            var _ownerShipIndex = CommonUtil.GetIndexByZM("BU") - 1;
-
-            var _distributeIndex = CommonUtil.GetIndexByZM("BX") - 1;
+            int _profileIndex     = CommonUtil.GetIndexByZm("N", 1);
+            int _nameIndex        = CommonUtil.GetIndexByZm("G", 1);
+            int _synacTarget      = CommonUtil.GetIndexByZm("AT", 1);
+            int _keepBodyIndex    = CommonUtil.GetIndexByZm("AX", 1);
+            int _rotateSpeedIndex = CommonUtil.GetIndexByZm("BA", 1);
+            int _minRoateIndex    = CommonUtil.GetIndexByZm("BB", 1);
+            int _visionRadius     = CommonUtil.GetIndexByZm("BF", 1);
+            int _ownerShipIndex   = CommonUtil.GetIndexByZm("BU", 1);
+            int _distributeIndex  = CommonUtil.GetIndexByZm("BX", 1);
 
             // 准备写入信息
-            foreach (var _pair in _fateNpcDataMap)
+            foreach (KeyValuePair<int, FateNpcToMonsterData> _pair in _fateNpcDataMap)
             {
-                int _targetIndex = 0;
-                List<string> _finalStrList = new List<string>();
-                var _targetRowDataList = mExcelSheetMonster?.GetCacheRowDataListByKeyStr(_pair.Key.ToString());
-                if (_targetRowDataList == null || _targetRowDataList.Count < 1)
+                int                  _targetIndex       = 0;
+                List<string>         _finalStrList      = new List<string>();
+                List<CellValueData>? _targetRowDataList = mExcelSheetMonster?.GetCacheRowDataListByKeyStr(_pair.Key.ToString());
+
+                if ((_targetRowDataList == null) || (_targetRowDataList.Count < 1))
                 {
                     // 新数据
                     _targetIndex = _newIndex;
@@ -511,7 +528,7 @@ namespace ExcelConsole
                     _finalStrList = new List<string>();
                     _finalStrList.AddRange(_templateDataList);
 
-                    var _newMonsterID = GetNextMonsterID(_pair.Value.MonsterIDKeyStr, 5);
+                    int _newMonsterID = GetNextMonsterID(_pair.Value.MonsterIDKeyStr, 5);
                     _finalStrList[5] = _newMonsterID.ToString();
 
                     Console.WriteLine($"新写入数据 -> FateNpc : [{_pair.Key}] , MonsterID : [{_newMonsterID}]");
@@ -519,33 +536,33 @@ namespace ExcelConsole
                 else
                 {
                     // 旧数据
-                    _targetIndex = _targetRowDataList[0].GetCellRowIndexInSheet();
+                    _targetIndex  = _targetRowDataList[0].GetCellRowIndexInSheet();
                     _finalStrList = CommonUtil.ParsRowCellDataToRowStringData(_targetRowDataList);
                 }
 
                 if (_finalStrList == null)
                 {
-                    throw new Exception($"错误，没有数据，请检查！");
+                    throw new Exception("错误，没有数据，请检查！");
                 }
 
-                _finalStrList[0] = _pair.Value.SmallMapName + "FATE";
-                _finalStrList[2] = _pair.Value.MapID.ToString();
-                _finalStrList[3] = _pair.Value.BNpcID.ToString();
-                _finalStrList[_nameIndex] = _pair.Value.FateNpcName;
-                _finalStrList[8] = _pair.Key.ToString();
-                _finalStrList[_profileIndex] = _pair.Value.BNpcID.ToString();
-                _finalStrList[_synacTarget] = "1";
-                _finalStrList[_keepBodyIndex] = "4000";
+                _finalStrList[0]                 = _pair.Value.SmallMapName + "FATE";
+                _finalStrList[2]                 = _pair.Value.MapID.ToString();
+                _finalStrList[3]                 = _pair.Value.BNpcID.ToString();
+                _finalStrList[_nameIndex]        = _pair.Value.FateNpcName;
+                _finalStrList[8]                 = _pair.Key.ToString();
+                _finalStrList[_profileIndex]     = _pair.Value.BNpcID.ToString();
+                _finalStrList[_synacTarget]      = "1";
+                _finalStrList[_keepBodyIndex]    = "4000";
                 _finalStrList[_rotateSpeedIndex] = "180";
-                _finalStrList[_minRoateIndex] = "15";
+                _finalStrList[_minRoateIndex]    = "15";
 
-                _finalStrList[_visionRadius] = "300";
+                _finalStrList[_visionRadius]     = "300";
                 _finalStrList[_visionRadius + 1] = "200";
                 _finalStrList[_visionRadius + 2] = "400";
                 _finalStrList[_visionRadius + 3] = "5000";
                 _finalStrList[_visionRadius + 4] = "5";
 
-                _finalStrList[_ownerShipIndex] = "伤害占比";
+                _finalStrList[_ownerShipIndex]     = "伤害占比";
                 _finalStrList[_ownerShipIndex + 1] = "5000";
 
                 _finalStrList[_distributeIndex] = "随机掉落";
@@ -555,7 +572,7 @@ namespace ExcelConsole
                 _writeDataMap.Add(_targetIndex, _finalStrList);
             }
 
-            foreach (var _pair in _writeDataMap)
+            foreach (KeyValuePair<int, List<string>> _pair in _writeDataMap)
             {
                 mExcelSheetMonster?.WriteOneData(_pair.Key, _pair.Value, true);
             }
@@ -566,10 +583,15 @@ namespace ExcelConsole
         }
 
         // 写入名字
-        private void InternalLoadFateNpcBaseIDAndName(int fateNpcKey, FateNpcToMonsterData targetData, Dictionary<int, FateNpcToMonsterData> totalData)
+        private void InternalLoadFateNpcBaseIDAndName(
+            int                                   fateNpcKey,
+            FateNpcToMonsterData                  targetData,
+            Dictionary<int, FateNpcToMonsterData> totalData
+        )
         {
-            var _cachedFateNpcData = mExcelSheetFateNpc?.GetCacheRowDataListByKeyStr(fateNpcKey.ToString());
-            if (_cachedFateNpcData == null || _cachedFateNpcData.Count < 1)
+            List<CellValueData>? _cachedFateNpcData = mExcelSheetFateNpc?.GetCacheRowDataListByKeyStr(fateNpcKey.ToString());
+
+            if ((_cachedFateNpcData == null) || (_cachedFateNpcData.Count < 1))
             {
                 throw new Exception($"无法获取缓存的数据，FateNpc : [{fateNpcKey}]");
             }
@@ -578,7 +600,8 @@ namespace ExcelConsole
             if (targetData.OverrideBNpcID > 0)
             {
                 // 获取一下父类
-                var _overrideFateData = totalData[targetData.OverrideBNpcID];
+                FateNpcToMonsterData _overrideFateData = totalData[targetData.OverrideBNpcID];
+
                 if (_overrideFateData.BNpcID <= 0)
                 {
                     // 认为没加载，去加载一下
@@ -592,39 +615,42 @@ namespace ExcelConsole
                 }
 
                 targetData.FateNpcName = _overrideFateData.FateNpcName;
-                targetData.BNpcID = _overrideFateData.BNpcID;
+                targetData.BNpcID      = _overrideFateData.BNpcID;
 
                 return;
             }
 
             if (targetData.IsEObj)
             {
-                var _targetEObjDataList = mExcelSheetEObj?.GetCacheRowDataListByKeyStr(targetData.BNpcID.ToString());
-                if (_targetEObjDataList == null || _targetEObjDataList.Count < 1)
+                List<CellValueData>? _targetEObjDataList = mExcelSheetEObj?.GetCacheRowDataListByKeyStr(targetData.BNpcID.ToString());
+
+                if ((_targetEObjDataList == null) || (_targetEObjDataList.Count < 1))
                 {
                     throw new Exception($"无法获取  Eobj 数据，ID是：[{targetData.BNpcID}] , FateNpc : [{fateNpcKey}]");
                 }
 
-                targetData.FateNpcName = _targetEObjDataList[_eobjNameIndex].GetCellValue();
+                targetData.FateNpcName = _targetEObjDataList[mEobjNameIndex].GetCellValue();
 
                 return;
             }
 
-            var _bNPCNameMappingStr = _cachedFateNpcData[_fateNpcIndexOfName].GetCellValue();
+            string _bNPCNameMappingStr = _cachedFateNpcData[mFateNpcIndexOfName].GetCellValue();
+
             if (!string.IsNullOrEmpty(_bNPCNameMappingStr))
             {
                 // 这里看下 BaseID 是否已经有了，如果有了， 那么去 BaseID 看看
-                var _targetRowDataList = mExcelSheetBNpcName?.GetRowCellDataByTargetKeysAndValus(
+                List<CellValueData>? _targetRowDataList = mExcelSheetBNpcName?.GetRowCellDataByTargetKeysAndValues(
                     new List<int> { 4 },
                     new List<string> { _bNPCNameMappingStr }
                 );
 
-                if (_targetRowDataList == null || _targetRowDataList.Count < 1)
+                if ((_targetRowDataList == null) || (_targetRowDataList.Count < 1))
                 {
-                    throw new Exception($"mExcelSheetBNpcName.GetRowCellDataByTargetKeysAndValus 错误，无法匹配，Str = [{_bNPCNameMappingStr}]");
+                    throw new Exception($"mExcelSheetBNpcName.GetRowCellDataByTargetKeysAndValues 错误，无法匹配，Str = [{_bNPCNameMappingStr}]");
                 }
 
-                targetData.FateNpcName = _targetRowDataList[_fateNpcTextIndex].GetCellValue();
+                targetData.FateNpcName = _targetRowDataList[mFateNpcTextIndex].GetCellValue();
+
                 return;
             }
 
@@ -632,39 +658,42 @@ namespace ExcelConsole
             if (targetData.BNpcID <= 0)
             {
                 CommonUtil.ShowError($"数据出错，没有 BNpcID ，FateNpc ID  是 ： [{fateNpcKey}]");
+
                 return;
             }
 
-            var _cacheBNpcDataList = mExcelSheetBNpcBase?.GetCacheRowDataListByKeyStr(targetData.BNpcID.ToString());
-            if (_cacheBNpcDataList == null || _cacheBNpcDataList.Count < 1)
+            List<CellValueData>? _cacheBNpcDataList = mExcelSheetBNpcBase?.GetCacheRowDataListByKeyStr(targetData.BNpcID.ToString());
+
+            if ((_cacheBNpcDataList == null) || (_cacheBNpcDataList.Count < 1))
             {
                 throw new Exception($"无法获取 BNpcBase 数据，ID是  : [{targetData.BNpcID}] , FateNpc : [{fateNpcKey}]");
             }
 
-            var _tempBNpcNameStr = _cacheBNpcDataList[4].GetCellValue();
+            string _tempBNpcNameStr = _cacheBNpcDataList[4].GetCellValue();
 
             if (!string.IsNullOrEmpty(_tempBNpcNameStr))
             {
-                var _targetRowDataList = mExcelSheetBNpcName?.GetRowCellDataByTargetKeysAndValus(
+                List<CellValueData>? _targetRowDataList = mExcelSheetBNpcName?.GetRowCellDataByTargetKeysAndValues(
                     new List<int> { 4 },
                     new List<string> { _tempBNpcNameStr }
                 );
 
-                if (_targetRowDataList == null || _targetRowDataList.Count < 1)
+                if ((_targetRowDataList == null) || (_targetRowDataList.Count < 1))
                 {
                     throw new Exception(
-                        $"mExcelSheetBNpcName.GetRowCellDataByTargetKeysAndValus 错误，BaseID : [{targetData.BNpcID}] , FateNpc : [{fateNpcKey}] , 匹配Str = [{_tempBNpcNameStr}]"
+                        $"mExcelSheetBNpcName.GetRowCellDataByTargetKeysAndValues 错误，BaseID : [{targetData.BNpcID}] , FateNpc : [{fateNpcKey}] , 匹配Str = [{_tempBNpcNameStr}]"
                     );
                 }
 
-                targetData.FateNpcName = _targetRowDataList[_fateNpcTextIndex].GetCellValue();
+                targetData.FateNpcName = _targetRowDataList[mFateNpcTextIndex].GetCellValue();
             }
         }
 
         private string InternalGetLevelReferenceID(List<CellValueData> singleRowData)
         {
             // layoutID
-            var _tempStr = singleRowData[mIndexOfFateNpcLayoutID].GetCellValue();
+            string _tempStr = singleRowData[mIndexOfFateNpcLayoutID].GetCellValue();
+
             if (!string.IsNullOrEmpty(_tempStr))
             {
                 return _tempStr;
@@ -672,6 +701,7 @@ namespace ExcelConsole
 
             // PopRange
             _tempStr = singleRowData[mIndexOfFateNpcPopRange].GetCellValue();
+
             if (!string.IsNullOrEmpty(_tempStr))
             {
                 return _tempStr;
@@ -679,6 +709,7 @@ namespace ExcelConsole
 
             // PopRange00
             _tempStr = singleRowData[mIndexOfFateNpcPopRange + 1].GetCellValue();
+
             if (!string.IsNullOrEmpty(_tempStr))
             {
                 return _tempStr;
@@ -686,6 +717,7 @@ namespace ExcelConsole
 
             // PopRange01
             _tempStr = singleRowData[mIndexOfFateNpcPopRange + 2].GetCellValue();
+
             if (!string.IsNullOrEmpty(_tempStr))
             {
                 return _tempStr;
@@ -693,6 +725,7 @@ namespace ExcelConsole
 
             // PopRange02
             _tempStr = singleRowData[mIndexOfFateNpcPopRange + 3].GetCellValue();
+
             if (!string.IsNullOrEmpty(_tempStr))
             {
                 return _tempStr;
@@ -705,63 +738,68 @@ namespace ExcelConsole
 
         public int GetNextMonsterID(string mapIDStr, int monsterIDIndex)
         {
-            var _exportSheet = mExcelSheetMonster;
+            ExcelSheetData? _exportSheet = mExcelSheetMonster;
+
             if (_exportSheet == null)
             {
                 throw new Exception($"{GetNextMonsterID} 出错，无法获取 mExcelSheetMonster");
             }
 
-            if (!int.TryParse(mapIDStr, out var _tempCheckValue))
+            if (!int.TryParse(mapIDStr, out int _tempCheckValue))
             {
                 throw new Exception($"{GetNextMonsterID} 出错，传入的值 : {mapIDStr} ，无法解析为 int，请检查!");
             }
 
             _exportSheet.LoadAllCellData(false);
 
-            var _keyList = _exportSheet.GetKeyListData();
-            KeyData _targetKey = _keyList[monsterIDIndex];
+            List<KeyData> _keyList   = _exportSheet.GetKeyListData();
+            KeyData       _targetKey = _keyList[monsterIDIndex];
 
             if (_targetKey == null)
             {
-                throw new Exception($"没有找到主 key，请检查");
+                throw new Exception("没有找到主 key，请检查");
             }
 
             // 如果已经有存储的，那么+1后返回，并再次存储
             {
-                if (MonsterExportIDMap.TryGetValue(mapIDStr, out var _tempID))
+                if (MonsterExportIDMap.TryGetValue(mapIDStr, out int _tempID))
                 {
-                    var _result = _tempID + 1;
+                    int _result = _tempID + 1;
                     MonsterExportIDMap[mapIDStr] = _result;
+
                     return _result;
                 }
             }
 
-            var _allDataList = _exportSheet.GetAllDataList();
-            if (_allDataList == null || _allDataList.Count < 1)
+            List<List<CellValueData>>? _allDataList = _exportSheet.GetAllDataList();
+
+            if ((_allDataList == null) || (_allDataList.Count < 1))
             {
-                throw new Exception($"导出的总数据为空，请检查");
+                throw new Exception("导出的总数据为空，请检查");
             }
 
             // 没有找到，那么就去遍历一下，获取最大的ID
             {
-                foreach (var _singleRow in _allDataList)
+                foreach (List<CellValueData> _singleRow in _allDataList)
                 {
                     // 这里去截取前5位，获得到ID
-                    var _cellStr = _singleRow[_targetKey.KeyIndexInList].GetCellValue();
-                    if (string.IsNullOrEmpty(_cellStr) || _cellStr.Length < 5)
+                    string _cellStr = _singleRow[_targetKey.KeyIndexInList].GetCellValue();
+
+                    if (string.IsNullOrEmpty(_cellStr) || (_cellStr.Length < 5))
                     {
                         continue;
                     }
 
-                    var _finalStr = _cellStr.Substring(0, 5);
+                    string _finalStr = _cellStr.Substring(0, 5);
+
                     if (!string.Equals(_finalStr, mapIDStr))
                     {
                         continue;
                     }
 
-                    if (int.TryParse(_cellStr, out var _monsterID))
+                    if (int.TryParse(_cellStr, out int _monsterID))
                     {
-                        if (!MonsterExportIDMap.TryGetValue(_finalStr, out var _currentStoreID))
+                        if (!MonsterExportIDMap.TryGetValue(_finalStr, out int _currentStoreID))
                         {
                             MonsterExportIDMap[_finalStr] = _monsterID;
                         }
@@ -776,21 +814,20 @@ namespace ExcelConsole
                 }
 
                 // 从数据里面找到了
-                if (MonsterExportIDMap.TryGetValue(mapIDStr, out var _tempID))
+                if (MonsterExportIDMap.TryGetValue(mapIDStr, out int _tempID))
                 {
-                    var _result = _tempID + 1;
+                    int _result = _tempID + 1;
                     MonsterExportIDMap[mapIDStr] = _result;
+
                     return _result;
                 }
-                else
-                {
-                    // 没有找到，那么组装一个新的放进去
-                    var _newValue = string.Format("{0}001", mapIDStr);
-                    int.TryParse(_newValue, out var _newIntValue);
-                    MonsterExportIDMap[mapIDStr] = _newIntValue;
 
-                    return _newIntValue;
-                }
+                // 没有找到，那么组装一个新的放进去
+                string _newValue = string.Format("{0}001", mapIDStr);
+                int.TryParse(_newValue, out int _newIntValue);
+                MonsterExportIDMap[mapIDStr] = _newIntValue;
+
+                return _newIntValue;
             }
 
             throw new Exception($"{GetNextMonsterID} 未找到数据，请检查!");

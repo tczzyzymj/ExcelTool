@@ -12,9 +12,9 @@ namespace ExcelTool
     {
         public ExcelSheetData()
         {
-            mKeyStartRowIndexInSheet = 2; // Key 的概念认为是数据列的名字，其开始的行下标，从1开始，不是0
-            mKeyStartColmIndexInSheet = 1; // Key 的概念认为是数据列的名字，其开始的列下标，从1开始，不是0
-            mContentStartRowIndexInSheet = 4; // 内容选中的行下标，从2开始，认为1是KEY不能小于2
+            mKeyStartRowIndexInSheet = 2; //  行，其开始的行下标，从1开始，不是0
+            mKeyStartColmIndexInSheet = 1; // 列，其开始的列下标，从1开始，不是0
+            mContentStartRowIndexInSheet = 4; // 内容选中的行下标，从1开始，不是0
         }
 
         protected ExcelWorksheet? mOriginSheetData = null; // 原始数据
@@ -85,7 +85,7 @@ namespace ExcelTool
             var _keyList = GetKeyListData();
             if (_keyList == null || _keyList.Count < 1)
             {
-                throw new Exception($"{typeof(ExcelSheetData).Name} : {WriteOneData} 出错，_keyList 无效");
+                throw new Exception($"{nameof(ExcelSheetData)} : {WriteOneData} 出错，_keyList 无效");
             }
 
             var _targetRowIndex = rowIndexInSheet;
@@ -98,24 +98,29 @@ namespace ExcelTool
                 // 这里去检测一下看下标是否对
                 if (rowIndexInSheet < 1 || rowIndexInSheet > mOriginSheetData.Dimension.Rows)
                 {
-                    throw new Exception($"{typeof(ExcelSheetData).Name} : {WriteOneData} 出错，rowIndexInSheet :{rowIndexInSheet} 无效");
+                    throw new Exception($"{nameof(ExcelSheetData)} : {WriteOneData} 出错，rowIndexInSheet :{rowIndexInSheet} 无效");
                 }
             }
 
-            for (int i = 0; i < _keyList.Count; ++i)
+            for (int _i = 0; _i < _keyList.Count; ++_i)
             {
-                var _tempContent = inValueList[i];
+                if (_i >= inValueList.Count)
+                {
+                    break;
+                }
+
+                var _tempContent = inValueList[_i];
 
                 if (skipEmptyData)
                 {
                     if (!string.IsNullOrEmpty(_tempContent))
                     {
-                        mOriginSheetData.Cells[_targetRowIndex, _keyList[i].GetKeyIndexInSheetData()].Value = _tempContent;
+                        mOriginSheetData.Cells[_targetRowIndex, _keyList[_i].GetKeyIndexInSheetData()].Value = _tempContent;
                     }
                 }
                 else
                 {
-                    mOriginSheetData.Cells[_targetRowIndex, _keyList[i].GetKeyIndexInSheetData()].Value = _tempContent;
+                    mOriginSheetData.Cells[_targetRowIndex, _keyList[_i].GetKeyIndexInSheetData()].Value = _tempContent;
                 }
             }
 

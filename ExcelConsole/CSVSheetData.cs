@@ -1,11 +1,5 @@
 ﻿using CsvHelper;
-using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExcelTool
 {
@@ -13,9 +7,9 @@ namespace ExcelTool
     {
         public CSVSheetData()
         {
-            mKeyStartRowIndexInSheet = 0; // Key 的概念认为是数据列的名字，其开始的行下标，从1开始，不是0
-            mKeyStartColmIndexInSheet = 0; // Key 的概念认为是数据列的名字，其开始的列下标，从1开始，不是0
-            mContentStartRowIndexInSheet = 3; // 内容选中的行下标，从2开始，认为1是KEY不能小于2
+            mKeyStartRowIndexInSheet = 0; // 行，其开始的行下标，下标从0开始
+            mKeyStartColmIndexInSheet = 0; // 列，其开始的列下标，下标从0开始
+            mContentStartRowIndexInSheet = 3; // 内容行下标，下标从0开始
         }
 
         private List<string[]> mAllSheetData = new List<string[]>();
@@ -62,10 +56,10 @@ namespace ExcelTool
             }
         }
 
-        public override bool WriteOneData(int rowIndexInSheet, List<string> valueList, bool skipEmptyData)
+        public override bool WriteOneData(int rowIndexInSheet, List<string> inValueList, bool skipEmptyData)
         {
             throw new Exception("CSV写入功能完善中");
-            //if (!base.WriteOneData(rowIndexInSheet, valueList, skipEmptyData))
+            //if (!base.WriteOneData(rowIndexInSheet, inValueList, skipEmptyData))
             //{
             //    return false;
             //}

@@ -10,7 +10,7 @@ namespace ExcelConsole
     public class ProcessForCreateNewColumForFatePopGroup : ProcessBase
     {
         private ExcelFileData? mExcelFate = null;
-        private static int mPopRangeIndex = CommonUtil.GetIndexByZM("j"); // 这里是sheetindex 不要 -1
+        private static int mPopRangeIndex = CommonUtil.GetIndexByZm("J", 0); // 这里是sheetindex 不要 -1
 
         private bool InternalLoadFiles()
         {

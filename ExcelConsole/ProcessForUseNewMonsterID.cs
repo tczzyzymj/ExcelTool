@@ -1,68 +1,68 @@
 ﻿using ExcelTool;
+using OfficeOpenXml;
 
 namespace ExcelConsole
 {
     public class FateNpcData
     {
-        public int BaseID;
+        public int    BaseID;
         public string DepopRangePosInfo;
-        public int FateNpcID;
-
+        public int    FateNpcID;
         public string IdleRangePosInfo;
         public string LogInfo;
-        public int MaxCount = 1;
-        public int MinCount = 1;
-        public int MonsterID;
+        public int    MaxCount = 1;
+        public int    MinCount = 1;
+        public int    MonsterID;
         public string PopRangePosInfo;
     }
 
     public class ProcessForUseNewMonsterID : ProcessBase
     {
-        private static int mFateNpcDepopRangeIndex = CommonUtil.GetIndexByZM("O") - 1;
-        private static int mFateNpcIdleRangeIndex = CommonUtil.GetIndexByZM("N") - 1;
-        private static int mFateNpcLayoutIDIndex = CommonUtil.GetIndexByZM("D") - 1;
-        private static int mFateNpcPopRangeIndex = CommonUtil.GetIndexByZM("E") - 1;
-        private static int mFateNpcRandomPopRange00Index = CommonUtil.GetIndexByZM("F") - 1;
-        private static int mFateOriginAllyIndex = CommonUtil.GetIndexByZM("BQ") - 2;
-        private static int mFateOriginPopRange00Index = CommonUtil.GetIndexByZM("BE") - 2;
-        private static int mFatePopGroupFirstMonsteMinrCountIndex = CommonUtil.GetIndexByZM("G") - 1;
-        private static int mFatePopGroupFirstMonsterBaseIDIndex = CommonUtil.GetIndexByZM("F") - 1;
-        private static int mFatePopGroupFirstMonsterDepopRangeIndex = CommonUtil.GetIndexByZM("S") - 1;
-        private static int mFatePopGroupFirstMonsterFirstMaxCountIndex = CommonUtil.GetIndexByZM("H") - 1;
-        private static int mFatePopGroupFirstMonsterIdleRangeIndex = CommonUtil.GetIndexByZM("R") - 1;
-        private static int mFatePopGroupFirstMonsterIDStartIndex = CommonUtil.GetIndexByZM("E") - 1;
-        private static int mFatePopGroupFirstMonsterPosStartIndex = CommonUtil.GetIndexByZM("I") - 1;
-        private static int mFatePopGroupFirstNpcDepopRangeIndex = CommonUtil.GetIndexByZM("IP") - 1;
-        private static int mFatePopGroupFirstNpcIDIndex = CommonUtil.GetIndexByZM("IK") - 1;
-        private static int mFatePopGroupFirstNpcIdleRangeIndex = CommonUtil.GetIndexByZM("IO") - 1;
-        private static int mFatePopGroupFirstNpcMaxNumIndex = CommonUtil.GetIndexByZM("IM") - 1;
-        private static int mFatePopGroupFirstNpcMinNumIndex = CommonUtil.GetIndexByZM("IL") - 1;
-        private static int mFatePopGroupFirstNpcPopRangeIndex = CommonUtil.GetIndexByZM("IN") - 1;
-        private static int mGuardParamIndex = CommonUtil.GetIndexByZM("BX") - 1;
-        private static int mMonsterAITableIDIndex = CommonUtil.GetIndexByZM("BC") - 1;
-        private static int mMonsterAttrIDColumIndex = CommonUtil.GetIndexByZM("AR") - 1;
-        private static int mMonsterBaseIDIndex = CommonUtil.GetIndexByZM("D") - 1;
-        private static int mMonsterFateIDIndex = CommonUtil.GetIndexByZM("B") - 1;
-        private static int mMonsterFateNpcIdIndex = CommonUtil.GetIndexByZM("I") - 1;
-        private static int mMonsterIDIndex = CommonUtil.GetIndexByZM("F") - 1;
-        private static int mMonsterLevelColumIndex = CommonUtil.GetIndexByZM("E") - 1;
-        private static int mMonsterNameIndex = CommonUtil.GetIndexByZM("G") - 1;
-        private CSVFileData? mCSVFatePopGroup = null;
-        private CSVSheetData? mCSVSheetFatePopGroup = null;
-        private ExcelFileData? mExcelCompare = null;
-        private ExcelFileData? mExcelFate = null;
-        private ExcelFileData? mExcelFateNpc = null;
-        private ExcelFileData? mExcelFateOrigin = null;
-        private ExcelFileData? mExcelFatePopGropOrigin = null;
-        private ExcelFileData? mExcelLevelReference = null;
-        private ExcelFileData? mExcelMonster = null;
-        private ExcelSheetData? mExcelSheetFateNpc = null;
-        private ExcelSheetData? mExcelSheetFateOrigin = null;
-        private ExcelSheetData? mExcelSheetFatePopGroupOrigin = null;
-        private ExcelSheetData? mExcelSheetLevelReference = null;
-        private ExcelSheetData? mExcelSheetMonster = null;
-        private ExcelSheetData? mExcelSheetPopGroupInFateExcel = null;
-        private bool mTest = false;
+        private static readonly int             mFateNpcDepopRangeIndex                     = CommonUtil.GetIndexByZm("O", 1);
+        private static readonly int             mFateNpcIdleRangeIndex                      = CommonUtil.GetIndexByZm("N", 1);
+        private static readonly int             mFateNpcLayoutIDIndex                       = CommonUtil.GetIndexByZm("D", 1);
+        private static readonly int             mFateNpcPopRangeIndex                       = CommonUtil.GetIndexByZm("E", 1);
+        private static readonly int             mFateNpcRandomPopRange00Index               = CommonUtil.GetIndexByZm("F", 1);
+        private static readonly int             mFateOriginAllyIndex                        = CommonUtil.GetIndexByZm("BQ", 2);
+        private static readonly int             mFateOriginPopRange00Index                  = CommonUtil.GetIndexByZm("BE", 2);
+        private static          int             mFatePopGroupFirstMonsteMinrCountIndex      = CommonUtil.GetIndexByZm("G", 1);
+        private static          int             mFatePopGroupFirstMonsterBaseIDIndex        = CommonUtil.GetIndexByZm("F", 1);
+        private static readonly int             mFatePopGroupFirstMonsterDepopRangeIndex    = CommonUtil.GetIndexByZm("S", 1);
+        private static          int             mFatePopGroupFirstMonsterFirstMaxCountIndex = CommonUtil.GetIndexByZm("H", 1);
+        private static readonly int             mFatePopGroupFirstMonsterIdleRangeIndex     = CommonUtil.GetIndexByZm("R", 1);
+        private static readonly int             mFatePopGroupFirstMonsterIDStartIndex       = CommonUtil.GetIndexByZm("E", 1);
+        private static readonly int             mFatePopGroupFirstMonsterPosStartIndex      = CommonUtil.GetIndexByZm("I", 1);
+        private static readonly int             mFatePopGroupFirstNpcDepopRangeIndex        = CommonUtil.GetIndexByZm("IP", 1);
+        private static readonly int             mFatePopGroupFirstNpcIDIndex                = CommonUtil.GetIndexByZm("IK", 1);
+        private static readonly int             mFatePopGroupFirstNpcIdleRangeIndex         = CommonUtil.GetIndexByZm("IO", 1);
+        private static          int             mFatePopGroupFirstNpcMaxNumIndex            = CommonUtil.GetIndexByZm("IM", 1);
+        private static          int             mFatePopGroupFirstNpcMinNumIndex            = CommonUtil.GetIndexByZm("IL", 1);
+        private static readonly int             mFatePopGroupFirstNpcPopRangeIndex          = CommonUtil.GetIndexByZm("IN", 1);
+        private static readonly int             mGuardParamIndex                            = CommonUtil.GetIndexByZm("BX", 1);
+        private static          int             mMonsterAITableIDIndex                      = CommonUtil.GetIndexByZm("BC", 1);
+        private static          int             mMonsterAttrIDColumIndex                    = CommonUtil.GetIndexByZm("AR", 1);
+        private static          int             mMonsterBaseIDIndex                         = CommonUtil.GetIndexByZm("D", 1);
+        private static          int             mMonsterFateIDIndex                         = CommonUtil.GetIndexByZm("B", 1);
+        private static readonly int             mMonsterFateNpcIdIndex                      = CommonUtil.GetIndexByZm("I", 1);
+        private static          int             mMonsterIDIndex                             = CommonUtil.GetIndexByZm("F", 1);
+        private static          int             mMonsterLevelColumIndex                     = CommonUtil.GetIndexByZm("E", 1);
+        private static          int             mMonsterNameIndex                           = CommonUtil.GetIndexByZm("G", 1);
+        private readonly        bool            mTest                                       = false;
+        private                 CSVFileData?    mCSVFatePopGroup;
+        private                 CSVSheetData?   mCSVSheetFatePopGroup;
+        private                 ExcelFileData?  mExcelCompare;
+        private                 ExcelFileData?  mExcelFate;
+        private                 ExcelFileData?  mExcelFateNpc;
+        private                 ExcelFileData?  mExcelFateOrigin;
+        private                 ExcelFileData?  mExcelFatePopGropOrigin;
+        private                 ExcelFileData?  mExcelLevelReference;
+        private                 ExcelFileData?  mExcelMonster;
+        private                 ExcelSheetData? mExcelSheetFateNpc;
+        private                 ExcelSheetData? mExcelSheetFateOrigin;
+        private                 ExcelSheetData? mExcelSheetFatePopGroupOrigin;
+        private                 ExcelSheetData? mExcelSheetLevelReference;
+        private                 ExcelSheetData? mExcelSheetMonster;
+        private                 ExcelSheetData? mExcelSheetPopGroupInFateExcel;
 
         public override bool Process()
         {
@@ -70,28 +70,31 @@ namespace ExcelConsole
             {
                 if (mTest)
                 {
-                    var _tempPath = Path.Combine(FolderPath, "Compare.xlsx");
+                    string _tempPath = Path.Combine(FolderPath, "Compare.xlsx");
                     mExcelCompare = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
                 }
 
                 // 加载 FATE表.xlsx
                 {
-                    var _tempPath = Path.Combine(FolderPath, "FATE表.xlsx");
+                    string _tempPath = Path.Combine(FolderPath, "FATE表.xlsx");
                     mExcelFate = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
+
                     if (mExcelFate == null)
                     {
-                        throw new Exception($"错误，加载 FATE表.xlsx 数据出错");
+                        throw new Exception("错误，加载 FATE表.xlsx 数据出错");
                     }
 
                     // 重新加载一下 key
 
                     mExcelSheetPopGroupInFateExcel = mExcelFate?.GetWorkSheetByIndex(6) as ExcelSheetData;
+
                     if (mExcelSheetPopGroupInFateExcel == null)
                     {
                         throw new Exception("无法获取 mFateFile.GetWorkSheetByIndex(6)");
                     }
 
-                    var _keyListData = mExcelSheetPopGroupInFateExcel.GetKeyListData();
+                    List<KeyData> _keyListData = mExcelSheetPopGroupInFateExcel.GetKeyListData();
+
                     for (int i = 0; i < _keyListData.Count; ++i)
                     {
                         _keyListData[i].IsMainKey = false;
@@ -104,8 +107,8 @@ namespace ExcelConsole
 
                 // fate 端游表 数据加载
                 {
-                    var _tempPath = Path.Combine(FolderPath, "Fate.xlsx");
-                    mExcelFateOrigin = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
+                    string _tempPath = Path.Combine(FolderPath, "Fate.xlsx");
+                    mExcelFateOrigin      = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
                     mExcelSheetFateOrigin = mExcelFateOrigin.GetWorkSheetByIndex(0) as ExcelSheetData;
 
                     if (mExcelSheetFateOrigin == null)
@@ -123,8 +126,8 @@ namespace ExcelConsole
 
                 // Fate PopGroup 端游数据加载
                 {
-                    var _tempPath = Path.Combine(FolderPath, "FatePopGroup.xlsx");
-                    mExcelFatePopGropOrigin = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
+                    string _tempPath = Path.Combine(FolderPath, "FatePopGroup.xlsx");
+                    mExcelFatePopGropOrigin       = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
                     mExcelSheetFatePopGroupOrigin = mExcelFatePopGropOrigin.GetWorkSheetByIndex(0) as ExcelSheetData;
 
                     if (mExcelSheetFatePopGroupOrigin == null)
@@ -142,31 +145,33 @@ namespace ExcelConsole
 
                 // 加载 Monster
                 {
-                    var _tempPath = Path.Combine(FolderPath, "G怪物表.xlsx");
-                    mExcelMonster = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
+                    string _tempPath = Path.Combine(FolderPath, "G怪物表.xlsx");
+                    mExcelMonster      = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
                     mExcelSheetMonster = mExcelMonster.GetWorkSheetByIndex(1) as ExcelSheetData;
+
                     if (mExcelSheetMonster == null)
                     {
-                        throw new Exception($"mExcelMonster.GetWorkSheetByIndex(1) 获取数据出错");
+                        throw new Exception("mExcelMonster.GetWorkSheetByIndex(1) 获取数据出错");
                     }
 
                     mExcelSheetMonster.SetKeyStartRowIndexInSheet(1);
                     mExcelSheetMonster.ReloadKey();
 
-                    var _allKeyDataList = mExcelSheetMonster.GetKeyListData();
-                    _allKeyDataList[CommonUtil.GetIndexByZM("F") - 1].IsMainKey = true;
+                    List<KeyData> _allKeyDataList = mExcelSheetMonster.GetKeyListData();
+                    _allKeyDataList[CommonUtil.GetIndexByZm("F", 1)].IsMainKey = true;
 
                     mExcelSheetMonster.LoadAllCellData(true);
                 }
 
                 // 加载 FateNpc
                 {
-                    var _tempPath = Path.Combine(FolderPath, "FateNpc.xlsx");
-                    mExcelFateNpc = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
+                    string _tempPath = Path.Combine(FolderPath, "FateNpc.xlsx");
+                    mExcelFateNpc      = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
                     mExcelSheetFateNpc = mExcelFateNpc.GetWorkSheetByIndex(0) as ExcelSheetData;
+
                     if (mExcelSheetFateNpc == null)
                     {
-                        throw new Exception($"mExcelFateNpc.GetWorkSheetByIndex(0) 获取数据出错");
+                        throw new Exception("mExcelFateNpc.GetWorkSheetByIndex(0) 获取数据出错");
                     }
 
                     mExcelSheetFateNpc.SetKeyStartRowIndexInSheet(1);
@@ -174,7 +179,7 @@ namespace ExcelConsole
                     mExcelSheetFateNpc.SetContentStartRowIndexInSheet(4);
 
                     mExcelSheetFateNpc.ReloadKey();
-                    var _allKeyDataList = mExcelSheetFateNpc.GetKeyListData();
+                    List<KeyData> _allKeyDataList = mExcelSheetFateNpc.GetKeyListData();
                     _allKeyDataList[0].IsMainKey = true;
 
                     mExcelSheetFateNpc.LoadAllCellData(true);
@@ -182,27 +187,30 @@ namespace ExcelConsole
 
                 // fatepopgroup csv表 数据加载
                 {
-                    var _tempPath = Path.Combine(FolderPath, "FatePopGroup.csv");
-                    mCSVFatePopGroup = new CSVFileData(_tempPath, LoadFileType.NormalFile);
+                    string _tempPath = Path.Combine(FolderPath, "FatePopGroup.csv");
+                    mCSVFatePopGroup      = new CSVFileData(_tempPath, LoadFileType.NormalFile);
                     mCSVSheetFatePopGroup = mCSVFatePopGroup.GetWorkSheetByIndex(0) as CSVSheetData;
 
                     if (mCSVSheetFatePopGroup == null)
                     {
                         CommonUtil.ShowError("无法获取 mCSVSheetFatePopGroup", true);
+
                         return false;
                     }
+
                     mCSVSheetFatePopGroup.LoadAllCellData(true);
                 }
                 // end
 
                 // 加载 LevelReference.csv
                 {
-                    var _tempPath = Path.Combine(FolderPath, "LevelReference.xlsx");
-                    mExcelLevelReference = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
+                    string _tempPath = Path.Combine(FolderPath, "LevelReference.xlsx");
+                    mExcelLevelReference      = new ExcelFileData(_tempPath, LoadFileType.NormalFile);
                     mExcelSheetLevelReference = mExcelLevelReference.GetWorkSheetByIndex(0) as ExcelSheetData;
+
                     if (mExcelSheetLevelReference == null)
                     {
-                        throw new Exception($"mExcelLevelReference.GetWorkSheetByIndex(0) 获取数据出错");
+                        throw new Exception("mExcelLevelReference.GetWorkSheetByIndex(0) 获取数据出错");
                     }
 
                     mExcelSheetLevelReference.SetKeyStartRowIndexInSheet(5);
@@ -228,20 +236,23 @@ namespace ExcelConsole
             Dictionary<int, List<FateNpcData>> _writeDataForFatePopGroupNpcMonster = new Dictionary<int, List<FateNpcData>>();
 
             // 解析数据中
-            var _allFateDataList = mExcelSheetPopGroupInFateExcel.GetAllDataList();
-            if (_allFateDataList == null || _allFateDataList.Count < 1)
+            List<List<CellValueData>>? _allFateDataList = mExcelSheetPopGroupInFateExcel.GetAllDataList();
+
+            if ((_allFateDataList == null) || (_allFateDataList.Count < 1))
             {
-                throw new Exception($"无法获取所有数据，请检查!");
+                throw new Exception("无法获取所有数据，请检查!");
             }
+
             for (int i = 0; i < _allFateDataList.Count; ++i)
             {
-                Dictionary<int, List<FateNpcData>> _oldMonsterListDataMap = new Dictionary<int, List<FateNpcData>>();
+                Dictionary<int, List<FateNpcData>> _oldMonsterListDataMap    = new Dictionary<int, List<FateNpcData>>();
                 Dictionary<int, List<FateNpcData>> _oldNpcMonsterListDataMap = new Dictionary<int, List<FateNpcData>>();
 
-                Dictionary<int, List<FateNpcData>> _newMonsterListDataMap = new Dictionary<int, List<FateNpcData>>();
+                Dictionary<int, List<FateNpcData>> _newMonsterListDataMap    = new Dictionary<int, List<FateNpcData>>();
                 Dictionary<int, List<FateNpcData>> _newNpcMonsterListDataMap = new Dictionary<int, List<FateNpcData>>();
 
-                int.TryParse(_allFateDataList[i][0].GetCellValue(), out var _targetFateID);
+                int.TryParse(_allFateDataList[i][0].GetCellValue(), out int _targetFateID);
+
                 if (_targetFateID <= 0)
                 {
                     throw new Exception($"错误，无法获取 创建物的 FateID ,index 是：[{i}]");
@@ -249,34 +260,34 @@ namespace ExcelConsole
 
                 // 解析一下旧数据
                 {
-                    var _targetRowData = _allFateDataList[i];
+                    List<CellValueData> _targetRowData = _allFateDataList[i];
 
-                    var tempMonsterList = new List<FateNpcData>();
+                    List<FateNpcData> tempMonsterList = new List<FateNpcData>();
                     _oldMonsterListDataMap.Add(_targetFateID, tempMonsterList);
 
-                    var _tempNpcMonsterList = new List<FateNpcData>();
+                    List<FateNpcData> _tempNpcMonsterList = new List<FateNpcData>();
                     _oldNpcMonsterListDataMap.Add(_targetFateID, _tempNpcMonsterList);
 
                     //  monster 的
                     for (int _tempIndex = 0; _tempIndex <= 15; ++_tempIndex)
                     {
-                        var _offset = _tempIndex * 15;
-                        int.TryParse(
-                            _targetRowData[mFatePopGroupFirstMonsterIDStartIndex + _offset].GetCellValue(),
-                            out var _tempMonsterId
-                        );
+                        int _offset = _tempIndex * 15;
+
+                        int.TryParse(_targetRowData[mFatePopGroupFirstMonsterIDStartIndex + _offset].GetCellValue(), out int _tempMonsterId);
 
                         if (_tempMonsterId <= 0)
                         {
                             continue;
                         }
 
-                        var _popRangePosInfo = _targetRowData[mFatePopGroupFirstMonsterPosStartIndex + _offset].GetCellValue();
-                        var _newData = new FateNpcData();
+                        string _popRangePosInfo = _targetRowData[mFatePopGroupFirstMonsterPosStartIndex + _offset].GetCellValue();
+
+                        FateNpcData _newData = new FateNpcData();
 
                         // IdleRange
                         {
-                            var _idlePosInfo = _targetRowData[mFatePopGroupFirstMonsterIdleRangeIndex + _offset].GetCellValue();
+                            string _idlePosInfo = _targetRowData[mFatePopGroupFirstMonsterIdleRangeIndex + _offset].GetCellValue();
+
                             if (!string.IsNullOrEmpty(_idlePosInfo))
                             {
                                 _newData.IdleRangePosInfo = _idlePosInfo;
@@ -285,36 +296,43 @@ namespace ExcelConsole
 
                         // DepopRange
                         {
-                            var _depopRangePosInfo = _targetRowData[mFatePopGroupFirstMonsterDepopRangeIndex + _offset].GetCellValue();
+                            string _depopRangePosInfo = _targetRowData[mFatePopGroupFirstMonsterDepopRangeIndex + _offset].GetCellValue();
+
                             if (!string.IsNullOrEmpty(_depopRangePosInfo))
                             {
                                 _newData.DepopRangePosInfo = _depopRangePosInfo;
                             }
                         }
 
-                        _newData.MonsterID = _tempMonsterId;
+                        _newData.MonsterID       = _tempMonsterId;
                         _newData.PopRangePosInfo = _popRangePosInfo;
-                        _newData.LogInfo = $"MonsterID:[{_tempMonsterId}] ; pos:[{_popRangePosInfo}],IdlePos:[{_newData.IdleRangePosInfo}],DepopRange:[{_newData.DepopRangePosInfo}]";
+
+                        _newData.LogInfo =
+                        $"MonsterID:[{_tempMonsterId}] ; pos:[{_popRangePosInfo}],IdlePos:[{_newData.IdleRangePosInfo}],DepopRange:[{_newData.DepopRangePosInfo}]";
+
                         tempMonsterList.Add(_newData);
                     }
 
                     // npc的
                     for (int _tempIndex = 0; _tempIndex <= 15; ++_tempIndex)
                     {
-                        var _offset = _tempIndex * 6;
-                        int.TryParse(_targetRowData[mFatePopGroupFirstNpcIDIndex + _offset].GetCellValue(), out var _npcMonsterID);
+                        int _offset = _tempIndex * 6;
+
+                        int.TryParse(_targetRowData[mFatePopGroupFirstNpcIDIndex + _offset].GetCellValue(), out int _npcMonsterID);
+
                         if (_npcMonsterID <= 0)
                         {
                             continue;
                         }
 
-                        var _tempPosInfo = _targetRowData[mFatePopGroupFirstNpcPopRangeIndex + _offset].GetCellValue();
+                        string _tempPosInfo = _targetRowData[mFatePopGroupFirstNpcPopRangeIndex + _offset].GetCellValue();
 
-                        var _newData = new FateNpcData();
+                        FateNpcData _newData = new FateNpcData();
 
                         // IdleRange
                         {
-                            var _idlePosInfo = _targetRowData[mFatePopGroupFirstNpcIdleRangeIndex + _offset].GetCellValue();
+                            string _idlePosInfo = _targetRowData[mFatePopGroupFirstNpcIdleRangeIndex + _offset].GetCellValue();
+
                             if (!string.IsNullOrEmpty(_idlePosInfo))
                             {
                                 _newData.IdleRangePosInfo = _idlePosInfo;
@@ -323,67 +341,74 @@ namespace ExcelConsole
 
                         // DepopRange
                         {
-                            var _depopRangePosInfo = _targetRowData[mFatePopGroupFirstNpcDepopRangeIndex + _offset].GetCellValue();
+                            string _depopRangePosInfo = _targetRowData[mFatePopGroupFirstNpcDepopRangeIndex + _offset].GetCellValue();
+
                             if (!string.IsNullOrEmpty(_depopRangePosInfo))
                             {
                                 _newData.DepopRangePosInfo = _depopRangePosInfo;
                             }
                         }
 
-                        _newData.MonsterID = _npcMonsterID;
+                        _newData.MonsterID       = _npcMonsterID;
                         _newData.PopRangePosInfo = _tempPosInfo;
-                        _newData.LogInfo = $"NpcMonsterID:[{_npcMonsterID}] ; pos:[{_tempPosInfo}] ; IdlePos:[{_newData.IdleRangePosInfo}], DepopPos:[{_newData.DepopRangePosInfo}]";
+
+                        _newData.LogInfo =
+                        $"NpcMonsterID:[{_npcMonsterID}] ; pos:[{_tempPosInfo}] ; IdlePos:[{_newData.IdleRangePosInfo}], DepopPos:[{_newData.DepopRangePosInfo}]";
+
                         _tempNpcMonsterList.Add(_newData);
                     }
                 }
 
                 // 解析端游数据
                 {
-                    var _targetRowData = mExcelSheetFateOrigin.GetRowCellDataByTargetKeysAndValus(
+                    List<CellValueData>? _targetRowData = mExcelSheetFateOrigin.GetRowCellDataByTargetKeysAndValues(
                         new List<int> { 0 },
                         new List<string> { $"{_targetFateID}" }
                     );
 
-                    if (_targetRowData == null || _targetRowData.Count < 1)
+                    if ((_targetRowData == null) || (_targetRowData.Count < 1))
                     {
                         throw new Exception($"数据无效，无法找到 fate :[{_targetFateID}] 数据，请检查");
                     }
 
                     // 护送的不管
-                    int.TryParse(_targetRowData[mGuardParamIndex].GetCellValue(), out var _guardParam);
+                    int.TryParse(_targetRowData[mGuardParamIndex].GetCellValue(), out int _guardParam);
+
                     if (_guardParam > 0)
                     {
                         continue;
                     }
 
-                    var _tempMonsterList = new List<FateNpcData>();
+                    List<FateNpcData> _tempMonsterList = new List<FateNpcData>();
                     _newMonsterListDataMap.Add(_targetFateID, _tempMonsterList);
 
-                    var _tempNpcMonsterList = new List<FateNpcData>();
+                    List<FateNpcData> _tempNpcMonsterList = new List<FateNpcData>();
                     _newNpcMonsterListDataMap.Add(_targetFateID, _tempNpcMonsterList);
 
                     // 这里是 怪物的
                     for (int _tempIndex = 0; _tempIndex < 12; ++_tempIndex)
                     {
-                        var _tempFatePopGroupStr = _targetRowData[mFateOriginPopRange00Index + _tempIndex].GetCellValue();
+                        string _tempFatePopGroupStr = _targetRowData[mFateOriginPopRange00Index + _tempIndex].GetCellValue();
+
                         if (string.IsNullOrEmpty(_tempFatePopGroupStr))
                         {
                             continue;
                         }
 
-                        var _originRowData = mExcelSheetFatePopGroupOrigin.GetRowCellDataByTargetKeysAndValus(
+                        List<CellValueData>? _originRowData = mExcelSheetFatePopGroupOrigin.GetRowCellDataByTargetKeysAndValues(
                             new List<int> { 2 },
                             new List<string> { _tempFatePopGroupStr }
                         );
 
-                        if (_originRowData == null || _originRowData.Count < 1)
+                        if ((_originRowData == null) || (_originRowData.Count < 1))
                         {
                             throw new Exception(
                                 $"1 无法在端游元表 FatePopGroup 中找到数据，KEYDevCode是：[{_tempFatePopGroupStr}], ColumIndex:[{_tempIndex}],Row:[{_targetRowData[0].GetCellValue()}]"
                             );
                         }
 
-                        int.TryParse(_originRowData[0].GetCellValue(), out var _fatePopGroupID);
+                        int.TryParse(_originRowData[0].GetCellValue(), out int _fatePopGroupID);
+
                         if (_fatePopGroupID <= 0)
                         {
                             throw new Exception(
@@ -391,85 +416,103 @@ namespace ExcelConsole
                             );
                         }
 
-                        var _fatePopGroupData = mCSVSheetFatePopGroup.GetRowCellDataByTargetKeysAndValus(
+                        List<CellValueData>? _fatePopGroupData = mCSVSheetFatePopGroup.GetRowCellDataByTargetKeysAndValues(
                             new List<int> { 0 },
                             new List<string> { _fatePopGroupID.ToString() }
                         );
 
-                        if (_fatePopGroupData == null || _fatePopGroupData.Count < 1)
+                        if ((_fatePopGroupData == null) || (_fatePopGroupData.Count < 1))
                         {
                             throw new Exception($"无法在 FatePopGroup.csv 中找到ID: {_fatePopGroupID}，请检查");
                         }
 
                         for (int j = 0; j <= 15; ++j)
                         {
-                            int.TryParse(_fatePopGroupData[3 + j * 2].GetCellValue(), out var _fateNpcID);
+                            int.TryParse(_fatePopGroupData[3 + (j * 2)].GetCellValue(), out int _fateNpcID);
+
                             if (_fateNpcID <= 0)
                             {
                                 continue;
                             }
 
-                            int.TryParse(_fatePopGroupData[4 + j * 2].GetCellValue(), out var _maxCount);
+                            int.TryParse(_fatePopGroupData[4 + (j * 2)].GetCellValue(), out int _maxCount);
 
-                            var _fateNpcRowData = mExcelSheetFateNpc.GetRowCellDataByTargetKeysAndValus(
+                            List<CellValueData>? _fateNpcRowData = mExcelSheetFateNpc.GetRowCellDataByTargetKeysAndValues(
                                 new List<int> { 0 },
                                 new List<string> { _fateNpcID.ToString() }
                             );
 
-                            if (_fateNpcRowData == null || _fateNpcRowData.Count < 1)
+                            if ((_fateNpcRowData == null) || (_fateNpcRowData.Count < 1))
                             {
                                 throw new Exception($"无法找到 FateNpc数据,ID是：{_fateNpcID}");
                             }
 
                             int _levelReferenceID = 0;
+
                             do
                             {
                                 int.TryParse(_fateNpcRowData[3].GetCellValue(), out _levelReferenceID);
+
                                 if (_levelReferenceID > 0)
                                 {
                                     break;
                                 }
 
                                 int.TryParse(_fateNpcRowData[4].GetCellValue(), out _levelReferenceID);
+
                                 if (_levelReferenceID > 0)
                                 {
                                     break;
                                 }
 
                                 int.TryParse(_fateNpcRowData[5].GetCellValue(), out _levelReferenceID);
+
                                 if (_levelReferenceID > 0)
                                 {
                                     break;
                                 }
-                            } while (false);
+                            }
+                            while (false);
 
                             if (_levelReferenceID <= 0)
                             {
                                 Console.WriteLine($"无法找到LevelReferenceID, FateNpcID : {_fateNpcID}，请检查");
+
                                 continue;
                             }
 
-                            var _findIndex = _tempMonsterList.FindIndex(x => x.FateNpcID == _fateNpcID);
+                            int _findIndex = _tempMonsterList.FindIndex(x => x.FateNpcID == _fateNpcID);
+
                             if (_findIndex < 0)
                             {
-                                var _popRangePosInfo = CommonUtil.GetPosInfoByLevelReferenceID(
-                                    _levelReferenceID, mExcelSheetLevelReference, true, false, true
+                                string _popRangePosInfo = CommonUtil.GetPosInfoByLevelReferenceId(
+                                    _levelReferenceID,
+                                    mExcelSheetLevelReference,
+                                    true,
+                                    false,
+                                    true
                                 );
 
-                                if (!_writeDataForFatePopGroupMonster.TryGetValue(_targetFateID, out var _targetFateNpcDataList))
+                                if (!_writeDataForFatePopGroupMonster.TryGetValue(_targetFateID, out List<FateNpcData>? _targetFateNpcDataList))
                                 {
-                                    _targetFateNpcDataList = new List<FateNpcData>();
+                                    _targetFateNpcDataList                          = new List<FateNpcData>();
                                     _writeDataForFatePopGroupMonster[_targetFateID] = _targetFateNpcDataList;
                                 }
 
-                                var _newData = new FateNpcData();
+                                FateNpcData _newData = new FateNpcData();
 
-                                int.TryParse(_fateNpcRowData[mFateNpcIdleRangeIndex].GetCellValue(), out var _idleRangeLevelRefID);
+                                int.TryParse(_fateNpcRowData[mFateNpcIdleRangeIndex].GetCellValue(), out int _idleRangeLevelRefID);
+
                                 if (_idleRangeLevelRefID > 0)
                                 {
-                                    var _idleRangePosInfo = CommonUtil.GetPosInfoByLevelReferenceID(
-                                        _idleRangeLevelRefID, mExcelSheetLevelReference, true, false, true
+                                    string _idleRangePosInfo = CommonUtil.GetPosInfoByLevelReferenceId(
+                                        _idleRangeLevelRefID,
+                                        mExcelSheetLevelReference,
+                                        true,
+                                        false,
+                                        true
                                     );
+
                                     _newData.IdleRangePosInfo = _idleRangePosInfo;
                                 }
                                 else
@@ -477,26 +520,35 @@ namespace ExcelConsole
                                     _newData.IdleRangePosInfo = _popRangePosInfo;
                                 }
 
-                                int.TryParse(_fateNpcRowData[mFateNpcDepopRangeIndex].GetCellValue(), out var _depopRangeLevelRefID);
+                                int.TryParse(_fateNpcRowData[mFateNpcDepopRangeIndex].GetCellValue(), out int _depopRangeLevelRefID);
+
                                 if (_depopRangeLevelRefID > 0)
                                 {
-                                    var _depopRangePosInfo = CommonUtil.GetPosInfoByLevelReferenceID(
-                                        _depopRangeLevelRefID, mExcelSheetLevelReference, true, false, true
+                                    string _depopRangePosInfo = CommonUtil.GetPosInfoByLevelReferenceId(
+                                        _depopRangeLevelRefID,
+                                        mExcelSheetLevelReference,
+                                        true,
+                                        false,
+                                        true
                                     );
+
                                     _newData.DepopRangePosInfo = _depopRangePosInfo;
                                 }
 
-                                var _msg = $"FateNpcID:[{_fateNpcID}] ; Pos:[{_popRangePosInfo}], IdlePos:[{_newData.IdleRangePosInfo}], DepopPos:[{_newData.DepopRangePosInfo}]";
-                                _newData.FateNpcID = _fateNpcID;
+                                string _msg =
+                                $"FateNpcID:[{_fateNpcID}] ; Pos:[{_popRangePosInfo}], IdlePos:[{_newData.IdleRangePosInfo}], DepopPos:[{_newData.DepopRangePosInfo}]";
+
+                                _newData.FateNpcID       = _fateNpcID;
                                 _newData.PopRangePosInfo = _popRangePosInfo;
-                                _newData.LogInfo = _msg;
-                                _newData.MaxCount = _maxCount;
+                                _newData.LogInfo         = _msg;
+                                _newData.MaxCount        = _maxCount;
                                 _tempMonsterList.Add(_newData);
                                 _targetFateNpcDataList.Add(_newData);
                             }
                             else
                             {
                                 _tempMonsterList[_findIndex].MinCount++;
+
                                 if (_tempMonsterList[_findIndex].MinCount > _tempMonsterList[_findIndex].MaxCount)
                                 {
                                     _tempMonsterList[_findIndex].MaxCount = _tempMonsterList[_findIndex].MinCount;
@@ -508,25 +560,27 @@ namespace ExcelConsole
                     // 这里是NPC的
                     do
                     {
-                        var _tempFatePopGroupStr = _targetRowData[mFateOriginAllyIndex].GetCellValue();
+                        string _tempFatePopGroupStr = _targetRowData[mFateOriginAllyIndex].GetCellValue();
+
                         if (string.IsNullOrEmpty(_tempFatePopGroupStr))
                         {
                             break;
                         }
 
-                        var _originRowData = mExcelSheetFatePopGroupOrigin.GetRowCellDataByTargetKeysAndValus(
+                        List<CellValueData>? _originRowData = mExcelSheetFatePopGroupOrigin.GetRowCellDataByTargetKeysAndValues(
                             new List<int> { 2 },
                             new List<string> { _tempFatePopGroupStr }
                         );
 
-                        if (_originRowData == null || _originRowData.Count < 1)
+                        if ((_originRowData == null) || (_originRowData.Count < 1))
                         {
                             throw new Exception(
                                 $"1 无法在端游元表 FatePopGroup 中找到数据，KEYDevCode是：[{_tempFatePopGroupStr}], ColumIndex:[{mFateOriginPopRange00Index}],Row:[{_targetRowData[0].GetCellValue()}]"
                             );
                         }
 
-                        int.TryParse(_originRowData[0].GetCellValue(), out var _fatePopGroupID);
+                        int.TryParse(_originRowData[0].GetCellValue(), out int _fatePopGroupID);
+
                         if (_fatePopGroupID <= 0)
                         {
                             throw new Exception(
@@ -534,84 +588,106 @@ namespace ExcelConsole
                             );
                         }
 
-                        var _fatePopGroupData = mCSVSheetFatePopGroup.GetRowCellDataByTargetKeysAndValus(
+                        List<CellValueData>? _fatePopGroupData = mCSVSheetFatePopGroup.GetRowCellDataByTargetKeysAndValues(
                             new List<int> { 0 },
                             new List<string> { _fatePopGroupID.ToString() }
                         );
 
-                        if (_fatePopGroupData == null || _fatePopGroupData.Count < 1)
+                        if ((_fatePopGroupData == null) || (_fatePopGroupData.Count < 1))
                         {
                             throw new Exception($"无法在 FatePopGroup.csv 中找到ID: {_fatePopGroupID}，请检查");
                         }
 
                         for (int j = 0; j <= 15; ++j)
                         {
-                            int.TryParse(_fatePopGroupData[3 + j * 2].GetCellValue(), out var _fateNpcID);
+                            int.TryParse(_fatePopGroupData[3 + (j * 2)].GetCellValue(), out int _fateNpcID);
+
                             if (_fateNpcID <= 0)
                             {
                                 continue;
                             }
 
-                            int.TryParse(_fatePopGroupData[4 + j * 2].GetCellValue(), out var _maxCount);
+                            int.TryParse(_fatePopGroupData[4 + (j * 2)].GetCellValue(), out int _maxCount);
 
-                            var _fateNpcRowData = mExcelSheetFateNpc.GetRowCellDataByTargetKeysAndValus(
+                            List<CellValueData>? _fateNpcRowData = mExcelSheetFateNpc.GetRowCellDataByTargetKeysAndValues(
                                 new List<int> { 0 },
                                 new List<string> { _fateNpcID.ToString() }
                             );
 
-                            if (_fateNpcRowData == null || _fateNpcRowData.Count < 1)
+                            if ((_fateNpcRowData == null) || (_fateNpcRowData.Count < 1))
                             {
                                 throw new Exception($"无法找到 FateNpc数据,ID是：{_fateNpcID}");
                             }
 
                             int _popLevelRefID = 0;
+
                             do
                             {
                                 int.TryParse(_fateNpcRowData[mFateNpcLayoutIDIndex].GetCellValue(), out _popLevelRefID);
+
                                 if (_popLevelRefID > 0)
                                 {
                                     break;
                                 }
 
                                 int.TryParse(_fateNpcRowData[mFateNpcPopRangeIndex].GetCellValue(), out _popLevelRefID);
+
                                 if (_popLevelRefID > 0)
                                 {
                                     break;
                                 }
 
                                 int.TryParse(_fateNpcRowData[mFateNpcRandomPopRange00Index].GetCellValue(), out _popLevelRefID);
+
                                 if (_popLevelRefID > 0)
                                 {
                                     break;
                                 }
-                            } while (false);
+                            }
+                            while (false);
 
                             if (_popLevelRefID <= 0)
                             {
                                 Console.WriteLine($"无法找到LevelReferenceID, FateNpcID : {_fateNpcID}，请检查");
+
                                 continue;
                             }
 
-                            var _findIndex = _tempNpcMonsterList.FindIndex(x => x.FateNpcID == _fateNpcID);
+                            int _findIndex = _tempNpcMonsterList.FindIndex(x => x.FateNpcID == _fateNpcID);
+
                             if (_findIndex < 0)
                             {
-                                var _popRangePosInfo = CommonUtil.GetPosInfoByLevelReferenceID(
-                                    _popLevelRefID, mExcelSheetLevelReference, true, false, true
+                                string _popRangePosInfo = CommonUtil.GetPosInfoByLevelReferenceId(
+                                    _popLevelRefID,
+                                    mExcelSheetLevelReference,
+                                    true,
+                                    false,
+                                    true
                                 );
 
-                                if (!_writeDataForFatePopGroupNpcMonster.TryGetValue(_targetFateID, out var _targetFateNpcDataList))
+                                if (!_writeDataForFatePopGroupNpcMonster.TryGetValue(
+                                        _targetFateID,
+                                        out List<FateNpcData>? _targetFateNpcDataList
+                                    ))
                                 {
-                                    _targetFateNpcDataList = new List<FateNpcData>();
+                                    _targetFateNpcDataList                             = new List<FateNpcData>();
                                     _writeDataForFatePopGroupNpcMonster[_targetFateID] = _targetFateNpcDataList;
                                 }
 
-                                var _newData = new FateNpcData();
-                                int.TryParse(_fateNpcRowData[mFateNpcIdleRangeIndex].GetCellValue(), out var _idleRangeLevelRefID);
+                                FateNpcData _newData = new FateNpcData();
+
+                                int.TryParse(_fateNpcRowData[mFateNpcIdleRangeIndex].GetCellValue(), out int _idleRangeLevelRefID);
+
                                 if (_idleRangeLevelRefID > 0)
                                 {
-                                    var _idleRangePosInfo = CommonUtil.GetPosInfoByLevelReferenceID(
-                                        _idleRangeLevelRefID, mExcelSheetLevelReference, true, false, true
+                                    string _idleRangePosInfo = CommonUtil.GetPosInfoByLevelReferenceId(
+                                        _idleRangeLevelRefID,
+                                        mExcelSheetLevelReference,
+                                        true,
+                                        false,
+                                        true
                                     );
+
                                     _newData.IdleRangePosInfo = _idleRangePosInfo;
                                 }
                                 else
@@ -619,19 +695,28 @@ namespace ExcelConsole
                                     _newData.IdleRangePosInfo = _popRangePosInfo;
                                 }
 
-                                int.TryParse(_fateNpcRowData[mFateNpcDepopRangeIndex].GetCellValue(), out var _depopRangeLevelRefID);
+                                int.TryParse(_fateNpcRowData[mFateNpcDepopRangeIndex].GetCellValue(), out int _depopRangeLevelRefID);
+
                                 if (_depopRangeLevelRefID > 0)
                                 {
-                                    var _depopRangePosInfo = CommonUtil.GetPosInfoByLevelReferenceID(
-                                        _depopRangeLevelRefID, mExcelSheetLevelReference, true, false, true
+                                    string _depopRangePosInfo = CommonUtil.GetPosInfoByLevelReferenceId(
+                                        _depopRangeLevelRefID,
+                                        mExcelSheetLevelReference,
+                                        true,
+                                        false,
+                                        true
                                     );
+
                                     _newData.DepopRangePosInfo = _depopRangePosInfo;
                                 }
-                                var _msg = $"FateNpcID:[{_fateNpcID}] ; Pos:[{_popRangePosInfo}], IdlePos:[{_newData.IdleRangePosInfo}], DepopPos:[{_newData.DepopRangePosInfo}]";
-                                _newData.FateNpcID = _fateNpcID;
+
+                                string _msg =
+                                $"FateNpcID:[{_fateNpcID}] ; Pos:[{_popRangePosInfo}], IdlePos:[{_newData.IdleRangePosInfo}], DepopPos:[{_newData.DepopRangePosInfo}]";
+
+                                _newData.FateNpcID       = _fateNpcID;
                                 _newData.PopRangePosInfo = _popRangePosInfo;
-                                _newData.LogInfo = _msg;
-                                _newData.MaxCount = _maxCount;
+                                _newData.LogInfo         = _msg;
+                                _newData.MaxCount        = _maxCount;
 
                                 _targetFateNpcDataList.Add(_newData);
                                 _tempNpcMonsterList.Add(_newData);
@@ -639,25 +724,28 @@ namespace ExcelConsole
                             else
                             {
                                 _tempNpcMonsterList[_findIndex].MinCount++;
+
                                 if (_tempNpcMonsterList[_findIndex].MinCount > _tempNpcMonsterList[_findIndex].MaxCount)
                                 {
                                     _tempNpcMonsterList[_findIndex].MaxCount = _tempNpcMonsterList[_findIndex].MinCount;
                                 }
                             }
                         }
-                    } while (false);
+                    }
+                    while (false);
                 }
 
                 // 写入 Compare
                 if (mTest)
                 {
-                    var _package = mExcelCompare?.GetExcelPackage();
+                    ExcelPackage? _package = mExcelCompare?.GetExcelPackage();
+
                     if (_package == null)
                     {
                         throw new Exception("获取 Package 为空，请检查");
                     }
 
-                    var _sheet = _package.Workbook.Worksheets[0];
+                    ExcelWorksheet? _sheet = _package.Workbook.Worksheets[0];
 
                     //// monster 的
                     //{
@@ -690,29 +778,30 @@ namespace ExcelConsole
 
                     // NPC的
                     {
-                        foreach (var _pair in _oldNpcMonsterListDataMap)
+                        foreach (KeyValuePair<int, List<FateNpcData>> _pair in _oldNpcMonsterListDataMap)
                         {
-                            _newNpcMonsterListDataMap.TryGetValue(_pair.Key, out var _newInfoList);
+                            _newNpcMonsterListDataMap.TryGetValue(_pair.Key, out List<FateNpcData>? _newInfoList);
 
-                            _sheet.Cells[1 + i * 2, 1].Value = _pair.Key.ToString();
+                            _sheet.Cells[1 + (i * 2), 1].Value = _pair.Key.ToString();
+
                             for (int j = 0; j < _pair.Value.Count; ++j)
                             {
-                                if (_newInfoList != null && j < _newInfoList.Count)
+                                if ((_newInfoList != null) && (j < _newInfoList.Count))
                                 {
                                     _pair.Value[j].FateNpcID = _newInfoList[j].FateNpcID;
                                 }
 
-                                _sheet.Cells[1 + i * 2, j + 2].Value = $"FateNpcID:[{_pair.Value[j].FateNpcID}] ; " +
-                                    _pair.Value[j].LogInfo;
+                                _sheet.Cells[1 + (i * 2), j + 2].Value = $"FateNpcID:[{_pair.Value[j].FateNpcID}] ; " + _pair.Value[j].LogInfo;
                             }
                         }
 
-                        foreach (var _pair in _newNpcMonsterListDataMap)
+                        foreach (KeyValuePair<int, List<FateNpcData>> _pair in _newNpcMonsterListDataMap)
                         {
-                            _sheet.Cells[2 + i * 2, 1].Value = _pair.Key.ToString();
+                            _sheet.Cells[2 + (i * 2), 1].Value = _pair.Key.ToString();
+
                             for (int j = 0; j < _pair.Value.Count; ++j)
                             {
-                                _sheet.Cells[2 + i * 2, j + 2].Value = _pair.Value[j].LogInfo;
+                                _sheet.Cells[2 + (i * 2), j + 2].Value = _pair.Value[j].LogInfo;
                             }
                         }
                     }
@@ -720,13 +809,13 @@ namespace ExcelConsole
                 else
                 {
                     // 这里要做旧数据映射，但是不要写入到 sheet里面
-                    foreach (var _pair in _oldMonsterListDataMap)
+                    foreach (KeyValuePair<int, List<FateNpcData>> _pair in _oldMonsterListDataMap)
                     {
-                        _newMonsterListDataMap.TryGetValue(_pair.Key, out var _newInfoList);
+                        _newMonsterListDataMap.TryGetValue(_pair.Key, out List<FateNpcData>? _newInfoList);
 
                         for (int j = 0; j < _pair.Value.Count; ++j)
                         {
-                            if (_newInfoList != null && j < _newInfoList.Count)
+                            if ((_newInfoList != null) && (j < _newInfoList.Count))
                             {
                                 _pair.Value[j].FateNpcID = _newInfoList[j].FateNpcID;
 
@@ -735,13 +824,13 @@ namespace ExcelConsole
                         }
                     }
 
-                    foreach (var _pair in _oldNpcMonsterListDataMap)
+                    foreach (KeyValuePair<int, List<FateNpcData>> _pair in _oldNpcMonsterListDataMap)
                     {
-                        _newNpcMonsterListDataMap.TryGetValue(_pair.Key, out var _newInfoList);
+                        _newNpcMonsterListDataMap.TryGetValue(_pair.Key, out List<FateNpcData>? _newInfoList);
 
                         for (int j = 0; j < _pair.Value.Count; ++j)
                         {
-                            if (_newInfoList != null && j < _newInfoList.Count)
+                            if ((_newInfoList != null) && (j < _newInfoList.Count))
                             {
                                 _pair.Value[j].FateNpcID = _newInfoList[j].FateNpcID;
 
@@ -825,7 +914,7 @@ namespace ExcelConsole
                 //    //            continue;
                 //    //        }
 
-                //    //        var _newRowData = mExcelSheetMonster.GetRowCellDataByTargetKeysAndValus(
+                //    //        var _newRowData = mExcelSheetMonster.GetRowCellDataByTargetKeysAndValues(
                 //    //            new List<int> { mMonsterFateNpcIdIndex },
                 //    //            new List<string> { _pair.Value.ToString() }
                 //    //        );
@@ -835,19 +924,19 @@ namespace ExcelConsole
                 //    //            throw new Exception($"错误,无法在怪物表中找到数据，基于Fate关联表，ID 是：[{_pair.Value}]");
                 //    //        }
 
-                //    //        _newRowData[mMonsterLevelColumIndex].WriteCellValue(
+                //    //        _newRowData[mMonsterLevelColumIndex].SetCellValue(
                 //    //            _oldRowData[mMonsterLevelColumIndex].GetCellValue()
                 //    //        );
-                //    //        _newRowData[mMonsterAttrIDColumIndex].WriteCellValue(
+                //    //        _newRowData[mMonsterAttrIDColumIndex].SetCellValue(
                 //    //            _oldRowData[mMonsterAttrIDColumIndex].GetCellValue()
                 //    //        );
-                //    //        _newRowData[mMonsterAITableIDIndex].WriteCellValue(
+                //    //        _newRowData[mMonsterAITableIDIndex].SetCellValue(
                 //    //            _oldRowData[mMonsterAITableIDIndex].GetCellValue()
                 //    //        );
-                //    //        _newRowData[mMonsterFateIDIndex].WriteCellValue(
+                //    //        _newRowData[mMonsterFateIDIndex].SetCellValue(
                 //    //            _oldRowData[mMonsterFateIDIndex].GetCellValue()
                 //    //        );
-                //    //        _newRowData[mMonsterNameIndex].WriteCellValue(
+                //    //        _newRowData[mMonsterNameIndex].SetCellValue(
                 //    //            _oldRowData[mMonsterNameIndex].GetCellValue()
                 //    //        );
                 //    //    }
@@ -865,7 +954,7 @@ namespace ExcelConsole
                 //    //            continue;
                 //    //        }
 
-                //    //        var _newRowData = mExcelSheetMonster.GetRowCellDataByTargetKeysAndValus(
+                //    //        var _newRowData = mExcelSheetMonster.GetRowCellDataByTargetKeysAndValues(
                 //    //            new List<int> { mMonsterFateNpcIdIndex },
                 //    //            new List<string> { _pair.Value.ToString() }
                 //    //        );
@@ -875,19 +964,19 @@ namespace ExcelConsole
                 //    //            throw new Exception($"错误,无法在怪物表中找到数据，基于Fate关联表，ID 是：[{_pair.Value}]");
                 //    //        }
 
-                //    //        _newRowData[mMonsterLevelColumIndex].WriteCellValue(
+                //    //        _newRowData[mMonsterLevelColumIndex].SetCellValue(
                 //    //            _oldRowData[mMonsterLevelColumIndex].GetCellValue()
                 //    //        );
-                //    //        _newRowData[mMonsterAttrIDColumIndex].WriteCellValue(
+                //    //        _newRowData[mMonsterAttrIDColumIndex].SetCellValue(
                 //    //            _oldRowData[mMonsterAttrIDColumIndex].GetCellValue()
                 //    //        );
-                //    //        _newRowData[mMonsterAITableIDIndex].WriteCellValue(
+                //    //        _newRowData[mMonsterAITableIDIndex].SetCellValue(
                 //    //            _oldRowData[mMonsterAITableIDIndex].GetCellValue()
                 //    //        );
-                //    //        _newRowData[mMonsterFateIDIndex].WriteCellValue(
+                //    //        _newRowData[mMonsterFateIDIndex].SetCellValue(
                 //    //            _oldRowData[mMonsterFateIDIndex].GetCellValue()
                 //    //        );
-                //    //        _newRowData[mMonsterNameIndex].WriteCellValue(
+                //    //        _newRowData[mMonsterNameIndex].SetCellValue(
                 //    //            _oldRowData[mMonsterNameIndex].GetCellValue()
                 //    //        );
                 //    //    }
@@ -925,21 +1014,21 @@ namespace ExcelConsole
 
                 //    //                var _indexOffset = i * 15;
 
-                //    //                _targetRowData[mFatePopGroupFirstMonsterIDStartIndex + _indexOffset].WriteCellValue(_data.MonsterID.ToString());
-                //    //                _targetRowData[mFatePopGroupFirstMonsterPosStartIndex + _indexOffset].WriteCellValue(_data.PopRangePosInfo);
-                //    //                _targetRowData[mFatePopGroupFirstMonsterBaseIDIndex + _indexOffset].WriteCellValue(_data.BaseID.ToString());
+                //    //                _targetRowData[mFatePopGroupFirstMonsterIDStartIndex + _indexOffset].SetCellValue(_data.MonsterID.ToString());
+                //    //                _targetRowData[mFatePopGroupFirstMonsterPosStartIndex + _indexOffset].SetCellValue(_data.PopRangePosInfo);
+                //    //                _targetRowData[mFatePopGroupFirstMonsterBaseIDIndex + _indexOffset].SetCellValue(_data.BaseID.ToString());
                 //    //                if (_data.MaxCount > 0)
                 //    //                {
-                //    //                    _targetRowData[mFatePopGroupFirstMonsteMinrCountIndex + _indexOffset].WriteCellValue(_data.MinCount.ToString());
-                //    //                    _targetRowData[mFatePopGroupFirstMonsterFirstMaxCountIndex + _indexOffset].WriteCellValue(_data.MaxCount.ToString());
+                //    //                    _targetRowData[mFatePopGroupFirstMonsteMinrCountIndex + _indexOffset].SetCellValue(_data.MinCount.ToString());
+                //    //                    _targetRowData[mFatePopGroupFirstMonsterFirstMaxCountIndex + _indexOffset].SetCellValue(_data.MaxCount.ToString());
                 //    //                }
                 //    //                else
                 //    //                {
-                //    //                    _targetRowData[mFatePopGroupFirstMonsteMinrCountIndex + _indexOffset].WriteCellValue("0");
-                //    //                    _targetRowData[mFatePopGroupFirstMonsterFirstMaxCountIndex + _indexOffset].WriteCellValue("0");
+                //    //                    _targetRowData[mFatePopGroupFirstMonsteMinrCountIndex + _indexOffset].SetCellValue("0");
+                //    //                    _targetRowData[mFatePopGroupFirstMonsterFirstMaxCountIndex + _indexOffset].SetCellValue("0");
                 //    //                }
-                //    //                _targetRowData[mFatePopGroupFirstMonsterIdleRangeIndex + _indexOffset].WriteCellValue(_data.IdleRangePosInfo);
-                //    //                _targetRowData[mFatePopGroupFirstMonsterDepopRangeIndex + _indexOffset].WriteCellValue(_data.DepopRangePosInfo);
+                //    //                _targetRowData[mFatePopGroupFirstMonsterIdleRangeIndex + _indexOffset].SetCellValue(_data.IdleRangePosInfo);
+                //    //                _targetRowData[mFatePopGroupFirstMonsterDepopRangeIndex + _indexOffset].SetCellValue(_data.DepopRangePosInfo);
                 //    //            }
                 //    //        }
                 //    //    }
@@ -974,22 +1063,22 @@ namespace ExcelConsole
 
                 //    //                var _indexOffset = tempIndex * 6;
 
-                //    //                _targetRowData[mFatePopGroupFirstNpcIDIndex + _indexOffset].WriteCellValue(_data.MonsterID.ToString());
-                //    //                _targetRowData[mFatePopGroupFirstNpcPopRangeIndex + _indexOffset].WriteCellValue(_data.PopRangePosInfo);
+                //    //                _targetRowData[mFatePopGroupFirstNpcIDIndex + _indexOffset].SetCellValue(_data.MonsterID.ToString());
+                //    //                _targetRowData[mFatePopGroupFirstNpcPopRangeIndex + _indexOffset].SetCellValue(_data.PopRangePosInfo);
 
                 //    //                if (_data.MaxCount > 0)
                 //    //                {
-                //    //                    _targetRowData[mFatePopGroupFirstNpcMinNumIndex + _indexOffset].WriteCellValue(_data.MinCount.ToString());
-                //    //                    _targetRowData[mFatePopGroupFirstNpcMaxNumIndex + _indexOffset].WriteCellValue(_data.MaxCount.ToString());
+                //    //                    _targetRowData[mFatePopGroupFirstNpcMinNumIndex + _indexOffset].SetCellValue(_data.MinCount.ToString());
+                //    //                    _targetRowData[mFatePopGroupFirstNpcMaxNumIndex + _indexOffset].SetCellValue(_data.MaxCount.ToString());
                 //    //                }
                 //    //                else
                 //    //                {
-                //    //                    _targetRowData[mFatePopGroupFirstNpcMinNumIndex + _indexOffset].WriteCellValue("0");
-                //    //                    _targetRowData[mFatePopGroupFirstNpcMaxNumIndex + _indexOffset].WriteCellValue("0");
+                //    //                    _targetRowData[mFatePopGroupFirstNpcMinNumIndex + _indexOffset].SetCellValue("0");
+                //    //                    _targetRowData[mFatePopGroupFirstNpcMaxNumIndex + _indexOffset].SetCellValue("0");
                 //    //                }
 
-                //    //                _targetRowData[mFatePopGroupFirstNpcIdleRangeIndex + _indexOffset].WriteCellValue(_data.IdleRangePosInfo);
-                //    //                _targetRowData[mFatePopGroupFirstNpcDepopRangeIndex + _indexOffset].WriteCellValue(_data.DepopRangePosInfo);
+                //    //                _targetRowData[mFatePopGroupFirstNpcIdleRangeIndex + _indexOffset].SetCellValue(_data.IdleRangePosInfo);
+                //    //                _targetRowData[mFatePopGroupFirstNpcDepopRangeIndex + _indexOffset].SetCellValue(_data.DepopRangePosInfo);
                 //    //            }
                 //    //        }
                 //    //    }
@@ -997,29 +1086,33 @@ namespace ExcelConsole
                 //}
 
                 // Key : OldMonsterID ; value : FateNpcID
-                foreach (var _pair in _oldDataMonsterIDToFateNpcID)
+                foreach (KeyValuePair<int, int> _pair in _oldDataMonsterIDToFateNpcID)
                 {
-                    var _rowData = mExcelSheetMonster.GetCacheRowDataListByKeyStr(_pair.Key.ToString());
-                    if (_rowData == null || _rowData.Count < 1)
+                    List<CellValueData>? _rowData = mExcelSheetMonster.GetCacheRowDataListByKeyStr(_pair.Key.ToString());
+
+                    if ((_rowData == null) || (_rowData.Count < 1))
                     {
                         Console.WriteLine($"错误，有无法获取数据的 MonsterID : [{_pair.Key}]");
+
                         continue;
                     }
 
-                    _rowData[mMonsterFateNpcIdIndex].WriteCellValue(_pair.Value.ToString());
+                    _rowData[mMonsterFateNpcIdIndex].SetCellValue(_pair.Value.ToString());
                 }
 
                 // key : OldNpcMonster ; value : FateNpcID
-                foreach (var _pair in _oldDataNpcMonsterIDToFateNpcID)
+                foreach (KeyValuePair<int, int> _pair in _oldDataNpcMonsterIDToFateNpcID)
                 {
-                    var _rowData = mExcelSheetMonster.GetCacheRowDataListByKeyStr(_pair.Key.ToString());
-                    if (_rowData == null || _rowData.Count < 1)
+                    List<CellValueData>? _rowData = mExcelSheetMonster.GetCacheRowDataListByKeyStr(_pair.Key.ToString());
+
+                    if ((_rowData == null) || (_rowData.Count < 1))
                     {
                         Console.WriteLine($"错误，有无法获取数据的 MonsterID : [{_pair.Key}]");
+
                         continue;
                     }
 
-                    _rowData[mMonsterFateNpcIdIndex].WriteCellValue(_pair.Value.ToString());
+                    _rowData[mMonsterFateNpcIdIndex].SetCellValue(_pair.Value.ToString());
                 }
 
                 // 写入数据

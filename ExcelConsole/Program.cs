@@ -11,16 +11,19 @@
     {
         private static void Main(string[] args)
         {
-            string currentPath = System.AppDomain.CurrentDomain.BaseDirectory;
-            var _targetFolderPath = Path.Combine(currentPath, "../FileFolder");
-            DirectoryInfo targetFolder = new DirectoryInfo(_targetFolderPath);
-            if (!targetFolder.Exists)
+            string        _currentPath      = AppDomain.CurrentDomain.BaseDirectory;
+            string        _targetFolderPath = Path.Combine(_currentPath, "../FileFolder");
+            DirectoryInfo _targetFolder     = new DirectoryInfo(_targetFolderPath);
+
+            if (!_targetFolder.Exists)
             {
-                Console.WriteLine($"错误，{targetFolder} 路径不存在");
+                Console.WriteLine($"错误，{_targetFolder} 路径不存在");
+                Console.ReadKey();
+
                 return;
             }
 
-            Console.WriteLine($"输入数字：");
+            Console.WriteLine("输入数字：");
             Console.WriteLine("1 : 处理 FateGuard 相关的 FateNpc 转化后的 Monster 的等级");
             Console.WriteLine("2 : 处理端游 FateGuard 导入后 创建物相关");
             Console.WriteLine("3 : 处理端游 FateGuard 导入后 Npc相关");
@@ -31,59 +34,71 @@
             Console.WriteLine("8 : 导出 FateArrayNpcYell 表");
             Console.WriteLine("9 : 处理 Monster 的 FateID");
             Console.WriteLine("9 : 处理 护送Fate 的 NpcID");
+            Console.WriteLine("10 : 处理 FateNpc 开启后再次对话 ID");
             Console.WriteLine("请输入:");
             string? _keyinfo = Console.ReadLine();
             int.TryParse(_keyinfo, out int _inputKey);
             ProcessBase? _process = null;
+
             switch (_inputKey)
             {
                 case 1:
                 {
                     _process = new ProcessForFateGuardNpcToMonsterLevel();
+
                     break;
                 }
                 case 2:
                 {
                     _process = new ProcessForFateMonsterAndReference();
+
                     break;
                 }
                 case 3:
                 {
                     _process = new ProcessForFateNPCAbout();
+
                     break;
                 }
                 case 4:
                 {
                     _process = new ProcessForFateNpcToMonster();
+
                     break;
                 }
                 case 5:
                 {
                     _process = new ProcessForCreateNewColumForFatePopGroup();
+
                     break;
                 }
                 case 6:
                 {
                     _process = new ProcessForFatePopGroupRandomPopPos();
+
                     break;
                 }
                 case 7:
                 {
                     _process = new ProcessForUseNewMonsterID();
+
                     break;
                 }
                 case 8:
                 {
                     _process = new ProcessForExportNpcYellArray();
+
                     break;
                 }
                 case 9:
                 {
                     _process = new ProcessForMonsterFateID();
+
                     break;
                 }
                 case 10:
                 {
+                    _process = new ProcessForFateAfterNpcDialog();
                     break;
                 }
                 default:
@@ -97,8 +112,9 @@
                 throw new Exception("错误，没有对应的处理方法");
             }
 
-            _process.FolderPath = Path.Combine(targetFolder.FullName, $"{_keyinfo}");
+            _process.FolderPath = Path.Combine(_targetFolder.FullName, $"{_keyinfo}");
             Console.WriteLine();
+
             try
             {
                 if (_process.Process())
@@ -114,6 +130,7 @@
             {
                 Console.WriteLine(ex.ToString());
             }
+
             Console.ReadKey();
         }
     }

@@ -76,13 +76,8 @@ namespace ExcelTool
             }
         }
 
-        public void WriteCellValue(string targetStr)
+        public void SetCellValue(string targetStr)
         {
-            if (mCellValue == null)
-            {
-                return;
-            }
-
             mCellValue = targetStr;
         }
     }
