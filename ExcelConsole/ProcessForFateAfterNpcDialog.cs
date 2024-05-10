@@ -1,4 +1,4 @@
-﻿using ExcelTool;
+using ExcelTool;
 
 namespace ExcelConsole
 {
@@ -192,7 +192,9 @@ namespace ExcelConsole
 
                 var _triggerNpcStr = _tempFateRowData[mFateTriggerNpcIndex].GetCellValue();
 
-                if (string.IsNullOrEmpty(_triggerNpcStr))
+                int.TryParse(_triggerNpcStr, out int _tempTriggerNpcId);
+
+                if (_tempTriggerNpcId <= 0)
                 {
                     continue;
                 }
